@@ -7,7 +7,7 @@ class NetSchoolAPI:
     def __init__(self, url):
 
         # Set global vars
-        self.url = url
+        self.url = self._urlformat(url)
         self.schools = []
 
         # Create new requests session
@@ -80,3 +80,18 @@ class NetSchoolAPI:
         """Log out of user session"""
 
         return self.session.post(f"{self.url}/webapi/auth/logout")
+
+    @staticmethod
+    def _formaturl(url):
+        """Format url"""
+        url = url.rstrip("/")
+
+        # Remove http prefix
+        if url.startswith("http://"):
+            url = url.removeprefix("http://")
+
+        # Set https prefix
+        if not url.startswith("https://"):
+            url = f"https://{url}"
+
+        return url
