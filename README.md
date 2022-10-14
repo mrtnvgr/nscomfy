@@ -1,2 +1,4 @@
 # nscomfy
-Набор софта для Сетевого Города (syncronous api, telegram bot)
+Software pack for NetSchool
+- Synchronous API
+- Telegram bot (WIP)
