@@ -70,9 +70,9 @@ class NetSchoolAPI:
         payload.update(authdata)
 
         # Log in
-        return self.request("login", method="POST", params=payload).json()
+        return self.request("login", method="POST", data=payload).json()
 
-    def request(self, url, method="GET", params=None, headers={}):
+    def request(self, url, method="GET", headers={}, **kwargs):
         """Session request wrapper"""
 
         # Check if url is relative
@@ -80,10 +80,9 @@ class NetSchoolAPI:
             url = f"{self._url}/webapi/{url}"
 
         # Add request headers
-        headers["user-agent"] = "NetSchoolAPI"
         headers["referer"] = self._url
 
-        return self.session.request(url=url, method=method, params=params)
+        return self.session.request(method, url, headers=headers, **kwargs)
 
     def logout(self):
         """Log out of user session"""
