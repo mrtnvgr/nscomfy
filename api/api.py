@@ -2,6 +2,8 @@
 import requests
 import hashlib
 
+import errors
+
 
 class NetSchoolAPI:
     def __init__(self, url):
@@ -75,8 +77,10 @@ class NetSchoolAPI:
         login_response = self.request("login", method="POST", data=payload).json()
 
         # Check if we logged in successfully
-        if "at" in login_response:
-            self._session_headers["at"] = login_response["at"]
+        if "at" not in login_response:
+            raise errors.LoginError(login_response["message"])
+
+        self._session_headers["at"] = login_response["at"]
 
         return login_response
 
