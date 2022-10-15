@@ -2,7 +2,7 @@
 import requests
 import hashlib
 
-import errors
+from errors import *
 
 
 class NetSchoolAPI:
@@ -56,6 +56,9 @@ class NetSchoolAPI:
                 payload["sft"] = school["funcType"]
                 payload["scid"] = school["id"]
 
+        if "scid" not in payload:
+            raise SchoolNotFoundError(school_name)
+
         # Get auth data (var, lt, salt)
         authdata = self.request("auth/getdata", method="POST").json()
 
@@ -79,7 +82,7 @@ class NetSchoolAPI:
 
         # Check if we logged in successfully
         if "at" not in login_response:
-            raise errors.LoginError(login_response["message"])
+            raise LoginError(login_response["message"])
 
         # Add at to headers for request access
         self._session_headers["at"] = login_response["at"]
@@ -115,7 +118,7 @@ class NetSchoolAPI:
                 return self.request(url, method, headers, **kwargs)
             else:
 
-                raise errors.RequestError(
+                raise RequestError(
                     "login before using requests that need authorization"
                 )
 

@@ -4,3 +4,7 @@ class LoginError(Exception):
 
 class RequestError(Exception):
     pass
+
+
+class SchoolNotFoundError(Exception):
+    pass
