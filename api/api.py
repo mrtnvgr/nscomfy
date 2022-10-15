@@ -10,8 +10,10 @@ class NetSchoolAPI:
         self._url = self._format_url(url)
         self._schools = []
 
+        self._session_headers = {"referer": self._url}
+
         # Create new requests session
-        self.session = requests.Session()
+        self._session = requests.Session()
 
         # Get version info and NSSESSIONID cookie
         self.info = self.request(f"{self._url}/webapi/logindata").json()
@@ -70,7 +72,13 @@ class NetSchoolAPI:
         payload.update(authdata)
 
         # Log in
-        return self.request("login", method="POST", data=payload).json()
+        login_response = self.request("login", method="POST", data=payload).json()
+
+        # Check if we logged in successfully
+        if "at" in login_response:
+            self._session_headers["at"] = login_response["at"]
+
+        return login_response
 
     def request(self, url, method="GET", headers={}, **kwargs):
         """Session request wrapper"""
@@ -79,10 +87,10 @@ class NetSchoolAPI:
         if not url.startswith(self._url):
             url = f"{self._url}/webapi/{url}"
 
-        # Add request headers
-        headers["referer"] = self._url
+        # Update request headers
+        headers = self._session_headers | headers
 
-        return self.session.request(method, url, headers=headers, **kwargs)
+        return self._session.request(method, url, headers=headers, **kwargs)
 
     def logout(self):
         """Log out of user session"""
