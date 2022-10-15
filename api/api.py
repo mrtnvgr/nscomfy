@@ -7,26 +7,26 @@ class NetSchoolAPI:
     def __init__(self, url):
 
         # Set global vars
-        self.url = self._format_url(url)
-        self.schools = []
+        self._url = self._format_url(url)
+        self._schools = []
 
         # Create new requests session
         self.session = requests.Session()
 
         # Get version info and NSSESSIONID cookie
-        self.info = self.request(f"{self.url}/webapi/logindata").json()
+        self.info = self.request(f"{self._url}/webapi/logindata").json()
 
     def getSchoolList(self, force=False):
         """Get school info list"""
 
         # Get school list from url if list is empty or force flag
-        if self.schools == [] or force:
+        if self._schools == [] or force:
 
             # Get school list from url
-            self.schools = self.request("addresses/schools").json()
+            self._schools = self.request("addresses/schools").json()
 
         # Return school list
-        return self.schools
+        return self._schools
 
     def login(self, username, password, school_name):
         """Log into user account"""
@@ -38,7 +38,7 @@ class NetSchoolAPI:
         payload = {"LoginType": 1, "un": username}
 
         # Iterate through schools
-        for school in self.schools:
+        for school in self._schools:
 
             # Check school name
             if school["name"] == school_name:
@@ -76,12 +76,12 @@ class NetSchoolAPI:
         """Session request wrapper"""
 
         # Check if url is relative
-        if not url.startswith(self.url):
-            url = f"{self.url}/webapi/{url}"
+        if not url.startswith(self._url):
+            url = f"{self._url}/webapi/{url}"
 
         # Add request headers
         headers["user-agent"] = "NetSchoolAPI"
-        headers["referer"] = self.url
+        headers["referer"] = self._url
 
         return self.session.request(url=url, method=method, params=params)
 
