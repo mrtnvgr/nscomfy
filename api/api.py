@@ -7,14 +7,14 @@ class NetSchoolAPI:
     def __init__(self, url):
 
         # Set global vars
-        self.url = self._urlformat(url)
+        self.url = self._format_url(url)
         self.schools = []
 
         # Create new requests session
         self.session = requests.Session()
 
         # Get version info and NSSESSIONID cookie
-        self.info = self.session.get(f"{self.url}/webapi/logindata").json()
+        self.info = self.request(f"{self.url}/webapi/logindata").json()
 
     def getSchoolList(self, force=False):
         """Get school info list"""
@@ -23,9 +23,7 @@ class NetSchoolAPI:
         if self.schools == [] or force:
 
             # Get school list from url
-            self.schools = self.session.get(
-                f"{self.url}/webapi/addresses/schools"
-            ).json()
+            self.schools = self.request("addresses/schools").json()
 
         # Return school list
         return self.schools
@@ -54,7 +52,7 @@ class NetSchoolAPI:
                 payload["scid"] = school["id"]
 
         # Get auth data (var, lt, salt)
-        authdata = self.session.post(f"{self.url}/webapi/auth/getdata").json()
+        authdata = self.request("auth/getdata", method="POST").json()
 
         # Pop salt from auth data
         salt = authdata.pop("salt")
@@ -72,17 +70,28 @@ class NetSchoolAPI:
         payload.update(authdata)
 
         # Log in
-        return self.session.post(
-            f"{self.url}/webapi/login", data=payload, headers={"referer": self.url}
-        ).json()
+        return self.request("login", method="POST", params=payload).json()
+
+    def request(self, url, method="GET", params=None, headers={}):
+        """Session request wrapper"""
+
+        # Check if url is relative
+        if not url.startswith(self.url):
+            url = f"{self.url}/webapi/{url}"
+
+        # Add request headers
+        headers["user-agent"] = "NetSchoolAPI"
+        headers["referer"] = self.url
+
+        return self.session.request(url=url, method=method, params=params)
 
     def logout(self):
         """Log out of user session"""
 
-        return self.session.post(f"{self.url}/webapi/auth/logout")
+        return self.request("auth/logout", method="POST")
 
     @staticmethod
-    def _formaturl(url):
+    def _format_url(url):
         """Format url"""
         url = url.rstrip("/")
 
