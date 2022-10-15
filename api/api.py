@@ -11,6 +11,7 @@ class NetSchoolAPI:
         # Set global vars
         self._url = self._format_url(url)
         self._schools = []
+        self._login_data = None
 
         self._session_headers = {"referer": self._url}
 
@@ -80,7 +81,11 @@ class NetSchoolAPI:
         if "at" not in login_response:
             raise errors.LoginError(login_response["message"])
 
+        # Add at to headers for request access
         self._session_headers["at"] = login_response["at"]
+
+        # Save current login data for auto-relogin
+        self._login_data = (username, password, school_name)
 
         return login_response
 
@@ -94,7 +99,27 @@ class NetSchoolAPI:
         # Update request headers
         headers = self._session_headers | headers
 
-        return self._session.request(method, url, headers=headers, **kwargs)
+        # Make a request
+        response = self._session.request(method, url, headers=headers, **kwargs)
+
+        # If access denied
+        if response.status_code == 500:
+
+            # Check if we have stored login data
+            if self._login_data:
+
+                # Try to login again
+                self.login(*self._login_data)
+
+                # Retry request
+                return self.request(url, method, headers, **kwargs)
+            else:
+
+                raise errors.RequestError(
+                    "login before using requests that need authorization"
+                )
+
+        return response
 
     def logout(self):
         """Log out of user session"""
