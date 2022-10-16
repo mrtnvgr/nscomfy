@@ -8,10 +8,13 @@ from errors import *
 class NetSchoolAPI:
     def __init__(self, url):
 
-        # Set global vars
         self._url = self._format_url(url)
         self._schools = []
+
+        # Reset login vars
         self._login_data = None
+        self._student_id = None
+        self._year_id = None
 
         self._session_headers = {"referer": self._url}
 
@@ -89,6 +92,15 @@ class NetSchoolAPI:
 
         # Save current login data for auto-relogin
         self._login_data = (username, password, school_name)
+
+        # Get student id
+        diary_info = self.request("student/diary/init").json()
+        student = diary_info["students"][diary_info["currentStudentId"]]
+        self._student_id = student["studentId"]
+
+        # Get year id
+        year_info = self.request("years/current").json()
+        self._year_id = year_info["id"]
 
         return login_response
 
