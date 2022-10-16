@@ -34,6 +34,28 @@ class NetSchoolAPI:
         # Return school list
         return self._schools
 
+    def getOverdueTasks(self):
+        """Get overdue tasks"""
+
+        response = self.request(
+            "student/diary/pastMandatory",
+            params={"studentId": self._student_id, "yearId": self._year_id},
+        ).json()
+
+        # Add task type info
+        for task in response:
+
+            # Get task index in response
+            index = response.index(task)
+            # Get type id value
+            typeId = response[index]["typeId"]
+            # Get type value from assignment types
+            typeName = self._assignment_types[typeId]
+            # Append value to task
+            response[index]["type"] = typeName
+
+        return response
+
     def login(self, username, password, school_name):
         """Log into user account"""
 
@@ -92,13 +114,23 @@ class NetSchoolAPI:
         self._login_data = (username, password, school_name)
 
         # Get student id
-        diary_info = self.request("student/diary/init").json()
-        student = diary_info["students"][diary_info["currentStudentId"]]
-        self._student_id = student["studentId"]
+        self._student_id = login_response["accountInfo"]["user"]["id"]
 
         # Get year id
         year_info = self.request("years/current").json()
         self._year_id = year_info["id"]
+
+        # Get year dates
+        self._year_start = year_info["startDate"].split("T")[0]
+        self._year_end = year_info["endDate"].split("T")[0]
+
+        # Get assignment types
+        assignment_types = self.request(
+            "grade/assignment/types", params={"all": False}
+        ).json()
+        self._assignment_types = {
+            assignment["id"]: assignment["name"] for assignment in assignment_types
+        }
 
         return login_response
 
@@ -146,7 +178,10 @@ class NetSchoolAPI:
         """Reset login data variables"""
         self._login_data = None
         self._student_id = None
+
         self._year_id = None
+        self._year_start = None
+        self._year_end = None
 
     @staticmethod
     def _format_url(url):
