@@ -11,10 +11,8 @@ class NetSchoolAPI:
         self._url = self._format_url(url)
         self._schools = []
 
-        # Reset login vars
-        self._login_data = None
-        self._student_id = None
-        self._year_id = None
+        # Reset login variables
+        self._reset_logindata()
 
         self._session_headers = {"referer": self._url}
 
@@ -22,7 +20,7 @@ class NetSchoolAPI:
         self._session = requests.Session()
 
         # Get version info and NSSESSIONID cookie
-        self.info = self.request(f"{self._url}/webapi/logindata").json()
+        self.info = self.request(f"logindata").json()
 
     def getSchoolList(self, force=False):
         """Get school info list"""
@@ -139,7 +137,16 @@ class NetSchoolAPI:
     def logout(self):
         """Log out of user session"""
 
+        # Reset login variables
+        self._reset_logindata()
+
         return self.request("auth/logout", method="POST")
+
+    def _reset_logindata(self):
+        """Reset login data variables"""
+        self._login_data = None
+        self._student_id = None
+        self._year_id = None
 
     @staticmethod
     def _format_url(url):
