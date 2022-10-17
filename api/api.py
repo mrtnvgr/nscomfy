@@ -38,6 +38,11 @@ class NetSchoolAPI:
         # Return school list
         return self._schools
 
+    def getSchoolInfo(self):
+        """Get full school information"""
+
+        return self.request(f"schools/{self._school_id}/card").json()
+
     def getDiary(self, start: Optional[date] = None, end: Optional[date] = None):
         """Get diary info"""
 
@@ -56,7 +61,7 @@ class NetSchoolAPI:
                 "weekStart": start.isoformat(),
                 "weekEnd": end.isoformat(),
             },
-        )
+        ).json()
 
         return response
 
@@ -96,6 +101,8 @@ class NetSchoolAPI:
 
             # Check school name
             if school["name"] == school_name:
+
+                self._school_id = school["id"]
 
                 # Add school info to payload
                 payload["cid"] = school["countryId"]
@@ -208,6 +215,8 @@ class NetSchoolAPI:
         self._year_id = None
         self._year_start = None
         self._year_end = None
+
+        self._school_id = None
 
     @staticmethod
     def _format_url(url):
