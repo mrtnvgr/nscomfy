@@ -1,6 +1,10 @@
 #!/usr/bin/env python
+
 import requests
 import hashlib
+
+from typing import Optional
+from datetime import date, timedelta
 
 from errors import *
 
@@ -33,6 +37,28 @@ class NetSchoolAPI:
 
         # Return school list
         return self._schools
+
+    def getDiary(self, start: Optional[date] = None, end: Optional[date] = None):
+        """Get diary info"""
+
+        if not start:
+            # Start = Monday
+            start = date.today() - timedelta(days=date.today().weekday())
+
+        if not end:
+            end = start + timedelta(days=5)
+
+        response = self.request(
+            "student/diary",
+            params={
+                "studentId": self._student_id,
+                "yearId": self._year_id,
+                "weekStart": start.isoformat(),
+                "weekEnd": end.isoformat(),
+            },
+        )
+
+        return response
 
     def getOverdueTasks(self):
         """Get overdue tasks"""
