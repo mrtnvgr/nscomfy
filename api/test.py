@@ -14,7 +14,7 @@ print(f"Student: {api.student_info['name']}")
 print()
 print("Overdue tasks:")
 for task in api.getOverdueTasks():
-    
+
     print(f"{task['subjectName']} - {task['assignmentName']}")
 
 diary = api.getDiary()["weekDays"]
@@ -25,16 +25,17 @@ print("Diary:")
 for day in diary:
 
     daydate = day["date"].split("T")[0]
-    
+
     print()
-    print(f'{daydate}')
+    print(f"{daydate}")
 
     for lesson in day["lessons"]:
 
         marks = []
+        tasks = []
 
         if "assignments" in lesson:
-            
+
             assignments = lesson["assignments"]
             for assignment in assignments:
 
@@ -42,6 +43,13 @@ for day in diary:
 
                     mark = assignment["mark"]
                     marks.append(str(mark["mark"]))
+
+                if "assignmentName" in assignment:
+
+                    # 3 - домашнее задание, мы выводим только дз
+                    if assignment["typeId"] == 3:
+
+                        tasks.append(assignment["assignmentName"])
 
         name = lesson["subjectName"]
 
@@ -51,6 +59,11 @@ for day in diary:
             name = "ОБЖ"
 
         print(f'    {name} [{", ".join(marks)}]')
+
+        if tasks != []:
+
+            for task in tasks:
+                print(f"        {task}")
 
 print()
 
