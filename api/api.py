@@ -24,7 +24,7 @@ class NetSchoolAPI:
         self._session = requests.Session()
 
         # Get version info and NSSESSIONID cookie
-        self.info = self.request(f"logindata").json()
+        self.ns_info = self.request(f"logindata").json()
 
     def getSchoolList(self, force=False):
         """Get school info list"""
@@ -56,7 +56,7 @@ class NetSchoolAPI:
         response = self.request(
             "student/diary",
             params={
-                "studentId": self._student_id,
+                "studentId": self.student_info["id"],
                 "yearId": self._year_id,
                 "weekStart": start.isoformat(),
                 "weekEnd": end.isoformat(),
@@ -70,7 +70,7 @@ class NetSchoolAPI:
 
         response = self.request(
             "student/diary/pastMandatory",
-            params={"studentId": self._student_id, "yearId": self._year_id},
+            params={"studentId": self.student_info["id"], "yearId": self._year_id},
         ).json()
 
         # Add task type info
@@ -146,8 +146,8 @@ class NetSchoolAPI:
         # Save current login data for auto-relogin
         self._login_data = (username, password, school_name)
 
-        # Get student id
-        self._student_id = login_response["accountInfo"]["user"]["id"]
+        # Get student info
+        self.student_info = login_response["accountInfo"]["user"]
 
         # Get year id
         year_info = self.request("years/current").json()
@@ -210,7 +210,9 @@ class NetSchoolAPI:
     def _reset_logindata(self):
         """Reset login data variables"""
         self._login_data = None
-        self._student_id = None
+
+        self.ns_info = {}
+        self.student_info = {}
 
         self._year_id = None
         self._year_start = None
