@@ -4,7 +4,7 @@ import json
 
 api = NetSchoolAPI("sgo.tomedu.ru")
 
-data = json.load(open("data.json"))
+data = json.load(open("test_data.json"))
 
 api.login(data["user"], data["pass"], data["school"])
 
