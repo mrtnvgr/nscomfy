@@ -87,6 +87,16 @@ class NetSchoolAPI:
 
         return response
 
+    def getAssignmentTypeId(self, name):
+
+        for a_id in self._assignment_types:
+
+            value = self._assignment_types[a_id]
+
+            if value == name:
+
+                return a_id
+
     def login(self, username, password, school_name):
         """Log into user account"""
 
@@ -243,7 +253,7 @@ class TelegramAPI:
         self.token = token
 
     def method(self, method, payload: Dict, user_id=None, **kwargs):
-        
+
         if user_id:
             payload["chat_id"] = user_id
             payload["parse_mode"] = "HTML"
@@ -258,7 +268,7 @@ class TelegramAPI:
             return response["result"]
         else:
             return response
-    
+
     def getUpdates(self, offset):
 
         payload = {"timeout": 60000, "offset": offset}

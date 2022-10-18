@@ -46,8 +46,10 @@ for day in diary:
 
                 if "assignmentName" in assignment:
 
-                    # 3 - домашнее задание, мы выводим только дз
-                    if assignment["typeId"] == 3:
+                    # Получим id типа домашнего задания
+                    typeid = api.getAssignmentTypeId("Домашнее задание")
+
+                    if assignment["typeId"] == typeid:
 
                         tasks.append(assignment["assignmentName"])
 
