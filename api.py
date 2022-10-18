@@ -242,10 +242,11 @@ class TelegramAPI:
         self.session = requests.Session()
         self.token = token
 
-    def method(self, method, user_id, payload: Dict, **kwargs):
-
-        payload["chat_id"] = user_id
-        payload["parse_mode"] = "HTML"
+    def method(self, method, payload: Dict, user_id=None, **kwargs):
+        
+        if user_id:
+            payload["chat_id"] = user_id
+            payload["parse_mode"] = "HTML"
 
         response = self.session.get(
             f"https://api.telegram.org/bot{self.token}/{method}",
@@ -257,6 +258,11 @@ class TelegramAPI:
             return response["result"]
         else:
             return response
+    
+    def getUpdates(self, offset):
+
+        payload = {"timeout": 60000, "offset": offset}
+        return self.method("getUpdates", payload)
 
     def sendMessage(self, user_id, text):
-        return self.method("sendMessage", user_id, {"text": text})
+        return self.method("sendMessage", {"text": text}, user_id)
