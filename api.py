@@ -3,7 +3,7 @@
 import requests
 import hashlib
 
-from typing import Optional
+from typing import Optional, Dict
 from datetime import date, timedelta
 
 from errors import *
@@ -234,3 +234,29 @@ class NetSchoolAPI:
             url = f"https://{url}"
 
         return url
+
+
+class TelegramAPI:
+    def __init__(self, token):
+
+        self.session = requests.Session()
+        self.token = token
+
+    def method(self, method, user_id, payload: Dict, **kwargs):
+
+        payload["chat_id"] = user_id
+        payload["parse_mode"] = "HTML"
+
+        response = self.session.get(
+            f"https://api.telegram.org/bot{self.token}/{method}",
+            params=payload,
+            **kwargs,
+        ).json()
+
+        if response["ok"]:
+            return response["result"]
+        else:
+            return response
+
+    def sendMessage(self, user_id, text):
+        return self.method("sendMessage", user_id, {"text": text})
