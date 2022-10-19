@@ -77,12 +77,14 @@ class TelegramHandler:
 
     def updateHandler(self, update):
         user_id = str(self.tg_api.getUserIdFromUpdate(update))
-        
+
         # First time
         if user_id not in self.master.config["users"]:
 
             self.askForAccount(user_id)
-        
+
+        self.menuAnswerHandler(user_id, update)
+
         # Check if user is currently logged in
         if self.master.config["users"][user_id]["current_session"]:
             self.sendMainMenu(user_id)
@@ -99,9 +101,12 @@ class TelegramHandler:
                 self.sendMainMenu(user_id)
 
     def sendMainMenu(self, user_id):
-        answer = self.sendKeyboard(user_id, "loggedin")
-            
-        if answer == "Выйти":
+        self.sendKeyboard(user_id, "mm", get_answer=False)
+
+    def menuAnswerHandler(self, user_id, update):
+        text = update["message"]["text"]
+
+        if text == "Выйти":
             self.master.config["users"][user_id]["current_session"] = None
             self.master.saveConfig()
 
@@ -113,14 +118,14 @@ class TelegramHandler:
         session["login"] = self.askUser(user_id, "Напишите login:")
         session["password"] = self.askUser(user_id, "Напишите password:")
         name = self.askUser(user_id, "Напишите имя сессии:")
-        
+
         if not all(session.values()):
             return
 
         self.addNewUser(user_id)
 
         self.master.config["users"][user_id]["current_session"] = None
-        
+
         self.master.config["users"][user_id]["sessions"][name] = session
         self.master.saveConfig()
 
@@ -131,33 +136,36 @@ class TelegramHandler:
 
     def askUser(self, user_id, msg):
         self.tg_api.sendMessage(user_id, msg)
-        
+
         response = self.getUpdates(limit=1)
 
         if response != []:
             return response[0]["message"]["text"]
 
-    def sendKeyboard(self, user_id, ktype):
+    def sendKeyboard(self, user_id, ktype, get_answer=True):
         """Send different keyboards to user"""
 
         # Default keyboard values
         keyboard = {"keyboard": [], "one_time_keyboard": True, "resize_keyboard": True}
         text = ""
-        
+
         if ktype == "session_selection":
             text = "Выберете аккаунт"
 
             for name in self.master.config["users"][user_id]["sessions"]:
                 keyboard["keyboard"].append([name])
 
-        elif ktype == "loggedin":
+        elif ktype == "mm":
             text = "Главное меню"
 
             keyboard["keyboard"].append(["Выйти"])
+            keyboard["one_time_keyboard"] = False
 
         self.tg_api.sendKeyboard(user_id, text, keyboard)
-        
-        # Answer
-        update = self.getUpdates(limit=1)
-        if update != []:
-            return update[0]["message"]["text"]
+
+        if get_answer:
+
+            # Get answer
+            update = self.getUpdates(limit=1)
+            if update != []:
+                return update[0]["message"]["text"]

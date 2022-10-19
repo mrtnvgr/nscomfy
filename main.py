@@ -33,7 +33,7 @@ class Main:
     def loop(self):
 
         while True:
-            
+
             updates = self.telegram.getUpdates(timeout=60000)
             self.telegram.parseUpdates(updates)
 
