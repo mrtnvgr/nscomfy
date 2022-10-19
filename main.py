@@ -34,7 +34,7 @@ class Main:
 
         while True:
             
-            updates = self.telegram.getUpdates()
+            updates = self.telegram.getUpdates(timeout=60000)
             self.telegram.parseUpdates(updates)
 
 

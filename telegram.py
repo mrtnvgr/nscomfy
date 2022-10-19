@@ -26,9 +26,9 @@ class TelegramAPI:
         else:
             raise Exception(response["description"])
 
-    def getUpdates(self, offset, limit):
+    def getUpdates(self, offset, limit, timeout):
 
-        payload = {"timeout": 60000, "offset": offset}
+        payload = {"timeout": timeout, "offset": offset, "limit": limit}
         return self.method("getUpdates", payload)
 
     def sendMessage(self, user_id, text):
@@ -56,10 +56,10 @@ class TelegramHandler:
         token = self.master.config["telegram"]["token"]
         self.tg_api = TelegramAPI(token)
 
-    def getUpdates(self, limit=100):
+    def getUpdates(self, limit=100, timeout=60000):
 
         offset = self.master.config["telegram"].get("offset", 0)
-        updates = self.tg_api.getUpdates(offset, limit)
+        updates = self.tg_api.getUpdates(offset, limit, timeout)
 
         if updates != []:
 
@@ -76,9 +76,7 @@ class TelegramHandler:
             self.updateHandler(update)
 
     def updateHandler(self, update):
-        text = update["message"]["text"]
-
-        user_id = self.tg_api.getUserIdFromUpdate(update)
+        user_id = str(self.tg_api.getUserIdFromUpdate(update))
         
         # First time
         if user_id not in self.master.config["users"]:
@@ -87,12 +85,26 @@ class TelegramHandler:
         
         # Check if user is currently logged in
         if self.master.config["users"][user_id]["current_session"]:
-            print("Logged in! Here starts main menu code")
+            self.sendMainMenu(user_id)
 
         # Login menu
-        else:
-            pass
-    
+        if not self.master.config["users"][user_id]["current_session"]:
+
+            session_name = self.sendKeyboard(user_id, "session_selection")
+
+            if session_name != None:
+                self.master.config["users"][user_id]["current_session"] = session_name
+                self.master.saveConfig()
+
+                self.sendMainMenu(user_id)
+
+    def sendMainMenu(self, user_id):
+        answer = self.sendKeyboard(user_id, "loggedin")
+            
+        if answer == "Выйти":
+            self.master.config["users"][user_id]["current_session"] = None
+            self.master.saveConfig()
+
     def askForAccount(self, user_id):
 
         session = {}
@@ -102,6 +114,9 @@ class TelegramHandler:
         session["password"] = self.askUser(user_id, "Напишите password:")
         name = self.askUser(user_id, "Напишите имя сессии:")
         
+        if not all(session.values()):
+            return
+
         self.addNewUser(user_id)
 
         self.master.config["users"][user_id]["current_session"] = None
@@ -122,13 +137,27 @@ class TelegramHandler:
         if response != []:
             return response[0]["message"]["text"]
 
-    def sendKeyboard(self, user_id):
+    def sendKeyboard(self, user_id, ktype):
         """Send different keyboards to user"""
 
         # Default keyboard values
         keyboard = {"keyboard": [], "one_time_keyboard": True, "resize_keyboard": True}
+        text = ""
+        
+        if ktype == "session_selection":
+            text = "Выберете аккаунт"
 
-        # # First time
-        # if user_id not in self.master.config["users"]:
-        #     keyboard["keyboard"].append(["Test"])
-        #     self.tg_api.sendKeyboard(user_id, "First time placeholder", keyboard)
+            for name in self.master.config["users"][user_id]["sessions"]:
+                keyboard["keyboard"].append([name])
+
+        elif ktype == "loggedin":
+            text = "Главное меню"
+
+            keyboard["keyboard"].append(["Выйти"])
+
+        self.tg_api.sendKeyboard(user_id, text, keyboard)
+        
+        # Answer
+        update = self.getUpdates(limit=1)
+        if update != []:
+            return update[0]["message"]["text"]
