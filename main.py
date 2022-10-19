@@ -22,14 +22,20 @@ class Main:
         if "token" not in self.config["telegram"]:
             raise Exception("Specify telegram token")
 
+        if "users" not in self.config:
+            self.config["users"] = {}
+
+        self.saveConfig()
+
     def saveConfig(self):
         json.dump(self.config, open("config.json", "w"), indent=4)
 
     def loop(self):
 
         while True:
-
-            self.telegram.getUpdates()
+            
+            updates = self.telegram.getUpdates()
+            self.telegram.parseUpdates(updates)
 
 
 if __name__ == "__main__":
