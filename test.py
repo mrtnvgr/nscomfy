@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from api import NetSchoolAPI
+from nsapi import NetSchoolAPI
 import json
 
 api = NetSchoolAPI("sgo.tomedu.ru")

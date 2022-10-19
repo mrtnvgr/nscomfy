@@ -13,12 +13,12 @@ class Main:
         self.telegram = TelegramHandler(self)
 
         self.loop()
-   
+
     def checkconfig(self):
 
         if "telegram" not in self.config:
             self.config["telegram"] = {}
-        
+
         if "token" not in self.config["telegram"]:
             raise Exception("Specify telegram token")
 
