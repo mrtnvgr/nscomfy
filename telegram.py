@@ -95,10 +95,25 @@ class TelegramHandler:
             session_name = self.sendKeyboard(user_id, "session_selection")
 
             if session_name != None:
-                self.master.config["users"][user_id]["current_session"] = session_name
-                self.master.saveConfig()
 
-                self.sendMainMenu(user_id)
+                if session_name == "+":
+                    self.askForAccount(user_id)
+                    self.sendMainMenu(user_id)
+
+                elif session_name == "-":
+
+                    name = self.sendKeyboard(user_id, "session_deletion")
+                    if name != None:
+                        self.master.config["users"][user_id]["sessions"].pop(name)
+
+                else:
+
+                    self.master.config["users"][user_id][
+                        "current_session"
+                    ] = session_name
+                    self.master.saveConfig()
+
+                    self.sendMainMenu(user_id)
 
     def sendMainMenu(self, user_id):
         self.sendKeyboard(user_id, "mm", get_answer=False)
@@ -149,11 +164,14 @@ class TelegramHandler:
         keyboard = {"keyboard": [], "one_time_keyboard": True, "resize_keyboard": True}
         text = ""
 
-        if ktype == "session_selection":
-            text = "Выберете аккаунт"
+        if ktype == "session_selection" or ktype == "session_deletion":
+            text = "Выберите аккаунт"
 
             for name in self.master.config["users"][user_id]["sessions"]:
                 keyboard["keyboard"].append([name])
+
+            if ktype == "session_selection":
+                keyboard["keyboard"].append(["+", "-"])
 
         elif ktype == "mm":
             text = "Главное меню"
