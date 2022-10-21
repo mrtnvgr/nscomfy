@@ -28,7 +28,7 @@ class Main:
         self.saveConfig()
 
     def saveConfig(self):
-        json.dump(self.config, open("config.json", "w"), indent=4)
+        json.dump(self.config, open("config.json", "w"), indent=4, ensure_ascii=False)
 
     def loop(self):
 

@@ -134,31 +134,31 @@ class TelegramHandler:
         self.menuAnswerHandler(user_id, update)
 
         # Check if user is currently logged in
-        if self.master.config["users"][user_id]["current_session"]:
+        if self.master.config["users"][user_id]["current_account"]:
             self.sendMainMenu(user_id)
 
         # Login menu
-        if not self.master.config["users"][user_id]["current_session"]:
+        if not self.master.config["users"][user_id]["current_account"]:
 
-            session_name = self.sendKeyboard(user_id, "session_selection")
+            account_name = self.sendKeyboard(user_id, "account_selection")
 
-            if session_name != None:
+            if account_name != None:
 
-                if session_name == "+":
+                if account_name == "+":
                     self.askForAccount(user_id)
                     self.sendMainMenu(user_id)
 
-                elif session_name == "-":
+                elif account_name == "-":
 
-                    name = self.sendKeyboard(user_id, "session_deletion")
+                    name = self.sendKeyboard(user_id, "account_deletion")
                     if name != None:
-                        self.master.config["users"][user_id]["sessions"].pop(name)
+                        self.master.config["users"][user_id]["accounts"].pop(name)
 
                 else:
 
                     self.master.config["users"][user_id][
-                        "current_session"
-                    ] = session_name
+                        "current_account"
+                    ] = account_name
                     self.master.saveConfig()
 
                     self.sendMainMenu(user_id)
@@ -172,19 +172,18 @@ class TelegramHandler:
             text = update["message"]["text"]
 
             if text == "Выйти":
-                self.master.config["users"][user_id]["current_session"] = None
+                self.master.config["users"][user_id]["current_account"] = None
                 self.master.saveConfig()
 
     def askForAccount(self, user_id):
 
-        session = {}
+        account = {}
 
-        session["url"] = self.askUser(user_id, "Напишите url:")
-        session["login"] = self.askUser(user_id, "Напишите login:")
-        session["password"] = self.askUser(user_id, "Напишите password:")
+        account["url"] = self.askUser(user_id, "Напишите url:")
+        account["login"] = self.askUser(user_id, "Напишите login:")
+        account["password"] = self.askUser(user_id, "Напишите password:")
 
-        # TODO: rename sessions from config to accounts
-        api = NetSchoolAPI(session["url"])
+        api = NetSchoolAPI(account["url"])
         districts_response = api.getMunicipalityDistrictList()
         schools_response = api.getSchoolList()
 
@@ -206,34 +205,34 @@ class TelegramHandler:
 
         self.sendButtons(user_id, "Выберите aдрес", addresses)
 
-        session["address"] = self.getButtonAnswer()
+        account["address"] = self.getButtonAnswer()
 
         schools = []
         for school in schools_response:
-            if school["addressString"] == session["address"]:
+            if school["addressString"] == account["address"]:
                 schools.append(school["name"])
 
         # TODO: not send, edit prev message
         # TODO: проверить существует ли аккаунт у пользователя перед логином
         self.sendButtons(user_id, "Выберите школу", schools)
 
-        session["school"] = self.getButtonAnswer()
+        account["school"] = self.getButtonAnswer()
 
         name = self.askUser(user_id, "Напишите имя сессии:")
 
-        if not all(session.values()):
+        if not all(account.values()):
             return
 
         self.addNewUser(user_id)
 
-        self.master.config["users"][user_id]["sessions"][name] = session
+        self.master.config["users"][user_id]["accounts"][name] = account
         self.master.saveConfig()
 
     def addNewUser(self, user_id):
         if user_id not in self.master.config["users"]:
             self.master.config["users"][user_id] = {}
-            self.master.config["users"][user_id]["sessions"] = {}
-            self.master.config["users"][user_id]["current_session"] = None
+            self.master.config["users"][user_id]["accounts"] = {}
+            self.master.config["users"][user_id]["current_account"] = None
 
     def askUser(self, user_id, msg):
         self.tg_api.sendMessage(user_id, msg)
@@ -247,13 +246,13 @@ class TelegramHandler:
         keyboard = {"keyboard": [], "one_time_keyboard": True, "resize_keyboard": True}
         text = ""
 
-        if ktype == "session_selection" or ktype == "session_deletion":
+        if ktype == "account_selection" or ktype == "account_deletion":
             text = "Выберите аккаунт"
 
-            for name in self.master.config["users"][user_id]["sessions"]:
+            for name in self.master.config["users"][user_id]["accounts"]:
                 keyboard["keyboard"].append([name])
 
-            if ktype == "session_selection":
+            if ktype == "account_selection":
                 keyboard["keyboard"].append(["+", "-"])
 
         elif ktype == "mm":
