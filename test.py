@@ -4,6 +4,11 @@ import json
 
 api = NetSchoolAPI("sgo.tomedu.ru")
 
+for school in api.getSchoolList():
+    if "Стреже" in school["addressString"]:
+        print(school)
+exit()
+
 data = json.load(open("test_data.json"))
 
 api.login(data["user"], data["pass"], data["school"])

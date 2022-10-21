@@ -14,6 +14,7 @@ class NetSchoolAPI:
 
         self._url = self._format_url(url)
         self._schools = []
+        self._districts = []
 
         # Reset login variables
         self._reset_logindata()
@@ -37,6 +38,18 @@ class NetSchoolAPI:
 
         # Return school list
         return self._schools
+
+    def getMunicipalityDistrictList(self, force=False):
+        """Get districts list"""
+
+        if self._districts == [] or force:
+
+            self._districts = self.request(
+                "loginform", params={"LASTNAME": "sid"}
+            ).json()["items"]
+
+        # Return list
+        return self._districts
 
     def getSchoolInfo(self):
         """Get full school information"""

@@ -2,6 +2,8 @@ from typing import Dict
 import requests
 import json
 
+from nsapi import NetSchoolAPI
+
 
 class TelegramAPI:
     def __init__(self, token):
@@ -44,19 +46,32 @@ class TelegramAPI:
             "sendMessage", {"text": text, "reply_markup": keyboard}, user_id
         )
 
+    def sendButtons(self, user_id, text, buttons):
+
+        if type(buttons) is dict:
+            buttons = json.dumps(buttons)
+
+        return self.method(
+            "sendMessage", {"text": text, "reply_markup": buttons}, user_id
+        )
+
     @staticmethod
     def getUserIdFromUpdate(update):
-        return update["message"]["chat"]["id"]
+        if "message" in update:
+            return update["message"]["chat"]["id"]
+        elif "callback_query" in update:
+            return update["callback_query"]["message"]["chat"]["id"]
 
 
 class TelegramHandler:
     def __init__(self, master):
         self.master = master
+        self.ns = NetSchoolSessionHandler(self)
 
         token = self.master.config["telegram"]["token"]
         self.tg_api = TelegramAPI(token)
 
-    def getUpdates(self, limit=100, timeout=60000):
+    def getUpdates(self, limit=100, timeout=60):
 
         offset = self.master.config["telegram"].get("offset", 0)
         updates = self.tg_api.getUpdates(offset, limit, timeout)
@@ -68,6 +83,39 @@ class TelegramHandler:
             self.master.saveConfig()
 
         return updates
+
+    def getUpdate(self):
+        update = self.getUpdates(limit=1)
+
+        if update != None:
+            if "message" in update[0]:
+                return update[0]["message"]["text"]
+
+    def getButtonAnswer(self):
+        update = self.getUpdates(limit=1)
+
+        if update != None:
+
+            if "callback_query" in update[0]:
+
+                query = update[0]["callback_query"]
+
+                buttons = query["message"]["reply_markup"]["inline_keyboard"]
+
+                data = query["data"]
+
+                for button_row in buttons:
+
+                    for button in button_row:
+
+                        if button["callback_data"] == data:
+
+                            if button["callback_data"].startswith("/button"):
+
+                                return button["text"]
+                            else:
+
+                                return button["callback_data"]
 
     def parseUpdates(self, updates):
 
@@ -119,11 +167,13 @@ class TelegramHandler:
         self.sendKeyboard(user_id, "mm", get_answer=False)
 
     def menuAnswerHandler(self, user_id, update):
-        text = update["message"]["text"]
 
-        if text == "Выйти":
-            self.master.config["users"][user_id]["current_session"] = None
-            self.master.saveConfig()
+        if "message" in update:
+            text = update["message"]["text"]
+
+            if text == "Выйти":
+                self.master.config["users"][user_id]["current_session"] = None
+                self.master.saveConfig()
 
     def askForAccount(self, user_id):
 
@@ -132,14 +182,49 @@ class TelegramHandler:
         session["url"] = self.askUser(user_id, "Напишите url:")
         session["login"] = self.askUser(user_id, "Напишите login:")
         session["password"] = self.askUser(user_id, "Напишите password:")
+
+        # TODO: rename sessions from config to accounts
+        api = NetSchoolAPI(session["url"])
+        districts_response = api.getMunicipalityDistrictList()
+        schools_response = api.getSchoolList()
+
+        districts = []
+        for district in districts_response:
+            districts.append(
+                {"text": district["name"], "callback_data": district["id"]}
+            )
+
+        self.sendButtons(user_id, "Выберите округ", districts)
+
+        municipalityDistrictId = self.getButtonAnswer()
+
+        addresses = []
+        for school in schools_response:
+            if school["addressString"] not in addresses:
+                if str(school["municipalityDistrictId"]) == municipalityDistrictId:
+                    addresses.append(school["addressString"])
+
+        self.sendButtons(user_id, "Выберите aдрес", addresses)
+
+        session["address"] = self.getButtonAnswer()
+
+        schools = []
+        for school in schools_response:
+            if school["addressString"] == session["address"]:
+                schools.append(school["name"])
+
+        # TODO: not send, edit prev message
+        # TODO: проверить существует ли аккаунт у пользователя перед логином
+        self.sendButtons(user_id, "Выберите школу", schools)
+
+        session["school"] = self.getButtonAnswer()
+
         name = self.askUser(user_id, "Напишите имя сессии:")
 
         if not all(session.values()):
             return
 
         self.addNewUser(user_id)
-
-        self.master.config["users"][user_id]["current_session"] = None
 
         self.master.config["users"][user_id]["sessions"][name] = session
         self.master.saveConfig()
@@ -148,14 +233,12 @@ class TelegramHandler:
         if user_id not in self.master.config["users"]:
             self.master.config["users"][user_id] = {}
             self.master.config["users"][user_id]["sessions"] = {}
+            self.master.config["users"][user_id]["current_session"] = None
 
     def askUser(self, user_id, msg):
         self.tg_api.sendMessage(user_id, msg)
 
-        response = self.getUpdates(limit=1)
-
-        if response != []:
-            return response[0]["message"]["text"]
+        return self.getUpdate()
 
     def sendKeyboard(self, user_id, ktype, get_answer=True):
         """Send different keyboards to user"""
@@ -184,6 +267,33 @@ class TelegramHandler:
         if get_answer:
 
             # Get answer
-            update = self.getUpdates(limit=1)
-            if update != []:
-                return update[0]["message"]["text"]
+            return self.getUpdate()
+
+    def sendButtons(self, user_id, text, values):
+
+        buttons = []
+        for ind, value in enumerate(values):
+            if type(value) is str:
+                buttons.append([{"text": value, "callback_data": f"/button {ind}"}])
+            elif type(value) is dict:
+                buttons.append([value])
+            elif type(value) is list:
+                buttons.append(value)
+
+        markup = {"inline_keyboard": [*buttons]}
+        self.tg_api.sendButtons(user_id, text, markup)
+
+
+class NetSchoolSessionHandler:
+    def __init__(self, master):
+        self.master = master
+        self.sessions = {}
+
+    def checkSession(self, user_id, url):
+        if user_id not in self.sessions:
+            self.sessions[user_id] = NetSchoolAPI(url)
+
+    def login(self, user_id, url, username, password, school):
+        self.checkSession(user_id, url)
+
+        self.sessions[user_id].login(username, password, school)
