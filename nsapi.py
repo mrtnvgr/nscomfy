@@ -7,6 +7,7 @@ from typing import Optional
 from datetime import date, timedelta
 
 from errors import *
+from json.decoder import JSONDecodeError
 
 
 class NetSchoolAPI:
@@ -25,7 +26,10 @@ class NetSchoolAPI:
         self._session = requests.Session()
 
         # Get version info and NSSESSIONID cookie
-        self.ns_info = self.request(f"logindata").json()
+        try:
+            self.ns_info = self.request(f"logindata").json()
+        except (JSONDecodeError, requests.exceptions.ConnectionError):
+            raise InvalidUrlError("given url isn't a net school url")
 
     def getSchoolList(self, force=False):
         """Get school info list"""

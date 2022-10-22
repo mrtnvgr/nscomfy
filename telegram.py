@@ -3,6 +3,7 @@ import requests
 import json
 
 from nsapi import NetSchoolAPI
+from errors import InvalidUrlError
 
 
 class TelegramAPI:
@@ -180,10 +181,14 @@ class TelegramHandler:
         account = {}
 
         account["url"] = self.askUser(user_id, "Напишите url:")
-        account["login"] = self.askUser(user_id, "Напишите login:")
-        account["password"] = self.askUser(user_id, "Напишите password:")
+        account["login"] = self.askUser(user_id, "Напишите логин:")
+        account["password"] = self.askUser(user_id, "Напишите пароль:")
 
-        api = NetSchoolAPI(account["url"])
+        try:
+            api = NetSchoolAPI(account["url"])
+        except InvalidUrlError:
+            return
+
         districts_response = api.getMunicipalityDistrictList()
         schools_response = api.getSchoolList()
 

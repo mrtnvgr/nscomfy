@@ -8,3 +8,7 @@ class RequestError(Exception):
 
 class SchoolNotFoundError(Exception):
     pass
+
+
+class InvalidUrlError(Exception):
+    pass
