@@ -217,6 +217,7 @@ class TelegramHandler:
         message_id = response["message_id"]
 
         municipalityDistrictId = self.getButtonAnswer()
+        if municipalityDistrictId == None: return
 
         addresses = []
         for school in schools_response:
@@ -227,6 +228,7 @@ class TelegramHandler:
         self.editButtons(user_id, message_id, "Выберите aдрес", addresses)
 
         account["address"] = self.getButtonAnswer()
+        if account["address"] == None: return
 
         schools = []
         for school in schools_response:
@@ -237,8 +239,10 @@ class TelegramHandler:
         self.editButtons(user_id, message_id, "Выберите школу", schools)
 
         account["school"] = self.getButtonAnswer()
+        if account["school"] == None: return
 
         name = self.askUser(user_id, "Напишите имя сессии:")
+        if name == None: return
 
         if not all(account.values()):
             return
