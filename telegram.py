@@ -156,32 +156,35 @@ class TelegramHandler:
         # Login menu
         if not self.master.config["users"][user_id]["current_account"]:
 
-            account_name = self.sendKeyboard(user_id, "account_selection")
+            self.sendLoginMenu(user_id)
 
-            if account_name != None:
+    def sendLoginMenu(self, user_id):
+        account_name = self.sendKeyboard(user_id, "account_selection")
 
-                if account_name == "+":
-                    self.askForAccount(user_id)
-                    self.sendMainMenu(user_id)
+        if account_name == None:
+            return
 
-                elif account_name == "-":
+        if account_name == "+":
+            self.askForAccount(user_id)
+            self.sendMainMenu(user_id)
 
-                    name = self.sendKeyboard(user_id, "account_deletion")
-                    if name != None:
-                        self.master.config["users"][user_id]["accounts"].pop(name)
+        elif account_name == "-":
 
-                else:
+            name = self.sendKeyboard(user_id, "account_deletion")
+            if name != None:
+                self.master.config["users"][user_id]["accounts"].pop(name)
+                self.sendLoginMenu(user_id)
 
-                    if account_name in self.master.config["users"][user_id]["accounts"]:
+        else:
 
-                        self.master.config["users"][user_id][
-                            "current_account"
-                        ] = account_name
-                        self.master.saveConfig()
+            if account_name in self.master.config["users"][user_id]["accounts"]:
 
-                        self.sendMainMenu(user_id)
-                    else:
-                        self.tg_api.sendMessage(user_id, "Такого аккаунта нет")
+                self.master.config["users"][user_id]["current_account"] = account_name
+                self.master.saveConfig()
+
+                self.sendMainMenu(user_id)
+            else:
+                self.tg_api.sendMessage(user_id, "Такого аккаунта нет")
 
     def sendMainMenu(self, user_id):
         self.sendKeyboard(user_id, "mm", get_answer=False)
