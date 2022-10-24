@@ -172,12 +172,16 @@ class TelegramHandler:
 
                 else:
 
-                    self.master.config["users"][user_id][
-                        "current_account"
-                    ] = account_name
-                    self.master.saveConfig()
+                    if account_name in self.master.config["users"][user_id]["accounts"]:
 
-                    self.sendMainMenu(user_id)
+                        self.master.config["users"][user_id][
+                            "current_account"
+                        ] = account_name
+                        self.master.saveConfig()
+
+                        self.sendMainMenu(user_id)
+                    else:
+                        self.tg_api.sendMessage(user_id, "Такого аккаунта нет")
 
     def sendMainMenu(self, user_id):
         self.sendKeyboard(user_id, "mm", get_answer=False)
@@ -217,7 +221,8 @@ class TelegramHandler:
         message_id = response["message_id"]
 
         municipalityDistrictId = self.getButtonAnswer()
-        if municipalityDistrictId == None: return
+        if municipalityDistrictId == None:
+            return
 
         addresses = []
         for school in schools_response:
@@ -228,21 +233,23 @@ class TelegramHandler:
         self.editButtons(user_id, message_id, "Выберите aдрес", addresses)
 
         account["address"] = self.getButtonAnswer()
-        if account["address"] == None: return
+        if account["address"] == None:
+            return
 
         schools = []
         for school in schools_response:
             if school["addressString"] == account["address"]:
                 schools.append(school["name"])
 
-        # TODO: проверить существует ли аккаунт у пользователя перед логином
         self.editButtons(user_id, message_id, "Выберите школу", schools)
 
         account["school"] = self.getButtonAnswer()
-        if account["school"] == None: return
+        if account["school"] == None:
+            return
 
         name = self.askUser(user_id, "Напишите имя сессии:")
-        if name == None: return
+        if name == None:
+            return
 
         if not all(account.values()):
             return
