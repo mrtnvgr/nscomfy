@@ -47,14 +47,21 @@ class TelegramAPI:
             "sendMessage", {"text": text, "reply_markup": keyboard}, user_id
         )
 
-    def sendButtons(self, user_id, text, buttons):
+    def sendButtons(self, user_id, text, markup):
 
-        if type(buttons) is dict:
-            buttons = json.dumps(buttons)
+        if type(markup) is dict:
+            markup = json.dumps(markup)
 
         return self.method(
-            "sendMessage", {"text": text, "reply_markup": buttons}, user_id
+            "sendMessage", {"text": text, "reply_markup": markup}, user_id
         )
+    
+    def editButtons(self, peer_id, message_id, text, markup):
+
+        if type(markup) is dict:
+            markup = json.dumps(markup)
+
+        return self.method("editMessage", {"text": text, "peer": peer_id, "id": message_id, "reply_markup": markup})
 
     @staticmethod
     def getUserIdFromUpdate(update):
@@ -198,7 +205,9 @@ class TelegramHandler:
                 {"text": district["name"], "callback_data": district["id"]}
             )
 
-        self.sendButtons(user_id, "Выберите округ", districts)
+        response = self.sendButtons(user_id, "Выберите округ", districts)
+        message_id = response["message_id"]
+        peer_id = response["chat"]["id"]
 
         municipalityDistrictId = self.getButtonAnswer()
 
@@ -208,7 +217,7 @@ class TelegramHandler:
                 if str(school["municipalityDistrictId"]) == municipalityDistrictId:
                     addresses.append(school["addressString"])
 
-        self.sendButtons(user_id, "Выберите aдрес", addresses)
+        self.editButtons(peer_id, message_id, "Выберите aдрес", addresses)
 
         account["address"] = self.getButtonAnswer()
 
@@ -217,9 +226,8 @@ class TelegramHandler:
             if school["addressString"] == account["address"]:
                 schools.append(school["name"])
 
-        # TODO: not send, edit prev message
         # TODO: проверить существует ли аккаунт у пользователя перед логином
-        self.sendButtons(user_id, "Выберите школу", schools)
+        self.editButtons(peer_id, message_id, "Выберите школу", schools)
 
         account["school"] = self.getButtonAnswer()
 
@@ -275,7 +283,20 @@ class TelegramHandler:
 
     def sendButtons(self, user_id, text, values):
 
+        markup = self._parseButtons(values)
+
+        return self.tg_api.sendButtons(user_id, text, markup)
+    
+    def editButtons(self, peer_id, message_id, text, values):
+        
+        markup = self._parseButtons(values)
+
+        return self.tg_api.editButtons(peer_id, message_id, text, markup)
+
+    @staticmethod
+    def _parseButtons(values):
         buttons = []
+
         for ind, value in enumerate(values):
             if type(value) is str:
                 buttons.append([{"text": value, "callback_data": f"/button {ind}"}])
@@ -284,8 +305,8 @@ class TelegramHandler:
             elif type(value) is list:
                 buttons.append(value)
 
-        markup = {"inline_keyboard": [*buttons]}
-        self.tg_api.sendButtons(user_id, text, markup)
+        return {"inline_keyboard": [*buttons]}
+        
 
 
 class NetSchoolSessionHandler:
