@@ -197,7 +197,7 @@ class TelegramHandler:
                 else:
 
                     if text in self.master.config["users"][user_id]["accounts"]:
-
+                        self.tg_api.sendMessage(user_id, "Подождите...")
                         account = self.master.config["users"][user_id]["accounts"][text]
                         try:
                             self.ns.login(
@@ -247,6 +247,8 @@ class TelegramHandler:
         account["login"] = self.askUser(user_id, "Напишите логин:")
         account["password"] = self.askUser(user_id, "Напишите пароль:")
 
+        message_id = self.tg_api.sendMessage(user_id, "Подождите...")["message_id"]
+
         districts_response = api.getMunicipalityDistrictList()
         schools_response = api.getSchoolList()
 
@@ -256,8 +258,7 @@ class TelegramHandler:
                 {"text": district["name"], "callback_data": district["id"]}
             )
 
-        response = self.sendButtons(user_id, "Выберите округ", districts)
-        message_id = response["message_id"]
+        self.editButtons(user_id, message_id, "Выберите округ", districts)
 
         municipalityDistrictId = self.getButtonAnswer()
         if municipalityDistrictId == None:
