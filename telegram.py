@@ -226,12 +226,6 @@ class TelegramHandler:
                         self.master.config["users"][user_id]["current_account"] = text
                         self.master.saveConfig()
 
-                        student_info = (
-                            f"Ученик: {self.ns.sessions[user_id].student_info['name']}"
-                        )
-                        text = f"Главное меню\n\n{student_info}"
-                        self.tg_api.sendMessage(user_id, text)
-
                     else:
                         self.tg_api.sendMessage(user_id, "Такого аккаунта нет")
 
@@ -350,6 +344,10 @@ class TelegramHandler:
         elif ktype == "mm":
 
             if self.ns.checkSession(user_id, None):
+                student_info = (
+                    f"Ученик: {self.ns.sessions[user_id].student_info['name']}"
+                )
+                text = f"Главное меню\n\n{student_info}"
 
                 keyboard["keyboard"].append(["Точки"])
                 keyboard["keyboard"].append(["Выйти"])
