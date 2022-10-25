@@ -190,8 +190,9 @@ class TelegramHandler:
 
                 elif text == "Удалить аккаунт":
 
-                    self.sendKeyboard(user_id, "account_deletion", get_answer=False)
-                    return True
+                    if self.master.config["users"][user_id]["accounts"] != {}:
+                        self.sendKeyboard(user_id, "account_deletion", get_answer=False)
+                        return True
 
                 else:
 
@@ -323,7 +324,11 @@ class TelegramHandler:
                 keyboard["keyboard"].append([name])
 
             if ktype == "account_selection":
-                keyboard["keyboard"].append(["Добавить аккаунт", "Удалить аккаунт"])
+                misc = ["Добавить аккаунт"]
+
+                if self.master.config["users"][user_id]["accounts"] != {}:
+                    misc.append("Удалить аккаунт")
+                keyboard["keyboard"].append(misc)
 
         elif ktype == "mm":
 
