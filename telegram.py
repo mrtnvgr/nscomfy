@@ -3,7 +3,7 @@ import requests
 import json
 
 from nsapi import NetSchoolAPI
-from errors import InvalidUrlError
+from errors import InvalidUrlError, SchoolNotFoundError, LoginError
 
 
 class TelegramAPI:
@@ -159,32 +159,7 @@ class TelegramHandler:
             self.sendLoginMenu(user_id)
 
     def sendLoginMenu(self, user_id):
-        account_name = self.sendKeyboard(user_id, "account_selection")
-
-        if account_name == None:
-            return
-
-        if account_name == "+":
-            self.askForAccount(user_id)
-            self.sendMainMenu(user_id)
-
-        elif account_name == "-":
-
-            name = self.sendKeyboard(user_id, "account_deletion")
-            if name != None:
-                self.master.config["users"][user_id]["accounts"].pop(name)
-                self.sendLoginMenu(user_id)
-
-        else:
-
-            if account_name in self.master.config["users"][user_id]["accounts"]:
-
-                self.master.config["users"][user_id]["current_account"] = account_name
-                self.master.saveConfig()
-
-                self.sendMainMenu(user_id)
-            else:
-                self.tg_api.sendMessage(user_id, "Такого аккаунта нет")
+        self.sendKeyboard(user_id, "account_selection", get_answer=False)
 
     def sendMainMenu(self, user_id):
         self.sendKeyboard(user_id, "mm", get_answer=False)
@@ -194,22 +169,69 @@ class TelegramHandler:
         if "message" in update:
             text = update["message"]["text"]
 
-            if text == "Выйти":
-                self.master.config["users"][user_id]["current_account"] = None
-                self.master.saveConfig()
+            current_keyboard = self.master.config["users"][user_id]["current_keyboard"]
+
+            if current_keyboard == "mm": # Main menu
+
+                if text == "Выйти":
+
+                    self.ns.logout(user_id)
+                    self.master.config["users"][user_id]["current_account"] = None
+                    self.master.saveConfig()
+
+            elif current_keyboard == "account_selection":
+
+                if text == "Добавить аккаунт":
+
+                    if self.askForAccount(user_id):
+                        self.sendMainMenu(user_id)
+
+                elif text == "Удалить аккаунт":
+
+                    self.sendKeyboard(user_id, "account_deletion", get_answer=False)
+
+                else:
+
+                    if text in self.master.config["users"][user_id]["accounts"]:
+                        
+                        account = self.master.config["users"][user_id]["accounts"][text]
+                        try:
+                            self.ns.login(user_id, account["url"], account["login"], account["password"], account["school"])
+                        except SchoolNotFoundError:
+                            self.tg_api.sendMessage(user_id, "Такой школы не существует")
+                            return
+                        except LoginError:
+                            self.tg_api.sendMessage(user_id, "Неправильный логин или пароль")
+                            return
+
+                        self.master.config["users"][user_id]["current_account"] = text
+                        self.master.saveConfig()
+
+                        self.sendMainMenu(user_id)
+                    else:
+                        self.tg_api.sendMessage(user_id, "Такого аккаунта нет")
+
+            elif current_keyboard == "account_deletion":
+
+                if text in self.master.config["users"][user_id]["accounts"]:
+                    self.master.config["users"][user_id]["accounts"].pop(text)
+                self.master.config.saveConfig()
+                self.sendLoginMenu(user_id)
 
     def askForAccount(self, user_id):
 
         account = {}
 
         account["url"] = self.askUser(user_id, "Напишите url:")
-        account["login"] = self.askUser(user_id, "Напишите логин:")
-        account["password"] = self.askUser(user_id, "Напишите пароль:")
 
         try:
             api = NetSchoolAPI(account["url"])
         except InvalidUrlError:
+            self.tg_api.sendMessage(user_id, "Неправильный url")
             return
+
+        account["login"] = self.askUser(user_id, "Напишите логин:")
+        account["password"] = self.askUser(user_id, "Напишите пароль:")
 
         districts_response = api.getMunicipalityDistrictList()
         schools_response = api.getSchoolList()
@@ -262,11 +284,14 @@ class TelegramHandler:
         self.master.config["users"][user_id]["accounts"][name] = account
         self.master.saveConfig()
 
+        return True
+
     def addNewUser(self, user_id):
         if user_id not in self.master.config["users"]:
             self.master.config["users"][user_id] = {}
             self.master.config["users"][user_id]["accounts"] = {}
             self.master.config["users"][user_id]["current_account"] = None
+            self.master.config["users"][user_id]["current_keyboard"] = None
 
     def askUser(self, user_id, msg):
         self.tg_api.sendMessage(user_id, msg)
@@ -287,15 +312,20 @@ class TelegramHandler:
                 keyboard["keyboard"].append([name])
 
             if ktype == "account_selection":
-                keyboard["keyboard"].append(["+", "-"])
+                keyboard["keyboard"].append(["Добавить аккаунт", "Удалить аккаунт"])
 
         elif ktype == "mm":
-            text = "Главное меню"
+            
+            student_info = f"Ученик: {self.ns.sessions[str(user_id)].student_info['name']}"
+            text = f"Главное меню\n\n{student_info}"
 
             keyboard["keyboard"].append(["Выйти"])
             keyboard["one_time_keyboard"] = False
 
         self.tg_api.sendKeyboard(user_id, text, keyboard)
+
+        self.master.config["users"][user_id]["current_keyboard"] = ktype
+        self.master.saveConfig()
 
         if get_answer:
 
@@ -342,3 +372,8 @@ class NetSchoolSessionHandler:
         self.checkSession(user_id, url)
 
         self.sessions[user_id].login(username, password, school)
+
+    def logout(self, user_id):
+
+        if user_id in self.sessions:
+            self.sessions[user_id].logout()
