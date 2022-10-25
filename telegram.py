@@ -147,7 +147,8 @@ class TelegramHandler:
 
             self.askForAccount(user_id)
 
-        self.menuAnswerHandler(user_id, update)
+        if self.menuAnswerHandler(user_id, update):
+            return
 
         # Check if user is currently logged in
         if self.master.config["users"][user_id]["current_account"]:
@@ -171,7 +172,7 @@ class TelegramHandler:
 
             current_keyboard = self.master.config["users"][user_id]["current_keyboard"]
 
-            if current_keyboard == "mm": # Main menu
+            if current_keyboard == "mm":  # Main menu
 
                 if text == "Выйти":
 
@@ -185,29 +186,40 @@ class TelegramHandler:
 
                     if self.askForAccount(user_id):
                         self.sendMainMenu(user_id)
+                        return True
 
                 elif text == "Удалить аккаунт":
 
                     self.sendKeyboard(user_id, "account_deletion", get_answer=False)
+                    return True
 
                 else:
 
                     if text in self.master.config["users"][user_id]["accounts"]:
-                        
+
                         account = self.master.config["users"][user_id]["accounts"][text]
                         try:
-                            self.ns.login(user_id, account["url"], account["login"], account["password"], account["school"])
+                            self.ns.login(
+                                user_id,
+                                account["url"],
+                                account["login"],
+                                account["password"],
+                                account["school"],
+                            )
                         except SchoolNotFoundError:
-                            self.tg_api.sendMessage(user_id, "Такой школы не существует")
+                            self.tg_api.sendMessage(
+                                user_id, "Такой школы не существует"
+                            )
                             return
                         except LoginError:
-                            self.tg_api.sendMessage(user_id, "Неправильный логин или пароль")
+                            self.tg_api.sendMessage(
+                                user_id, "Неправильный логин или пароль"
+                            )
                             return
 
                         self.master.config["users"][user_id]["current_account"] = text
                         self.master.saveConfig()
 
-                        self.sendMainMenu(user_id)
                     else:
                         self.tg_api.sendMessage(user_id, "Такого аккаунта нет")
 
@@ -215,8 +227,7 @@ class TelegramHandler:
 
                 if text in self.master.config["users"][user_id]["accounts"]:
                     self.master.config["users"][user_id]["accounts"].pop(text)
-                self.master.config.saveConfig()
-                self.sendLoginMenu(user_id)
+                    self.master.saveConfig()
 
     def askForAccount(self, user_id):
 
@@ -315,8 +326,8 @@ class TelegramHandler:
                 keyboard["keyboard"].append(["Добавить аккаунт", "Удалить аккаунт"])
 
         elif ktype == "mm":
-            
-            student_info = f"Ученик: {self.ns.sessions[str(user_id)].student_info['name']}"
+
+            student_info = f"Ученик: {self.ns.sessions[user_id].student_info['name']}"
             text = f"Главное меню\n\n{student_info}"
 
             keyboard["keyboard"].append(["Выйти"])
