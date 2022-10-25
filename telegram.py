@@ -226,9 +226,11 @@ class TelegramHandler:
 
             elif current_keyboard == "account_deletion":
 
-                if text in self.master.config["users"][user_id]["accounts"]:
-                    self.master.config["users"][user_id]["accounts"].pop(text)
-                    self.master.saveConfig()
+                if text != "Назад":
+
+                    if text in self.master.config["users"][user_id]["accounts"]:
+                        self.master.config["users"][user_id]["accounts"].pop(text)
+                        self.master.saveConfig()
 
     def askForAccount(self, user_id):
 
@@ -329,6 +331,9 @@ class TelegramHandler:
                 if self.master.config["users"][user_id]["accounts"] != {}:
                     misc.append("Удалить аккаунт")
                 keyboard["keyboard"].append(misc)
+
+            if ktype == "account_deletion":
+                keyboard["keyboard"].append(["Назад"])
 
         elif ktype == "mm":
 
