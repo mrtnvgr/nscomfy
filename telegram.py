@@ -180,6 +180,11 @@ class TelegramHandler:
                     self.master.config["users"][user_id]["current_account"] = None
                     self.master.saveConfig()
 
+                elif text == "Точки":
+
+                    text = self.ns.getOverdueTasks(user_id)
+                    self.tg_api.sendMessage(user_id, text)
+
             elif current_keyboard == "account_selection":
 
                 if text == "Добавить аккаунт":
@@ -344,7 +349,9 @@ class TelegramHandler:
                 )
                 text = f"Главное меню\n\n{student_info}"
 
+                keyboard["keyboard"].append(["Точки"])
                 keyboard["keyboard"].append(["Выйти"])
+
                 keyboard["one_time_keyboard"] = False
 
         self.tg_api.sendKeyboard(user_id, text, keyboard)
@@ -408,6 +415,22 @@ class NetSchoolSessionHandler:
         self.checkSession(user_id, url)
 
         self.sessions[user_id].login(username, password, school)
+
+    def getOverdueTasks(self, user_id):
+        output = []
+        response = self.sessions[user_id].getOverdueTasks()
+
+        for task in response:
+
+            output.append(f"{task['subjectName']}")
+
+        output.append("todo")
+
+        if output == []:
+
+            return "Нету! :3"
+
+        return "\n".join(output)
 
     def logout(self, user_id):
 
