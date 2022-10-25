@@ -337,11 +337,14 @@ class TelegramHandler:
 
         elif ktype == "mm":
 
-            student_info = f"Ученик: {self.ns.sessions[user_id].student_info['name']}"
-            text = f"Главное меню\n\n{student_info}"
+            if self.ns.checkSession(user_id, None):
+                student_info = (
+                    f"Ученик: {self.ns.sessions[user_id].student_info['name']}"
+                )
+                text = f"Главное меню\n\n{student_info}"
 
-            keyboard["keyboard"].append(["Выйти"])
-            keyboard["one_time_keyboard"] = False
+                keyboard["keyboard"].append(["Выйти"])
+                keyboard["one_time_keyboard"] = False
 
         self.tg_api.sendKeyboard(user_id, text, keyboard)
 
@@ -386,8 +389,19 @@ class NetSchoolSessionHandler:
         self.sessions = {}
 
     def checkSession(self, user_id, url):
+
         if user_id not in self.sessions:
+
+            if url == None:
+                user = self.master.config["users"][user_id]
+                account_name = user["current_account"]
+                account = user["accounts"][account_name]
+                url = account["url"]
+
             self.sessions[user_id] = NetSchoolAPI(url)
+            return False
+        else:
+            return True
 
     def login(self, user_id, url, username, password, school):
         self.checkSession(user_id, url)
