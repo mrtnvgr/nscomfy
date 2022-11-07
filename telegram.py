@@ -160,10 +160,10 @@ class TelegramHandler:
             self.sendLoginMenu(user_id)
 
     def sendLoginMenu(self, user_id):
-        self.sendKeyboard(user_id, "account_selection", get_answer=False)
+        self.sendKeyboard(user_id, "account_selection")
 
     def sendMainMenu(self, user_id):
-        self.sendKeyboard(user_id, "mm", get_answer=False)
+        self.sendKeyboard(user_id, "mm")
 
     def menuAnswerHandler(self, user_id, update):
 
@@ -187,7 +187,7 @@ class TelegramHandler:
 
                 elif text == "Дневник":
 
-                    self.sendKeyboard(user_id, "diary", get_answer=False)
+                    self.sendKeyboard(user_id, "diary")
                     return True
 
             elif current_keyboard == "account_selection":
@@ -201,7 +201,7 @@ class TelegramHandler:
                 elif text == "Удалить аккаунт":
 
                     if self.master.config["users"][user_id]["accounts"] != {}:
-                        self.sendKeyboard(user_id, "account_deletion", get_answer=False)
+                        self.sendKeyboard(user_id, "account_deletion")
                         return True
 
                 else:
@@ -327,7 +327,7 @@ class TelegramHandler:
 
         return self.getUpdate()
 
-    def sendKeyboard(self, user_id, ktype, get_answer=True):
+    def sendKeyboard(self, user_id, ktype, get_answer=False):
         """Send different keyboards to user"""
 
         # Default keyboard values
