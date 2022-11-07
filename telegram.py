@@ -185,6 +185,11 @@ class TelegramHandler:
                     text = self.ns.getOverdueTasks(user_id)
                     self.tg_api.sendMessage(user_id, text)
 
+                elif text == "Дневник":
+
+                    self.sendKeyboard(user_id, "diary", get_answer=False)
+                    return True
+
             elif current_keyboard == "account_selection":
 
                 if text == "Добавить аккаунт":
@@ -236,6 +241,10 @@ class TelegramHandler:
                     if text in self.master.config["users"][user_id]["accounts"]:
                         self.master.config["users"][user_id]["accounts"].pop(text)
                         self.master.saveConfig()
+
+            elif current_keyboard == "diary":
+
+                pass
 
     def askForAccount(self, user_id):
 
@@ -343,16 +352,22 @@ class TelegramHandler:
 
         elif ktype == "mm":
 
-            if self.ns.checkSession(user_id, None):
-                student_info = (
-                    f"Ученик: {self.ns.sessions[user_id].student_info['name']}"
-                )
-                text = f"Главное меню\n\n{student_info}"
+            self.ns.checkSession(user_id)
+            student_info = f"Ученик: {self.ns.sessions[user_id].student_info['name']}"
+            text = f"Главное меню\n\n{student_info}"
 
-                keyboard["keyboard"].append(["Точки"])
-                keyboard["keyboard"].append(["Выйти"])
+            keyboard["keyboard"].append(["Дневник", "Точки"])
+            keyboard["keyboard"].append(["Выйти"])
 
-                keyboard["one_time_keyboard"] = False
+            keyboard["one_time_keyboard"] = False
+
+        elif ktype == "diary":
+
+            text = "Дневник todo"
+
+            keyboard["keyboard"].append(["Назад"])
+
+            keyboard["one_time_keyboard"] = False
 
         self.tg_api.sendKeyboard(user_id, text, keyboard)
 
@@ -396,24 +411,25 @@ class NetSchoolSessionHandler:
         self.master = master
         self.sessions = {}
 
-    def checkSession(self, user_id, url):
+    def checkSession(self, user_id):
 
         if user_id not in self.sessions:
 
-            if url == None:
-                user = self.master.config["users"][user_id]
-                account_name = user["current_account"]
-                account = user["accounts"][account_name]
-                url = account["url"]
+            self.master.tg_api.sendMessage(user_id, "Подождите...")
+
+            user = self.master.master.config["users"][user_id]
+            account_name = user["current_account"]
+            account = user["accounts"][account_name]
+            url = account["url"]
+            username = account["login"]
+            password = account["password"]
+            school = account["school"]
 
             self.sessions[user_id] = NetSchoolAPI(url)
-            return False
-        else:
-            return True
+            self.sessions[user_id].login(username, password, school)
 
     def login(self, user_id, url, username, password, school):
-        self.checkSession(user_id, url)
-
+        self.sessions[user_id] = NetSchoolAPI(url)
         self.sessions[user_id].login(username, password, school)
 
     def getOverdueTasks(self, user_id):
