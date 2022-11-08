@@ -247,7 +247,7 @@ class TelegramHandler:
 
                 if text == "Расписание":
                     
-                    buttons = ["Сегодня"]
+                    buttons = ["Сегодня", "Завтра"]
                     resp = self.sendButtons(user_id, "Выберите дату:", buttons)
                     message_id = resp["message_id"]
 
@@ -472,6 +472,9 @@ class NetSchoolSessionHandler:
 
         if date == "Сегодня":
             start = datetime.date.today()
+            end = start
+        elif date == "Завтра":
+            start = datetime.date.today() + datetime.timedelta(days=1)
             end = start
         else:
             return False
