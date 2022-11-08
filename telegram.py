@@ -1,10 +1,10 @@
 from typing import Dict
 import requests
+import datetime
 import json
 
 from nsapi import NetSchoolAPI
 from errors import InvalidUrlError, SchoolNotFoundError, LoginError
-
 
 class TelegramAPI:
     def __init__(self, token):
@@ -245,7 +245,23 @@ class TelegramHandler:
 
             elif current_keyboard == "diary":
 
-                pass
+                if text == "Расписание":
+                    
+                    buttons = ["Сегодня"]
+                    resp = self.sendButtons(user_id, "Выберите дату:", buttons)
+                    message_id = resp["message_id"]
+
+                    dateanswer = self.getButtonAnswer()
+                    if dateanswer == None:
+                        return True
+
+                    diary = self.ns.getDiary(user_id, dateanswer)
+                    if not diary:
+                        return True
+                    text, buttons = diary
+                    self.editButtons(user_id, message_id, text, buttons)
+
+                    return True
 
     def askForAccount(self, user_id):
 
@@ -364,8 +380,9 @@ class TelegramHandler:
 
         elif ktype == "diary":
 
-            text = "Дневник todo"
-
+            text = "Дневник:"
+            
+            keyboard["keyboard"].append(["Расписание"])
             keyboard["keyboard"].append(["Назад"])
 
             keyboard["one_time_keyboard"] = False
@@ -448,6 +465,69 @@ class NetSchoolSessionHandler:
             return "Нету! :3"
 
         return "\n".join(output)
+
+    def getDiary(self, user_id, date):
+        
+        self.checkSession(user_id)
+
+        if date == "Сегодня":
+            start = datetime.date.today()
+            end = start
+        else:
+            return False
+        
+        api = self.sessions[user_id]
+
+        diary = api.getDiary(start, end)
+
+        text = []
+         
+        for day in diary["weekDays"]:
+
+            daydate = day["date"].split("T")[0]
+
+            text.append("")
+            text.append(f"{daydate}:")
+
+            for lesson in day["lessons"]:
+            
+                marks = []
+                tasks = []
+
+                if "assignments" in lesson:
+
+                    assignments = lesson["assignments"]
+                    for assignment in assignments:
+
+                        if "mark" in assignment:
+
+                            mark = assignment["mark"]
+                            marks.append(str(mark["mark"]))
+
+                        if "assignmentName" in assignment:
+
+                            # Получим id типа домашнего задания
+                            typeid = api.getAssignmentTypeId("Домашнее задание")
+
+                            if assignment["typeId"] == typeid:
+
+                                tasks.append(assignment["assignmentName"])
+
+                name = lesson["subjectName"]
+
+                if name == "Информатика и ИКТ":
+                    name = "Информатика"
+                elif name == "Основы безопасности жизнедеятельности":
+                    name = "ОБЖ"
+
+                text.append(f'{name} [{", ".join(marks)}]')
+
+                if tasks != []:
+
+                    for task in tasks:
+                        text.append(f"  {task}")
+        text.append("")
+        return "\n".join(text), []
 
     def logout(self, user_id):
 
