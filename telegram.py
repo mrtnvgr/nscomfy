@@ -522,13 +522,16 @@ class NetSchoolSessionHandler:
                                 tasks.append(assignment["assignmentName"])
 
                 name = lesson["subjectName"]
+                number = lesson["number"]
+                start = lesson["startTime"]
+                end = lesson["endTime"]
 
                 if name == "Информатика и ИКТ":
                     name = "Информатика"
                 elif name == "Основы безопасности жизнедеятельности":
                     name = "ОБЖ"
                 
-                line = name
+                line = f"{number}: {name} ({start} - {end})"
                 if marks:
                     line += ", ".join(marks)
                 text.append(util.normalizeHTMLText(line))
