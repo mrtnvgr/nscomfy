@@ -522,8 +522,11 @@ class NetSchoolSessionHandler:
                     name = "Информатика"
                 elif name == "Основы безопасности жизнедеятельности":
                     name = "ОБЖ"
-
-                text.append(f'{name} [{", ".join(marks)}]')
+                
+                if marks:
+                    text.append(f'{name} [{", ".join(marks)}]')
+                else:
+                    text.append(name)
 
                 if tasks != []:
 
