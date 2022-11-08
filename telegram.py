@@ -184,6 +184,7 @@ class TelegramHandler:
 
                     text = self.ns.getOverdueTasks(user_id)
                     self.tg_api.sendMessage(user_id, text)
+                    return True
 
                 elif text == "Дневник":
 
@@ -438,9 +439,9 @@ class NetSchoolSessionHandler:
 
         for task in response:
 
-            output.append(f"{task['subjectName']}")
-
-        output.append("todo")
+            subject = task["subjectName"]
+            assignment = task["assignmentName"]
+            output.append(f"{subject}: {assignment}")
 
         if output == []:
 
