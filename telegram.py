@@ -5,6 +5,8 @@ import json
 
 from nsapi import NetSchoolAPI
 from errors import InvalidUrlError, SchoolNotFoundError, LoginError
+import util
+
 
 class TelegramAPI:
     def __init__(self, token):
@@ -56,20 +58,21 @@ class TelegramAPI:
             "sendMessage", {"text": text, "reply_markup": markup}, user_id
         )
 
-    def editButtons(self, user_id, message_id, text, markup):
+    def editButtons(self, user_id, message_id, text, markup, parse_mode):
 
         if type(markup) is dict:
             markup = json.dumps(markup)
 
-        return self.method(
-            "editMessageText",
-            {
-                "chat_id": user_id,
-                "message_id": message_id,
-                "text": text,
-                "reply_markup": markup,
-            },
-        )
+        payload = {
+            "chat_id": user_id,
+            "message_id": message_id,
+            "text": text,
+        }
+
+        if parse_mode:
+            payload["parse_mode"] = parse_mode
+
+        return self.method("editMessageText", payload)
 
     @staticmethod
     def getUserIdFromUpdate(update):
@@ -246,7 +249,7 @@ class TelegramHandler:
             elif current_keyboard == "diary":
 
                 if text == "Расписание":
-                    
+
                     buttons = ["Сегодня", "Завтра"]
                     resp = self.sendButtons(user_id, "Выберите дату:", buttons)
                     message_id = resp["message_id"]
@@ -259,7 +262,9 @@ class TelegramHandler:
                     if not diary:
                         return True
                     text, buttons = diary
-                    self.editButtons(user_id, message_id, text, buttons)
+                    self.editButtons(
+                        user_id, message_id, text, buttons, parse_mode="HTML"
+                    )
 
                     return True
 
@@ -381,7 +386,7 @@ class TelegramHandler:
         elif ktype == "diary":
 
             text = "Дневник:"
-            
+
             keyboard["keyboard"].append(["Расписание"])
             keyboard["keyboard"].append(["Назад"])
 
@@ -403,11 +408,11 @@ class TelegramHandler:
 
         return self.tg_api.sendButtons(user_id, text, markup)
 
-    def editButtons(self, user_id, message_id, text, values):
+    def editButtons(self, user_id, message_id, text, values, parse_mode=""):
 
         markup = self._parseButtons(values)
 
-        return self.tg_api.editButtons(user_id, message_id, text, markup)
+        return self.tg_api.editButtons(user_id, message_id, text, markup, parse_mode)
 
     @staticmethod
     def _parseButtons(values):
@@ -467,7 +472,7 @@ class NetSchoolSessionHandler:
         return "\n".join(output)
 
     def getDiary(self, user_id, date):
-        
+
         self.checkSession(user_id)
 
         if date == "Сегодня":
@@ -478,22 +483,22 @@ class NetSchoolSessionHandler:
             end = start
         else:
             return False
-        
+
         api = self.sessions[user_id]
 
         diary = api.getDiary(start, end)
 
         text = []
-         
+
         for day in diary["weekDays"]:
 
-            daydate = day["date"].split("T")[0]
+            daydate = util.formatDate(day["date"].split("T")[0])
 
             text.append("")
-            text.append(f"{daydate}:")
+            text.append(f"<b>{daydate}:</b>")
 
             for lesson in day["lessons"]:
-            
+
                 marks = []
                 tasks = []
 
@@ -523,15 +528,16 @@ class NetSchoolSessionHandler:
                 elif name == "Основы безопасности жизнедеятельности":
                     name = "ОБЖ"
                 
+                line = name
                 if marks:
-                    text.append(f'{name} [{", ".join(marks)}]')
-                else:
-                    text.append(name)
+                    line += ", ".join(marks)
+                text.append(util.normalizeHTMLText(line))
 
                 if tasks != []:
 
                     for task in tasks:
-                        text.append(f"  {task}")
+                        task = util.normalizeHTMLText(task)
+                        text.append(f"<pre>{task}</pre>")
         text.append("")
         return "\n".join(text), []
 
