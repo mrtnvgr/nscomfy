@@ -39,6 +39,9 @@ class TelegramAPI:
     def sendMessage(self, user_id, text):
         return self.method("sendMessage", {"text": text}, user_id)
 
+    def deleteMessage(self, user_id, msg_id):
+        return self.method("deleteMessage", {"chat_id": user_id, "message_id": msg_id})
+
     def sendKeyboard(self, user_id, text, keyboard):
 
         if type(keyboard) is dict:
@@ -211,7 +214,9 @@ class TelegramHandler:
                 else:
 
                     if text in self.master.config["users"][user_id]["accounts"]:
-                        self.tg_api.sendMessage(user_id, "Подождите...")
+                        message_id = self.tg_api.sendMessage(user_id, "Подождите...")[
+                            "message_id"
+                        ]
                         account = self.master.config["users"][user_id]["accounts"][text]
                         try:
                             self.ns.login(
@@ -234,6 +239,8 @@ class TelegramHandler:
 
                         self.master.config["users"][user_id]["current_account"] = text
                         self.master.saveConfig()
+
+                        self.tg_api.deleteMessage(user_id, message_id)
 
                     else:
                         self.tg_api.sendMessage(user_id, "Такого аккаунта нет")
@@ -438,7 +445,9 @@ class NetSchoolSessionHandler:
 
         if user_id not in self.sessions:
 
-            self.master.tg_api.sendMessage(user_id, "Подождите...")
+            msg_id = self.master.tg_api.sendMessage(user_id, "Подождите...")[
+                "message_id"
+            ]
 
             user = self.master.master.config["users"][user_id]
             account_name = user["current_account"]
@@ -450,6 +459,8 @@ class NetSchoolSessionHandler:
 
             self.sessions[user_id] = NetSchoolAPI(url)
             self.sessions[user_id].login(username, password, school)
+
+            self.master.tg_api.deleteMessage(user_id, msg_id)
 
     def login(self, user_id, url, username, password, school):
         self.sessions[user_id] = NetSchoolAPI(url)
@@ -530,7 +541,7 @@ class NetSchoolSessionHandler:
                     name = "Информатика"
                 elif name == "Основы безопасности жизнедеятельности":
                     name = "ОБЖ"
-                
+
                 line = f"{number}: {name} ({start} - {end})"
                 if marks:
                     line += ", ".join(marks)
