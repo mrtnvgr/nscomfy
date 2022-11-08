@@ -70,6 +70,7 @@ class TelegramAPI:
             "chat_id": user_id,
             "message_id": message_id,
             "text": text,
+            "reply_markup": markup,
         }
 
         if parse_mode:
@@ -150,7 +151,6 @@ class TelegramHandler:
 
         # First time
         if user_id not in self.master.config["users"]:
-
             self.askForAccount(user_id)
 
         if self.menuAnswerHandler(user_id, update):
@@ -158,18 +158,11 @@ class TelegramHandler:
 
         # Check if user is currently logged in
         if self.master.config["users"][user_id]["current_account"]:
-            self.sendMainMenu(user_id)
+            self.sendKeyboard(user_id, "mm")
 
         # Login menu
         if not self.master.config["users"][user_id]["current_account"]:
-
-            self.sendLoginMenu(user_id)
-
-    def sendLoginMenu(self, user_id):
-        self.sendKeyboard(user_id, "account_selection")
-
-    def sendMainMenu(self, user_id):
-        self.sendKeyboard(user_id, "mm")
+            self.sendKeyboard(user_id, "account_selection")
 
     def menuAnswerHandler(self, user_id, update):
 
@@ -201,9 +194,7 @@ class TelegramHandler:
 
                 if text == "Добавить аккаунт":
 
-                    if self.askForAccount(user_id):
-                        self.sendMainMenu(user_id)
-                        return True
+                    self.askForAccount(user_id)
 
                 elif text == "Удалить аккаунт":
 
@@ -293,7 +284,6 @@ class TelegramHandler:
         message_id = self.tg_api.sendMessage(user_id, "Подождите...")["message_id"]
 
         districts_response = api.getMunicipalityDistrictList()
-        schools_response = api.getSchoolList()
 
         districts = []
         for district in districts_response:
@@ -306,6 +296,8 @@ class TelegramHandler:
         municipalityDistrictId = self.getButtonAnswer()
         if municipalityDistrictId == None:
             return
+
+        schools_response = api.getSchoolList()
 
         addresses = []
         for school in schools_response:
@@ -330,7 +322,8 @@ class TelegramHandler:
         if account["school"] == None:
             return
 
-        name = self.askUser(user_id, "Напишите имя сессии:")
+        self.editButtons(user_id, message_id, "Напишите имя аккаунта:", [])
+        name = self.getUpdate()
         if name == None:
             return
 
