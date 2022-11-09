@@ -30,7 +30,10 @@ class TelegramAPI:
         if response["ok"]:
             return response["result"]
         else:
-            raise Exception(f'{response["error_code"]}: {response["description"]}')
+
+            # Get rid of annoying bad gateway errors
+            if response["error_code"] != 502:
+                raise Exception(f'{response["error_code"]}: {response["description"]}')
 
     def getUpdates(self, offset, limit, timeout):
 
