@@ -422,7 +422,8 @@ class TelegramHandler:
     def _parseButtons(values):
         buttons = []
 
-        for ind, value in enumerate(values):
+        ind = 0
+        for value in values:
             if type(value) is str:
                 buttons.append([{"text": value, "callback_data": f"/button {ind}"}])
             elif type(value) is dict:
@@ -433,10 +434,12 @@ class TelegramHandler:
                 else:
                     values = []
                     for button in value:
+                        ind += 1
                         values.append(
                             {"text": button, "callback_data": f"/button {ind}"}
                         )
                     buttons.append(values)
+            ind += 1
 
         return {"inline_keyboard": [*buttons]}
 
@@ -572,7 +575,10 @@ class NetSchoolSessionHandler:
                     for task in tasks:
                         task = util.normalizeHTMLText(task)
                         text.append(f"<pre>{task}</pre>")
-        text.append("")
+
+        if text == []:
+            text.append("На эти числа уроков нет!")
+
         return "\n".join(text), []
 
     def logout(self, user_id):
