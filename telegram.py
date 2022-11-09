@@ -544,7 +544,8 @@ class NetSchoolSessionHandler:
                         if "mark" in assignment:
 
                             mark = assignment["mark"]
-                            marks.append(str(mark["mark"]))
+                            mark_sign = util.mark_to_sign(mark["mark"])
+                            marks.append(mark_sign)
 
                         if "assignmentName" in assignment:
 
