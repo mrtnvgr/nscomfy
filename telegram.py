@@ -248,7 +248,7 @@ class TelegramHandler:
 
                 if text == "Расписание":
 
-                    buttons = ["Сегодня", "Завтра"]
+                    buttons = [["Вчера", "Сегодня", "Завтра"]]
                     resp = self.sendButtons(user_id, "Выберите дату:", buttons)
                     message_id = resp["message_id"]
 
@@ -424,7 +424,15 @@ class TelegramHandler:
             elif type(value) is dict:
                 buttons.append([value])
             elif type(value) is list:
-                buttons.append(value)
+                if type(value[0]) is dict:
+                    buttons.append(value)
+                else:
+                    values = []
+                    for button in value:
+                        values.append(
+                            {"text": button, "callback_data": f"/button {ind}"}
+                        )
+                    buttons.append(values)
 
         return {"inline_keyboard": [*buttons]}
 
@@ -479,11 +487,16 @@ class NetSchoolSessionHandler:
 
         self.checkSession(user_id)
 
+        today = datetime.date.today()
+
         if date == "Сегодня":
-            start = datetime.date.today()
+            start = today
             end = start
         elif date == "Завтра":
-            start = datetime.date.today() + datetime.timedelta(days=1)
+            start = today + datetime.timedelta(days=1)
+            end = start
+        elif date == "Вчера":
+            start = today - datetime.timedelta(days=1)
             end = start
         else:
             return False
