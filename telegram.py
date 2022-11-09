@@ -566,9 +566,10 @@ class NetSchoolSessionHandler:
                     name = "ОБЖ"
 
                 line = f"{number}: {name} ({start} - {end})"
+                line = util.normalizeHTMLText(line)
                 if marks:
-                    line += ", ".join(marks)
-                text.append(util.normalizeHTMLText(line))
+                    line += f" <b>[{', '.join(marks)}]</b>"
+                text.append(line)
 
                 if tasks != []:
 
