@@ -1,6 +1,7 @@
+from datetime import date as datetime
+from datetime import timedelta
 from typing import Dict
 import requests
-import datetime
 import json
 
 from nsapi import NetSchoolAPI
@@ -248,7 +249,10 @@ class TelegramHandler:
 
                 if text == "Расписание":
 
-                    buttons = [["Вчера", "Сегодня", "Завтра"]]
+                    buttons = [
+                        ["Вчера", "Сегодня", "Завтра"],
+                        ["Прошлая", "Текущая", "Следующая"],
+                    ]
                     resp = self.sendButtons(user_id, "Выберите дату:", buttons)
                     message_id = resp["message_id"]
 
@@ -487,17 +491,27 @@ class NetSchoolSessionHandler:
 
         self.checkSession(user_id)
 
-        today = datetime.date.today()
+        today = datetime.today()
+        monday = today - timedelta(days=today.weekday())
 
         if date == "Сегодня":
             start = today
             end = start
         elif date == "Завтра":
-            start = today + datetime.timedelta(days=1)
+            start = today + timedelta(days=1)
             end = start
         elif date == "Вчера":
-            start = today - datetime.timedelta(days=1)
+            start = today - timedelta(days=1)
             end = start
+        elif date == "Текущая":
+            start = monday
+            end = start + timedelta(days=5)
+        elif date == "Следующая":
+            start = monday + timedelta(days=7)
+            end = start + timedelta(days=5)
+        elif date == "Прошлая":
+            start = monday - timedelta(days=7)
+            end = start + timedelta(days=5)
         else:
             return False
 
