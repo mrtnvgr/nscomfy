@@ -353,7 +353,7 @@ class TelegramHandler:
 
         return self.getUpdate()
 
-    def sendKeyboard(self, user_id, ktype, get_answer=False):
+    def sendKeyboard(self, user_id, ktype):
         """Send different keyboards to user"""
 
         # Default keyboard values
@@ -400,11 +400,6 @@ class TelegramHandler:
 
         self.master.config["users"][user_id]["current_keyboard"] = ktype
         self.master.saveConfig()
-
-        if get_answer:
-
-            # Get answer
-            return self.getUpdate()
 
     def sendButtons(self, user_id, text, values):
 
