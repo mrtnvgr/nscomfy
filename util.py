@@ -24,3 +24,12 @@ def mark_to_sign(mark):
         return emojis[mark]
     else:
         return str(mark)
+
+
+def detectEmptyTask(task):
+    # This function filters tasks like "не задано."
+    task = task.lower()
+    task = task.rstrip(" ")
+    task = task.removesuffix(".")
+    if task == "не задано":
+        return True

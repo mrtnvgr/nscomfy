@@ -567,14 +567,20 @@ class NetSchoolSessionHandler:
                             else:
                                 marks.append(mark_sign)
 
-                        if show_tasks and "assignmentName" in assignment and not only_marks:
+                        if (
+                            show_tasks
+                            and "assignmentName" in assignment
+                            and not only_marks
+                        ):
 
                             # Получим id типа домашнего задания
                             typeid = api.getAssignmentTypeId("Домашнее задание")
 
-                            if assignment["typeId"] == typeid:
+                            assignmentName = assignment["assignmentName"]
+                            isEmpty = util.detectEmptyTask(assignmentName)
 
-                                tasks.append(assignment["assignmentName"])
+                            if not isEmpty and assignment["typeId"] == typeid:
+                                tasks.append(assignmentName)
 
                 name = lesson["subjectName"]
                 number = lesson["number"]
