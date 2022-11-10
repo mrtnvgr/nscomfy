@@ -488,7 +488,9 @@ class NetSchoolSessionHandler:
 
         return "\n".join(output)
 
-    def getDiary(self, user_id, date):
+    def getDiary(
+        self, user_id, date, show_tasks=True, show_marks=True, only_marks=False
+    ):
 
         self.checkSession(user_id)
 
@@ -539,13 +541,13 @@ class NetSchoolSessionHandler:
                     assignments = lesson["assignments"]
                     for assignment in assignments:
 
-                        if "mark" in assignment:
+                        if show_marks and "mark" in assignment:
 
                             mark = assignment["mark"]
                             mark_sign = util.mark_to_sign(mark["mark"])
                             marks.append(mark_sign)
 
-                        if "assignmentName" in assignment:
+                        if show_tasks and "assignmentName" in assignment:
 
                             # Получим id типа домашнего задания
                             typeid = api.getAssignmentTypeId("Домашнее задание")
@@ -563,6 +565,9 @@ class NetSchoolSessionHandler:
                     name = "Информатика"
                 elif name == "Основы безопасности жизнедеятельности":
                     name = "ОБЖ"
+
+                if only_marks and not marks:
+                    continue
 
                 line = f"{number}: {name} ({start} - {end})"
                 line = util.normalizeHTMLText(line)
