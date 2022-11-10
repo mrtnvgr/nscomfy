@@ -620,7 +620,7 @@ class NetSchoolSessionHandler:
                 text += day_text
 
         if text == []:
-            text.append("На эти числа уроков нет!")
+            text.append("На эти числа информации нет!")
 
         return "\n".join(text), []
 
