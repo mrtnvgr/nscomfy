@@ -250,7 +250,7 @@ class TelegramHandler:
 
             elif current_keyboard == "diary":
 
-                if text == "Расписание":
+                if text in ["Расписание", "Задания", "Оценки"]:
 
                     buttons = [
                         ["Вчера", "Сегодня", "Завтра"],
@@ -263,7 +263,15 @@ class TelegramHandler:
                     if dateanswer == None:
                         return True
 
-                    diary = self.ns.getDiary(user_id, dateanswer)
+                    diary_kwargs = {}
+
+                    if text == "Задания":
+                        diary_kwargs["only_tasks"] = True
+                    elif text == "Оценки":
+                        diary_kwargs["only_marks"] = True
+
+                    diary = self.ns.getDiary(user_id, dateanswer, **diary_kwargs)
+
                     if not diary:
                         return True
                     text, buttons = diary
@@ -395,6 +403,7 @@ class TelegramHandler:
             text = "Дневник:"
 
             keyboard["keyboard"].append(["Расписание"])
+            keyboard["keyboard"].append(["Задания", "Оценки"])
             keyboard["keyboard"].append(["Назад"])
 
             keyboard["one_time_keyboard"] = False
@@ -489,7 +498,13 @@ class NetSchoolSessionHandler:
         return "\n".join(output)
 
     def getDiary(
-        self, user_id, date, show_tasks=True, show_marks=True, only_marks=False
+        self,
+        user_id,
+        date,
+        show_tasks=True,
+        show_marks=True,
+        only_tasks=False,
+        only_marks=False,
     ):
 
         self.checkSession(user_id)
@@ -528,8 +543,7 @@ class NetSchoolSessionHandler:
 
             daydate = util.formatDate(day["date"].split("T")[0])
 
-            text.append("")
-            text.append(f"<b>{daydate}:</b>")
+            day_text = []
 
             for lesson in day["lessons"]:
 
@@ -545,9 +559,15 @@ class NetSchoolSessionHandler:
 
                             mark = assignment["mark"]
                             mark_sign = util.mark_to_sign(mark["mark"])
-                            marks.append(mark_sign)
+                            mark_typeid = assignment["typeId"]
+                            mark_type = api._assignment_types[mark_typeid]
 
-                        if show_tasks and "assignmentName" in assignment:
+                            if only_marks:
+                                marks.append(f"{mark_sign} | {mark_type}")
+                            else:
+                                marks.append(mark_sign)
+
+                        if show_tasks and "assignmentName" in assignment and not only_marks:
 
                             # Получим id типа домашнего задания
                             typeid = api.getAssignmentTypeId("Домашнее задание")
@@ -569,17 +589,29 @@ class NetSchoolSessionHandler:
                 if only_marks and not marks:
                     continue
 
+                if only_tasks and not tasks:
+                    continue
+
                 line = f"{number}: {name} ({start} - {end})"
                 line = util.normalizeHTMLText(line)
-                if marks:
-                    line += f" <b>[{', '.join(marks)}]</b>"
-                text.append(line)
+                if marks and not only_tasks:
+                    if only_marks:
+                        marks_text = "\n".join(marks)
+                        line += f"\n{marks_text}"
+                    else:
+                        line += f" <b>[{', '.join(marks)}]</b>"
+                day_text.append(line)
 
                 if tasks != []:
 
                     for task in tasks:
                         task = util.normalizeHTMLText(task)
-                        text.append(f"<pre>{task}</pre>")
+                        day_text.append(f"<pre>{task}</pre>")
+
+            if day_text:
+                text.append("")
+                text.append(f"<b>{daydate}:</b>")
+                text += day_text
 
         if text == []:
             text.append("На эти числа уроков нет!")
