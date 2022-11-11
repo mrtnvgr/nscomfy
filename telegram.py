@@ -199,7 +199,7 @@ class TelegramHandler:
 
         account = {}
 
-        account["url"] = self.askUser(user_id, "Напишите url:")
+        account["url"] = self.askUser(user_id, "Напишите ссылку на нет город:")
 
         try:
             api = NetSchoolAPI(account["url"])
