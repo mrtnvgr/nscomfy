@@ -148,6 +148,8 @@ class TelegramHandler:
                             )
                             return
 
+                        self.ns.setStudent(user_id, account["student"])
+
                         self.master.config["users"][user_id]["current_account"] = text
                         self.master.saveConfig()
 
@@ -252,6 +254,26 @@ class TelegramHandler:
         account["school"] = self.getButtonAnswer()
         if account["school"] == None:
             return
+
+        try:
+            api.login(account["login"], account["password"], account["school"])
+        except SchoolNotFoundError:
+            self.tg_api.sendMessage(user_id, "Такой школы не существует")
+            return
+        except LoginError:
+            self.tg_api.sendMessage(user_id, "Неправильный логин или пароль")
+            return
+
+        students = api._students
+        student_buttons = [student["name"] for student in students]
+
+        self.editButtons(user_id, message_id, "Выберите ученика", student_buttons)
+
+        account["student"] = self.getButtonAnswer()
+        if account["student"] == None:
+            return
+
+        api.logout()
 
         self.editButtons(user_id, message_id, "Напишите имя аккаунта:", [])
         name = self.getUpdate()

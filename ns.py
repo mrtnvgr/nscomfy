@@ -36,6 +36,9 @@ class NetSchoolSessionHandler:
         self.sessions[user_id].login(username, password, school)
 
     def getOverdueTasks(self, user_id):
+
+        self.checkSession(user_id)
+
         output = []
         response = self.sessions[user_id].getOverdueTasks()
 
@@ -50,6 +53,9 @@ class NetSchoolSessionHandler:
             return "Нету! :3"
 
         return "\n".join(output)
+
+    def setStudent(self, user_id, student_name):
+        return self.sessions[user_id].setStudent(student_name)
 
     def getDiary(
         self,

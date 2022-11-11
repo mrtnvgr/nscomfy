@@ -173,8 +173,8 @@ class NetSchoolAPI:
         # Save current login data for auto-relogin
         self._login_data = (username, password, school_name)
 
-        # Get student info
-        self.student_info = login_response["accountInfo"]["user"]
+        # Get students
+        self._students = self.request("context/students").json()
 
         # Get year id
         year_info = self.request("years/current").json()
@@ -193,6 +193,14 @@ class NetSchoolAPI:
         }
 
         return login_response
+
+    def setStudent(self, student_name):
+        """Set api student"""
+
+        for student in self._students:
+            if student["name"] == student_name:
+                self.student_info = student
+                break
 
     def request(self, url, method="GET", headers={}, **kwargs):
         """Session request wrapper"""
