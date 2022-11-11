@@ -2,12 +2,17 @@
 
 from telegram import TelegramHandler
 import json
+import os
 
 
 class Main:
     def __init__(self):
 
-        self.config = json.load(open("config.json"))
+        if os.path.exists("config.json"):
+            self.config = json.load(open("config.json"))
+        else:
+            self.config = {}
+
         self.checkconfig()
 
         self.telegram = TelegramHandler(self)
@@ -20,6 +25,8 @@ class Main:
             self.config["telegram"] = {}
 
         if "token" not in self.config["telegram"]:
+            self.config["telegram"]["token"] = ""
+            self.saveConfig()
             raise Exception("Specify telegram token")
 
         if "users" not in self.config:
