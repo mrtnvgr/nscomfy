@@ -175,6 +175,8 @@ class NetSchoolAPI:
 
         # Get students
         self._students = self.request("context/students").json()
+        if not self._students:
+            self._students = [login_response["accountInfo"]["user"]]
 
         # Get year id
         year_info = self.request("years/current").json()
@@ -247,6 +249,8 @@ class NetSchoolAPI:
         self._login_data = None
 
         self.ns_info = {}
+
+        self._students = []
         self.student_info = {}
 
         self._year_id = None
