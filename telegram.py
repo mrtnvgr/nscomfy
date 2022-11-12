@@ -196,7 +196,7 @@ class TelegramHandler:
         try:
             api = NetSchoolAPI(account["url"])
         except InvalidUrlError:
-            self.tg_api.sendMessage(user_id, "Неправильный url")
+            self.tg_api.sendMessage(user_id, "Неправильная ссылка")
             return
 
         account["login"] = self.askUser(user_id, "Напишите логин:")
@@ -335,9 +335,7 @@ class TelegramHandler:
 
             self.ns.checkSession(user_id)
             student_info = f"Ученик: {self.ns.sessions[user_id].student_info['name']}"
-            activeSessions = (
-                f"В сети: {len(self.ns.sessions[user_id]._active_sessions)}"
-            )
+            activeSessions = f"Пользователей в сети: {len(self.ns.sessions[user_id]._active_sessions)}"
             text = f"Главное меню\n\n{student_info}\n{activeSessions}"
 
             keyboard["keyboard"].append(["Дневник", "Точки"])
