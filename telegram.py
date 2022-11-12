@@ -58,12 +58,6 @@ class TelegramHandler:
 
                                 return button["callback_data"]
 
-    def parseUpdates(self, updates):
-
-        for update in updates:
-
-            self.updateHandler(update)
-
     def updateHandler(self, update):
         user_id = str(self.tg_api.getUserIdFromUpdate(update))
 

@@ -42,7 +42,8 @@ class Main:
         while True:
 
             updates = self.telegram.getUpdates(timeout=60000)
-            self.telegram.parseUpdates(updates)
+            for update in updates:
+                self.telegram.updateHandler(update)
 
 
 if __name__ == "__main__":
