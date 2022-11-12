@@ -164,15 +164,8 @@ class TelegramHandler:
 
                 if text in ["Расписание", "Задания", "Оценки"]:
 
-                    buttons = [
-                        ["Вчера", "Сегодня", "Завтра"],
-                        ["Прошлая", "Текущая", "Следующая"],
-                    ]
-                    resp = self.sendButtons(user_id, "Выберите дату:", buttons)
-                    message_id = resp["message_id"]
-
-                    dateanswer = self.getButtonAnswer()
-                    if dateanswer == None:
+                    dateanswer, message_id = self.askUserAboutDate(user_id)
+                    if not dateanswer:
                         return True
 
                     diary_kwargs = {}
@@ -187,6 +180,7 @@ class TelegramHandler:
                     if not diary:
                         return True
                     text, buttons = diary
+
                     self.editButtons(
                         user_id, message_id, text, buttons, parse_mode="HTML"
                     )
@@ -301,6 +295,18 @@ class TelegramHandler:
 
         self.editButtons(user_id, message_id, msg, buttons)
         return self.getButtonAnswer()
+
+    def askUserAboutDate(self, user_id):
+        buttons = [
+            ["Вчера", "Сегодня", "Завтра"],
+            ["Прошлая", "Текущая", "Следующая"],
+        ]
+        resp = self.sendButtons(user_id, "Выберите дату:", buttons)
+        message_id = resp["message_id"]
+
+        dateanswer = self.getButtonAnswer()
+
+        return dateanswer, message_id
 
     def sendKeyboard(self, user_id, ktype):
         """Send different keyboards to user"""
