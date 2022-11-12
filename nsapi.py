@@ -194,6 +194,9 @@ class NetSchoolAPI:
             assignment["id"]: assignment["name"] for assignment in assignment_types
         }
 
+        # Get active sessions info
+        self._active_sessions = self.request("context/activeSessions").json()
+
         return login_response
 
     def setStudent(self, student_name):

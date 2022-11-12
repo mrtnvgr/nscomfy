@@ -335,7 +335,10 @@ class TelegramHandler:
 
             self.ns.checkSession(user_id)
             student_info = f"Ученик: {self.ns.sessions[user_id].student_info['name']}"
-            text = f"Главное меню\n\n{student_info}"
+            activeSessions = (
+                f"В сети: {len(self.ns.sessions[user_id]._active_sessions)}"
+            )
+            text = f"Главное меню\n\n{student_info}\n{activeSessions}"
 
             keyboard["keyboard"].append(["Дневник", "Точки"])
             keyboard["keyboard"].append(["Выйти"])
