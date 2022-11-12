@@ -147,10 +147,7 @@ class NetSchoolSessionHandler:
                 start = lesson["startTime"]
                 end = lesson["endTime"]
 
-                if name == "Информатика и ИКТ":
-                    name = "Информатика"
-                elif name == "Основы безопасности жизнедеятельности":
-                    name = "ОБЖ"
+                name = util.shortenSubjectName(name)
 
                 if only_marks and not marks:
                     continue

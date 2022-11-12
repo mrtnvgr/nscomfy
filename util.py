@@ -33,3 +33,15 @@ def detectEmptyTask(task):
     task = task.removesuffix(".")
     if task == "не задано":
         return True
+
+
+def shortenSubjectName(subject):
+    subjects = {
+        "Основы безопасности жизнедеятельности": "ОБЖ",
+        "Информатика и ИКТ": "Информатика",
+    }
+
+    if subject in subjects:
+        return subjects[subject]
+    else:
+        return subject
