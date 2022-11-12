@@ -224,10 +224,10 @@ class TelegramHandler:
                 {"text": district["name"], "callback_data": district["id"]}
             )
 
-        self.editButtons(user_id, message_id, "Выберите округ", districts)
-
-        municipalityDistrictId = self.getButtonAnswer()
-        if municipalityDistrictId == None:
+        municipalityDistrictId = self.askUserWithButtons(
+            user_id, message_id, "Выберите округ", districts
+        )
+        if not municipalityDistrictId:
             return
 
         schools_response = api.getSchoolList()
@@ -238,10 +238,10 @@ class TelegramHandler:
                 if str(school["municipalityDistrictId"]) == municipalityDistrictId:
                     addresses.append(school["addressString"])
 
-        self.editButtons(user_id, message_id, "Выберите aдрес", addresses)
-
-        account["address"] = self.getButtonAnswer()
-        if account["address"] == None:
+        account["address"] = self.askUserWithButtons(
+            user_id, message_id, "Выберите адрес", addresses
+        )
+        if not account["address"]:
             return
 
         schools = []
@@ -249,10 +249,10 @@ class TelegramHandler:
             if school["addressString"] == account["address"]:
                 schools.append(school["name"])
 
-        self.editButtons(user_id, message_id, "Выберите школу", schools)
-
-        account["school"] = self.getButtonAnswer()
-        if account["school"] == None:
+        account["school"] = self.askUserWithButtons(
+            user_id, message_id, "Выберите школу", schools
+        )
+        if not account["school"]:
             return
 
         try:
@@ -267,20 +267,17 @@ class TelegramHandler:
         students = api._students
         student_buttons = [student["name"] for student in students]
 
-        self.editButtons(user_id, message_id, "Выберите ученика", student_buttons)
-
-        account["student"] = self.getButtonAnswer()
-        if account["student"] == None:
+        account["student"] = self.askUserWithButtons(
+            user_id, message_id, "Выберите ученика", student_buttons
+        )
+        if not account["student"]:
             return
 
         api.logout()
 
         self.editButtons(user_id, message_id, "Напишите имя аккаунта:", [])
         name = self.getUpdate()
-        if name == None:
-            return
-
-        if not all(account.values()):
+        if not name:
             return
 
         self.addNewUser(user_id)
@@ -301,6 +298,15 @@ class TelegramHandler:
         self.tg_api.sendMessage(user_id, msg)
 
         return self.getUpdate()
+
+    def askUserWithButtons(self, user_id, message_id, msg, buttons):
+
+        if type(buttons) is list:
+            if len(buttons) == 1:
+                return buttons[0]
+
+        self.editButtons(user_id, message_id, msg, buttons)
+        return self.getButtonAnswer()
 
     def sendKeyboard(self, user_id, ktype):
         """Send different keyboards to user"""
