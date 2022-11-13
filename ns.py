@@ -26,8 +26,7 @@ class NetSchoolSessionHandler:
             password = account["password"]
             school = account["school"]
 
-            self.sessions[user_id] = NetSchoolAPI(url)
-            self.sessions[user_id].login(username, password, school)
+            self.login(user_id, url, username, password, school)
 
             self.master.tg_api.deleteMessage(user_id, msg_id)
 
@@ -53,6 +52,13 @@ class NetSchoolSessionHandler:
             return "Нету! :3"
 
         return "\n".join(output)
+
+    def setOverdueCount(self, user_id):
+
+        self.checkSession(user_id)
+
+        overdues = self.sessions[user_id].getOverdueTasks()
+        self.sessions[user_id]._overdue_count = len(overdues)
 
     def setStudent(self, user_id, student_name):
         return self.sessions[user_id].setStudent(student_name)

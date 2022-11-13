@@ -144,6 +144,8 @@ class TelegramHandler:
 
                         self.ns.setStudent(user_id, account["student"])
 
+                        self.ns.setOverdueCount(user_id)
+
                         self.master.config["users"][user_id]["current_account"] = text
                         self.master.saveConfig()
 
@@ -337,9 +339,16 @@ class TelegramHandler:
         elif ktype == "mm":
 
             self.ns.checkSession(user_id)
-            student_info = f"Ученик: {self.ns.sessions[user_id].student_info['name']}"
-            activeSessions = f"Пользователей в сети: {len(self.ns.sessions[user_id]._active_sessions)}"
-            text = f"Главное меню\n\n{student_info}\n{activeSessions}"
+            api = self.ns.sessions[user_id]
+            student_info = f"Ученик: {api.student_info['name']}"
+            activeSessions = f"\nПользователей в сети: {len(api._active_sessions)}"
+
+            if api._overdue_count > 0:
+                overdueCount = f"\nТочки: {api._overdue_count}"
+            else:
+                overdueCount = ""
+
+            text = f"Главное меню\n\n{student_info}{overdueCount}{activeSessions}"
 
             keyboard["keyboard"].append(["Дневник", "Точки"])
             keyboard["keyboard"].append(["Выйти"])
