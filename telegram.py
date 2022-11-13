@@ -142,10 +142,6 @@ class TelegramHandler:
                             )
                             return
 
-                        self.ns.setStudent(user_id, account["student"])
-
-                        self.ns.setOverdueCount(user_id)
-
                         self.master.config["users"][user_id]["current_account"] = text
                         self.master.saveConfig()
 

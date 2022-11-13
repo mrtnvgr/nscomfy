@@ -33,6 +33,8 @@ class NetSchoolSessionHandler:
     def login(self, user_id, url, username, password, school):
         self.sessions[user_id] = NetSchoolAPI(url)
         self.sessions[user_id].login(username, password, school)
+        self.setStudent(user_id, account["student"])
+        self.setOverdueCount(user_id)
 
     def getOverdueTasks(self, user_id):
 
