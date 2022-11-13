@@ -129,6 +129,7 @@ class TelegramHandler:
                                 account["url"],
                                 account["login"],
                                 account["password"],
+                                account["account"],
                                 account["school"],
                             )
                         except SchoolNotFoundError:
