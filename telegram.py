@@ -162,7 +162,7 @@ class TelegramHandler:
 
             elif current_keyboard == "diary":
 
-                if text in ["Расписание", "Задания", "Оценки"]:
+                if text in ["Всё", "Расписание", "Задания", "Оценки"]:
 
                     dateanswer, message_id = self.askUserAboutDate(user_id)
                     if not dateanswer:
@@ -170,7 +170,10 @@ class TelegramHandler:
 
                     diary_kwargs = {}
 
-                    if text == "Задания":
+                    if text == "Расписание":
+                        diary_kwargs["show_tasks"] = False
+                        diary_kwargs["show_marks"] = False
+                    elif text == "Задания":
                         diary_kwargs["only_tasks"] = True
                     elif text == "Оценки":
                         diary_kwargs["only_marks"] = True
@@ -345,8 +348,9 @@ class TelegramHandler:
 
         elif ktype == "diary":
 
-            text = "Дневник:"
+            text = "Выберите тип информации:"
 
+            keyboard["keyboard"].append(["Всё"])
             keyboard["keyboard"].append(["Расписание"])
             keyboard["keyboard"].append(["Задания", "Оценки"])
             keyboard["keyboard"].append(["Назад"])
