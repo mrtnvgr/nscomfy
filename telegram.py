@@ -338,14 +338,14 @@ class TelegramHandler:
             self.ns.checkSession(user_id)
             api = self.ns.sessions[user_id]
             student_info = f"Ученик: {api.student_info['name']}"
-            activeSessions = f"\nПользователей в сети: {len(api._active_sessions)}"
+            activeSessions = f"Пользователей в сети: {len(api._active_sessions)}"
 
             if api._overdue_count > 0:
                 overdueCount = f"\nТочки: {api._overdue_count}"
             else:
                 overdueCount = ""
 
-            text = f"Главное меню\n\n{student_info}{overdueCount}{activeSessions}"
+            text = f"Главное меню\n\n{student_info}{overdueCount}\n\n{activeSessions}"
 
             keyboard["keyboard"].append(["Дневник", "Точки"])
             keyboard["keyboard"].append(["Выйти"])
