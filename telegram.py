@@ -35,7 +35,7 @@ class TelegramHandler:
     def getButtonAnswer(self):
         update = self.getUpdates(limit=1)
 
-        if update != None:
+        if update:
 
             if "callback_query" in update[0]:
 
