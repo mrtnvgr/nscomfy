@@ -143,7 +143,7 @@ class NetSchoolAPI:
             raise SchoolNotFoundError(school_name)
 
         # Get auth data (var, lt, salt)
-        authdata = self.request("auth/getdata", method="POST").json()
+        authdata = self.request("auth/getdata", method="POST", relogin=False).json()
 
         # Pop salt from auth data
         salt = authdata.pop("salt")
@@ -161,7 +161,7 @@ class NetSchoolAPI:
         payload.update(authdata)
 
         # Log in
-        login_response = self.request("login", method="POST", data=payload).json()
+        login_response = self.request("login", method="POST", data=payload, relogin=False).json()
 
         # Check if we logged in successfully
         if "at" not in login_response:
@@ -207,7 +207,7 @@ class NetSchoolAPI:
                 self.student_info = student
                 break
 
-    def request(self, url, method="GET", headers={}, **kwargs):
+    def request(self, url, method="GET", headers={}, relogin=True, **kwargs):
         """Session request wrapper"""
 
         # Check if url is relative
@@ -220,8 +220,8 @@ class NetSchoolAPI:
         # Make a request
         response = self._session.request(method, url, headers=headers, **kwargs)
 
-        # If access denied
-        if response.status_code == 500:
+        # If access denied, try to relogin
+        if response.status_code == 500 and relogin:
 
             # Check if we have stored login data
             if self._login_data:
