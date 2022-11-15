@@ -12,6 +12,9 @@ class TelegramHandler:
         token = self.master.config["telegram"]["token"]
         self.tg_api = TelegramAPI(token)
 
+        # Set offset to latest update
+        self.getInstantUpdates()
+
     def getUpdates(self, limit=100, timeout=60):
 
         offset = self.master.config["telegram"].get("offset", 0)
@@ -23,16 +26,10 @@ class TelegramHandler:
             self.master.config["telegram"]["offset"] = offset
             self.master.saveConfig()
 
-            # Do not parse offline bot updates
-            parsed_updates = []
-            for update in updates:
-                update_stamp = update["message"]["date"]
-                if update_stamp > self.master.runstamp:
-                    parsed_updates.append(update)
-
-            return parsed_updates
-
         return updates
+
+    def getInstantUpdates(self):
+        return self.getUpdates(timeout=0)
 
     def getUpdate(self):
         update = self.getUpdates(limit=1)

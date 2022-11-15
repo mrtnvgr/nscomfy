@@ -1,10 +1,5 @@
 from html import escape as html_escape
 from unicodedata import lookup as unilookup
-from time import time as curtime
-
-
-def get_timestamp():
-    return int(curtime())
 
 
 def formatDate(string: str):
