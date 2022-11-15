@@ -1,12 +1,16 @@
 #!/usr/bin/env python
 
 from telegram import TelegramHandler
+from util import get_timestamp
+
 import json
 import os
 
 
 class Main:
     def __init__(self):
+
+        self.runstamp = get_timestamp()
 
         if os.path.exists("config.json"):
             self.config = json.load(open("config.json"))

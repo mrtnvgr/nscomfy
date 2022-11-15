@@ -23,12 +23,18 @@ class TelegramHandler:
             self.master.config["telegram"]["offset"] = offset
             self.master.saveConfig()
 
+            # Do not parse offline bot updates
+            for ind, update in enumerate(updates[:]):
+                update_stamp = update["message"]["date"]
+                if update_stamp < self.master.runstamp:
+                    updates.pop(ind)
+
         return updates
 
     def getUpdate(self):
         update = self.getUpdates(limit=1)
 
-        if update != None:
+        if update:
             if "message" in update[0]:
                 return update[0]["message"]["text"]
 
