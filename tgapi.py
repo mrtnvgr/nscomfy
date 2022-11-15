@@ -32,7 +32,14 @@ class TelegramAPI:
 
     def getUpdates(self, offset, limit, timeout):
 
-        payload = {"timeout": timeout, "offset": offset, "limit": limit}
+        allowed_types = json.dumps(["message", "callback_query"])
+
+        payload = {
+            "timeout": timeout,
+            "offset": offset,
+            "limit": limit,
+            "allowed_updates": allowed_types,
+        }
         return self.method("getUpdates", payload)
 
     def sendMessage(self, user_id, text):
