@@ -27,7 +27,7 @@ class TelegramHandler:
             parsed_updates = []
             for update in updates:
                 update_stamp = update["message"]["date"]
-                if update_stamp < self.master.runstamp:
+                if update_stamp > self.master.runstamp:
                     parsed_updates.append(update)
 
             return parsed_updates
