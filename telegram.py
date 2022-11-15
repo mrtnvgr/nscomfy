@@ -17,7 +17,7 @@ class TelegramHandler:
         offset = self.master.config["telegram"].get("offset", 0)
         updates = self.tg_api.getUpdates(offset, limit, timeout)
 
-        if updates != []:
+        if len(updates) > 0:
 
             offset = int(updates[-1]["update_id"]) + 1
             self.master.config["telegram"]["offset"] = offset
