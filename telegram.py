@@ -154,9 +154,6 @@ class TelegramHandler:
 
                         self.tg_api.deleteMessage(user_id, message_id)
 
-                        self.sendKeyboard(user_id, "mm")
-                        return True
-
                     else:
                         self.tg_api.sendMessage(user_id, "Такого аккаунта нет")
 
