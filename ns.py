@@ -107,6 +107,7 @@ class NetSchoolSessionHandler:
         diary = api.getDiary(start, end)
 
         text = []
+        buttons = []
 
         assignIds = self.getAssignIds(diary["weekDays"])
         attachments = api.getDiaryAttachments(assignIds)
@@ -159,14 +160,19 @@ class NetSchoolSessionHandler:
                             assignment_attachments = attachments[assignId]
 
                             for attachment in assignment_attachments:
-                                # attachmentId = attachment["id"]
-                                # api.getAttachmentUrl(attachmentId)
                                 attachmentName = attachment["originalFileName"]
                                 attachmentName = util.normalizeHTMLText(attachmentName)
 
                                 clip = util.getEmoji("PAPERCLIP")
 
-                                text.append(f"<b>{clip} {attachmentName}</b>")
+                                attachmentText = f"{clip} {attachmentName}"
+
+                                attachmentButton = self.createAttachmentButton(
+                                    attachmentText, attachment
+                                )
+
+                                text.append(f"<b>{attachmentText}</b>")
+                                buttons.append(attachmentButton)
 
                 name = lesson["subjectName"]
                 number = lesson["number"]
@@ -205,7 +211,7 @@ class NetSchoolSessionHandler:
         if text == []:
             text.append("На эти числа информации нет!")
 
-        return "\n".join(text), []
+        return "\n".join(text), buttons
 
     def getAssignIds(self, days):
 
@@ -217,6 +223,11 @@ class NetSchoolSessionHandler:
                         assignIds.append(assignment["id"])
 
         return assignIds
+
+    def createAttachmentButton(self, text, attachment):
+        aId = attachment["id"]
+        data = f"/downloadAttachment {aId}"
+        return {"text": text, "callback_data": data}
 
     def logout(self, user_id):
 

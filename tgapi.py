@@ -64,7 +64,9 @@ class TelegramAPI:
             markup = json.dumps(markup)
 
         return self.method(
-            "sendMessage", {"text": text, "reply_markup": markup}, user_id
+            "sendMessage",
+            {"text": text, "reply_markup": markup},
+            user_id,
         )
 
     def editButtons(self, user_id, message_id, text, markup, parse_mode):
