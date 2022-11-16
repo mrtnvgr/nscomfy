@@ -155,24 +155,28 @@ class NetSchoolSessionHandler:
                             if not isEmpty and assignment["typeId"] == typeid:
                                 tasks.append(assignmentName)
 
-                        if assignment["id"] in attachments:
-                            assignId = assignment["id"]
-                            assignment_attachments = attachments[assignId]
+                        if not only_marks and not only_tasks:
 
-                            for attachment in assignment_attachments:
-                                attachmentName = attachment["originalFileName"]
-                                attachmentName = util.normalizeHTMLText(attachmentName)
+                            if assignment["id"] in attachments:
+                                assignId = assignment["id"]
+                                assignment_attachments = attachments[assignId]
 
-                                clip = util.getEmoji("PAPERCLIP")
+                                for attachment in assignment_attachments:
+                                    attachmentName = attachment["originalFileName"]
+                                    attachmentName = util.normalizeHTMLText(
+                                        attachmentName
+                                    )
 
-                                attachmentText = f"{clip} {attachmentName}"
+                                    clip = util.getEmoji("PAPERCLIP")
 
-                                attachmentButton = self.createAttachmentButton(
-                                    attachmentText, attachment
-                                )
+                                    attachmentText = f"{clip} {attachmentName}"
 
-                                text.append(f"<b>{attachmentText}</b>")
-                                buttons.append(attachmentButton)
+                                    attachmentButton = self.createAttachmentButton(
+                                        attachmentText, attachment
+                                    )
+
+                                    text.append(f"<b>{attachmentText}</b>")
+                                    buttons.append(attachmentButton)
 
                 name = lesson["subjectName"]
                 number = lesson["number"]
