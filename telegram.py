@@ -39,13 +39,16 @@ class TelegramHandler:
                 return update[0]["message"]["text"]
 
     def getButtonAnswer(self):
-        update = self.getUpdates(limit=1)
+        update = self.getUpdates(limit=1)[0]
+        return self.parseButtonUpdate(update)
+
+    def parseButtonUpdate(self, update):
 
         if update:
 
-            if "callback_query" in update[0]:
+            if "callback_query" in update:
 
-                query = update[0]["callback_query"]
+                query = update["callback_query"]
 
                 buttons = query["message"]["reply_markup"]["inline_keyboard"]
 
@@ -58,10 +61,8 @@ class TelegramHandler:
                         if button["callback_data"] == data:
 
                             if button["callback_data"].startswith("/button"):
-
                                 return button["text"]
                             else:
-
                                 return button["callback_data"]
 
     def updateHandler(self, update):
@@ -194,6 +195,39 @@ class TelegramHandler:
                     )
 
                     return True
+
+        elif "callback_query" in update:
+
+            button_data = self.parseButtonUpdate(update)
+
+            if not button_data:
+                return
+
+            button_data = button_data.split(" ")
+
+            if button_data[0] == "/downloadAttachment":
+
+                if not self.ns.checkSession(user_id):
+                    self.tg_api.sendMessage(
+                        user_id, "Перед тем как скачивать, нужно зайти в аккаунт."
+                    )
+                    return True
+
+                api = self.ns.sessions[user_id]
+
+                studentId = api.student_info["id"]
+
+                if str(studentId) != button_data[1]:
+                    self.tg_api.sendMessage(
+                        user_id, "Текущий аккаунт не имеет доступа к этому вложению."
+                    )
+                    return True
+
+                attachmentId = button_data[2]
+
+                self.tg_api.sendMessage(user_id, attachmentId)
+
+                return True
 
     def askForAccount(self, user_id):
 

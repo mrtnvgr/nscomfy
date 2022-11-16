@@ -19,7 +19,12 @@ class NetSchoolSessionHandler:
             ]
 
             user = self.master.master.config["users"][user_id]
+
             account_name = user["current_account"]
+            if not account_name:
+                self.master.tg_api.deleteMessage(user_id, msg_id)
+                return False
+
             account = user["accounts"][account_name]
             url = account["url"]
             username = account["login"]
@@ -30,6 +35,8 @@ class NetSchoolSessionHandler:
             self.login(user_id, url, username, password, student, school)
 
             self.master.tg_api.deleteMessage(user_id, msg_id)
+
+        return True
 
     def login(self, user_id, url, username, password, student, school):
         self.sessions[user_id] = NetSchoolAPI(url)
@@ -176,7 +183,7 @@ class NetSchoolSessionHandler:
                                     attachmentText = f"{clip} {attachmentName}"
 
                                     attachmentButton = self.createAttachmentButton(
-                                        attachmentText, attachment
+                                        user_id, attachmentText, attachment
                                     )
 
                                     text.append(f"<b>{attachmentText}</b>")
@@ -232,12 +239,18 @@ class NetSchoolSessionHandler:
 
         return assignIds
 
-    def createAttachmentButton(self, text, attachment):
+    def createAttachmentButton(self, user_id, text, attachment):
+
         aId = attachment["id"]
-        data = f"/downloadAttachment {aId}"
+
+        api = self.sessions[user_id]
+        studentId = api.student_info["id"]
+
+        data = f"/downloadAttachment {studentId} {aId}"
         return {"text": text, "callback_data": data}
 
     def logout(self, user_id):
 
         if user_id in self.sessions:
             self.sessions[user_id].logout()
+            self.sessions.pop(user_id)
