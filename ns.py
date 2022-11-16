@@ -123,6 +123,8 @@ class NetSchoolSessionHandler:
                 marks = []
                 tasks = []
 
+                showAttachments = False
+
                 if "assignments" in lesson:
 
                     assignments = lesson["assignments"]
@@ -139,6 +141,7 @@ class NetSchoolSessionHandler:
                                 marks.append(f"{mark_sign} | {mark_type}")
                             else:
                                 marks.append(mark_sign)
+                                showAttachments = True
 
                         if (
                             show_tasks
@@ -154,8 +157,9 @@ class NetSchoolSessionHandler:
 
                             if not isEmpty and assignment["typeId"] == typeid:
                                 tasks.append(assignmentName)
+                                showAttachments = True
 
-                        if not only_marks and not only_tasks:
+                        if showAttachments:
 
                             if assignment["id"] in attachments:
                                 assignId = assignment["id"]
