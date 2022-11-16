@@ -82,6 +82,30 @@ class NetSchoolAPI:
 
         return response
 
+    def getDiaryAttachments(self, assignId):
+        """Get diary attachments"""
+
+        if type(assignId) is not list:
+            assignId = [assignId]
+
+        response = self.request(
+            "student/diary/get-attachments",
+            params={"studentId": self.student_info["id"]},
+            json={"assignId": assignId},
+            method="POST",
+        ).json()
+
+        if not response:
+            return {}
+
+        return {
+            assignment["assignmentId"]: assignment["attachments"]
+            for assignment in response
+        }
+
+    def getAttachmentUrl(self, attachmentId):
+        return f"{self._url}/webapi/attachments/{attachmentId}"
+
     def getOverdueTasks(self):
         """Get overdue tasks"""
 

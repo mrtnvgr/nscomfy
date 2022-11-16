@@ -19,13 +19,17 @@ def mark_to_sign(mark):
         3: "3\ufe0f\u20e3",
         4: "4\ufe0f\u20e3",
         5: "5\ufe0f\u20e3",
-        None: unilookup("HEAVY EXCLAMATION MARK SYMBOL"),
+        None: getEmoji("HEAVY EXCLAMATION MARK SYMBOL"),
     }
 
     if mark in emojis:
         return emojis[mark]
     else:
         return str(mark)
+
+
+def getEmoji(name):
+    return unilookup(name)
 
 
 def detectEmptyTask(task):
