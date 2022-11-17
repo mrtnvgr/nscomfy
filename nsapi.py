@@ -248,7 +248,11 @@ class NetSchoolAPI:
         headers = self._session_headers | headers
 
         # Make a request
-        response = self._session.request(method, url, headers=headers, **kwargs)
+        try:
+            response = self._session.request(method, url, headers=headers, **kwargs)
+        except requests.exceptions.ReadTimeout:
+            # Retry request
+            return self.request(url, method, headers, **kwargs)
 
         # If access denied and we are logged in, try to relogin
         if response.status_code == 500 and self._logged_in:
