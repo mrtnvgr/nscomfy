@@ -398,7 +398,8 @@ class TelegramHandler:
         if ktype in ["account_selection", "account_deletion", "account_renaming"]:
             text = "Выберите аккаунт"
 
-            for name in self.master.config["users"][user_id]["accounts"]:
+            accounts = self.master.config["users"][user_id]["accounts"]
+            for name in sorted(accounts):
                 keyboard["keyboard"].append([name])
 
             if ktype == "account_selection":
