@@ -279,6 +279,7 @@ class TelegramHandler:
         message_id = self.tg_api.sendMessage(user_id, "Подождите...")["message_id"]
 
         districts_response = api.getMunicipalityDistrictList()
+        schools_response = api.getSchoolList()
 
         districts = []
         for district in districts_response:
@@ -291,8 +292,6 @@ class TelegramHandler:
         )
         if not municipalityDistrictId:
             return
-
-        schools_response = api.getSchoolList()
 
         addresses = []
         for school in schools_response:
@@ -316,6 +315,8 @@ class TelegramHandler:
         )
         if not account["school"]:
             return
+
+        self.editButtons(user_id, message_id, "Подождите...", [])
 
         try:
             api.login(account["login"], account["password"], account["school"])
