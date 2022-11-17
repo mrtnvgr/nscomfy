@@ -51,11 +51,29 @@ class NetSchoolSessionHandler:
         output = []
         response = self.sessions[user_id].getOverdueTasks()
 
-        for task in response:
+        dates = {}
 
-            subject = task["subjectName"]
-            assignment = task["assignmentName"]
-            output.append(f"{subject}: {assignment}")
+        for task in response:
+            date = util.formatDate(task["dueDate"].split("T")[0])
+            if date not in dates:
+                dates[date] = []
+            dates[date].append(task)
+
+        for date in dates:
+
+            output.append(f"<b>{date}</b>")
+
+            overdues = dates[date]
+
+            for overdue in overdues:
+
+                subject = overdue["subjectName"]
+                assignment = overdue["assignmentName"]
+
+                assignment = util.normalizeHTMLText(assignment)
+
+                output.append(f"{subject} ({overdue['type']}):")
+                output.append(f"<pre>{assignment}</pre>")
 
         if output == []:
 
