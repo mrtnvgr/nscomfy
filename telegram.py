@@ -119,10 +119,14 @@ class TelegramHandler:
 
                 elif text == "Удалить аккаунт":
 
-                    if self.master.config["users"][user_id]["accounts"] != {}:
+                    if self.master.config["users"][user_id]["accounts"]:
                         self.sendKeyboard(user_id, "account_deletion")
                         return True
+                elif text == "Переименовать аккаунт":
 
+                    if self.master.config["users"][user_id]["accounts"]:
+                        self.sendKeyboard(user_id, "account_renaming")
+                        return True
                 else:
 
                     if text in self.master.config["users"][user_id]["accounts"]:
@@ -165,6 +169,30 @@ class TelegramHandler:
                     if text in self.master.config["users"][user_id]["accounts"]:
                         self.master.config["users"][user_id]["accounts"].pop(text)
                         self.master.saveConfig()
+
+            elif current_keyboard == "account_renaming":
+
+                if text != "Назад":
+
+                    if text in self.master.config["users"][user_id]["accounts"]:
+                        newName = self.askUser(
+                            user_id, "Напишите новое название аккаунта:"
+                        )
+
+                        if newName:
+
+                            account = self.master.config["users"][user_id][
+                                "accounts"
+                            ].pop(text)
+
+                            self.master.config["users"][user_id]["accounts"][
+                                newName
+                            ] = account
+                            self.master.saveConfig()
+
+                            self.tg_api.sendMessage(
+                                user_id, f'Аккаунт "{text}" переименован в "{newName}"'
+                            )
 
             elif current_keyboard == "diary":
 
@@ -357,7 +385,7 @@ class TelegramHandler:
         keyboard = {"keyboard": [], "one_time_keyboard": True, "resize_keyboard": True}
         text = ""
 
-        if ktype == "account_selection" or ktype == "account_deletion":
+        if ktype in ["account_selection", "account_deletion", "account_renaming"]:
             text = "Выберите аккаунт"
 
             for name in self.master.config["users"][user_id]["accounts"]:
@@ -370,7 +398,9 @@ class TelegramHandler:
                     misc.append("Удалить аккаунт")
                 keyboard["keyboard"].append(misc)
 
-            if ktype == "account_deletion":
+                keyboard["keyboard"].append(["Переименовать аккаунт"])
+
+            if ktype in ["account_deletion", "account_renaming"]:
                 keyboard["keyboard"].append(["Назад"])
 
         elif ktype == "mm":
