@@ -147,6 +147,7 @@ class NetSchoolSessionHandler:
 
                 marks = []
                 tasks = []
+                attachments_text = []
 
                 showAttachments = False
 
@@ -204,7 +205,7 @@ class NetSchoolSessionHandler:
                                         user_id, attachmentText, attachment
                                     )
 
-                                    text.append(f"<b>{attachmentText}</b>")
+                                    attachments_text.append(f"<b>{attachmentText}</b>")
                                     buttons.append(attachmentButton)
 
                 name = lesson["subjectName"]
@@ -230,11 +231,15 @@ class NetSchoolSessionHandler:
                         line += f" <b>[{', '.join(marks)}]</b>"
                 day_text.append(line)
 
-                if tasks != []:
+                if tasks:
 
                     for task in tasks:
                         task = util.normalizeHTMLText(task)
                         day_text.append(f"<pre>{task}</pre>")
+
+                if attachments_text:
+
+                    day_text.extend(attachments_text)
 
             if day_text:
                 text.append("")
