@@ -205,7 +205,7 @@ class NetSchoolSessionHandler:
                                         user_id, attachmentText, attachment
                                     )
 
-                                    attachments_text.append(f"<b>{attachmentText}</b>")
+                                    attachments_text.append(f"<b>{attachmentText}</b>\n")
                                     buttons.append(attachmentButton)
 
                 name = lesson["subjectName"]
@@ -221,7 +221,7 @@ class NetSchoolSessionHandler:
                 if only_tasks and not tasks:
                     continue
 
-                line = f"{number}: {name} ({start} - {end})"
+                line = f"\n{number}: {name} ({start} - {end})"
                 line = util.normalizeHTMLText(line)
                 if marks and not only_tasks:
                     if only_marks:
@@ -229,27 +229,28 @@ class NetSchoolSessionHandler:
                         line += f"\n{marks_text}"
                     else:
                         line += f" <b>[{', '.join(marks)}]</b>"
-                day_text.append(line)
+                day_text.append(f"{line}\n")
 
                 if tasks:
 
                     for task in tasks:
                         task = util.normalizeHTMLText(task)
-                        day_text.append(f"<pre>{task}</pre>")
+                        day_text.append(f"<pre>{task}</pre>\n")
 
                 if attachments_text:
 
                     day_text.extend(attachments_text)
 
             if day_text:
-                text.append("")
+                text.append("\n")
+                text.append("\n")
                 text.append(f"<b>{daydate}:</b>")
                 text += day_text
 
         if text == []:
             text.append("На эти числа информации нет!")
 
-        return "\n".join(text), buttons
+        return "".join(text), buttons
 
     def getAssignIds(self, days):
 
