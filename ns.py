@@ -54,7 +54,7 @@ class NetSchoolSessionHandler:
         dates = {}
 
         for task in response:
-            date = util.formatDate(task["dueDate"].split("T")[0])
+            date = util.formatDate(task["dueDate"])
             if date not in dates:
                 dates[date] = []
             dates[date].append(task)
@@ -139,7 +139,7 @@ class NetSchoolSessionHandler:
 
         for day in diary["weekDays"]:
 
-            daydate = util.formatDate(day["date"].split("T")[0])
+            daydate = util.formatDate(day["date"])
 
             day_text = []
 

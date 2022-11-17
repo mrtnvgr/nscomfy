@@ -3,6 +3,7 @@ from unicodedata import lookup as unilookup
 
 
 def formatDate(string: str):
+    string = string.removesuffix("T00:00:00")
     # YYYY-MM-DD -> DD.MM.YYYY
     date = string.split("-")
     return ".".join(date[::-1])
