@@ -2,6 +2,7 @@ from nsapi import NetSchoolAPI
 from errors import InvalidUrlError, SchoolNotFoundError, LoginError
 from ns import NetSchoolSessionHandler
 from tgapi import TelegramAPI
+import util
 
 
 class TelegramHandler:
@@ -179,6 +180,9 @@ class TelegramHandler:
                             user_id, "Напишите новое название аккаунта:"
                         )
 
+                        if not util.checkAccountName(newName):
+                            self.tg_api.sendMessage(user_id, "Такое имя аккаунта запрещено")
+
                         if newName:
 
                             account = self.master.config["users"][user_id][
@@ -335,6 +339,11 @@ class TelegramHandler:
 
         self.editButtons(user_id, message_id, "Напишите имя аккаунта:", [])
         name = self.getUpdate()
+
+        if not util.checkAccountName(name):
+            self.tg_api.sendMessage(user_id, "Такое имя аккаунта запрещено")
+            return
+
         if not name:
             return
 

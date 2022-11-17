@@ -52,3 +52,7 @@ def shortenSubjectName(subject):
         return subjects[subject]
     else:
         return subject
+
+def checkAccountName(name):
+    if name != "Назад":
+        return True
