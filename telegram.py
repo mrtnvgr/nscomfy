@@ -97,14 +97,13 @@ class TelegramHandler:
 
                 if text == "Выйти":
 
-                    self.ns.logout(user_id)
-                    self.master.config["users"][user_id]["current_account"] = None
-                    self.master.saveConfig()
+                    self.forceLogout(user_id)
 
                 elif text == "Точки":
 
                     text = self.ns.getOverdueTasks(user_id)
-                    self.tg_api.sendMessage(user_id, text)
+                    if text:
+                        self.tg_api.sendMessage(user_id, text)
                     return True
 
                 elif text == "Дневник":
@@ -140,14 +139,18 @@ class TelegramHandler:
                                 account["school"],
                             )
                         except SchoolNotFoundError:
-                            self.tg_api.sendMessage(
-                                user_id, "Такой школы не существует"
+                            self.editButtons(
+                                user_id, message_id, "Такой школы не существует", []
                             )
+                            self.master.config["users"][user_id]["accounts"].pop(text)
+                            self.master.saveConfig()
                             return
                         except LoginError:
-                            self.tg_api.sendMessage(
-                                user_id, "Неправильный логин или пароль"
+                            self.editButtons(
+                                user_id, message_id, "Неправильный логин или пароль", []
                             )
+                            self.master.config["users"][user_id]["accounts"].pop(text)
+                            self.master.saveConfig()
                             return
 
                         self.master.config["users"][user_id]["current_account"] = text
@@ -426,7 +429,8 @@ class TelegramHandler:
 
         elif ktype == "mm":
 
-            self.ns.checkSession(user_id)
+            if not self.ns.checkSession(user_id):
+                return
             api = self.ns.sessions[user_id]
             student_info = f"Ученик: {api.student_info['name']}"
             activeSessions = f"Пользователей в сети: {len(api._active_sessions)}"
@@ -492,6 +496,11 @@ class TelegramHandler:
         markup = self._parseButtons(values)
 
         return self.tg_api.editButtons(user_id, message_id, text, markup, parse_mode)
+
+    def forceLogout(self, user_id):
+        self.ns.logout(user_id)
+        self.master.config["users"][user_id]["current_account"] = None
+        self.master.saveConfig()
 
     @staticmethod
     def _parseButtons(values):

@@ -3,6 +3,7 @@ from datetime import timedelta
 
 import util
 from nsapi import NetSchoolAPI
+from errors import SchoolNotFoundError, LoginError
 
 
 class NetSchoolSessionHandler:
@@ -32,7 +33,18 @@ class NetSchoolSessionHandler:
             school = account["school"]
             student = account["student"]
 
-            self.login(user_id, url, username, password, student, school)
+            try:
+                self.login(user_id, url, username, password, student, school)
+            except SchoolNotFoundError:
+                self.master.editButtons(user_id, msg_id, "Такой школы не существует", [])
+                self.master.forceLogout(user_id)
+                self.master.sendKeyboard(user_id, "account_selection")
+                return
+            except LoginError:
+                self.master.editButtons(user_id, msg_id, "Неправильный логин или пароль", [])
+                self.master.forceLogout(user_id)
+                self.master.sendKeyboard(user_id, "account_selection")
+                return
 
             self.master.tg_api.deleteMessage(user_id, msg_id)
 
@@ -46,7 +58,8 @@ class NetSchoolSessionHandler:
 
     def getOverdueTasks(self, user_id):
 
-        self.checkSession(user_id)
+        if not self.checkSession(user_id):
+            return
 
         output = []
         response = self.sessions[user_id].getOverdueTasks()
@@ -101,7 +114,8 @@ class NetSchoolSessionHandler:
         only_marks=False,
     ):
 
-        self.checkSession(user_id)
+        if not self.checkSession(user_id):
+            return
 
         today = datetime.today()
         monday = today - timedelta(days=today.weekday())
