@@ -181,7 +181,9 @@ class TelegramHandler:
                         )
 
                         if not util.checkAccountName(newName):
-                            self.tg_api.sendMessage(user_id, "Такое имя аккаунта запрещено")
+                            self.tg_api.sendMessage(
+                                user_id, "Такое имя аккаунта запрещено"
+                            )
 
                         if newName:
 
@@ -243,7 +245,7 @@ class TelegramHandler:
 
                 if not self.ns.checkSession(user_id):
                     self.tg_api.sendMessage(
-                        user_id, "Перед тем как скачивать, нужно зайти в аккаунт."
+                        user_id, "Перед тем как скачивать, нужно зайти в аккаунт"
                     )
                     return True
 
@@ -253,7 +255,7 @@ class TelegramHandler:
 
                 if str(studentId) != button_data[1]:
                     self.tg_api.sendMessage(
-                        user_id, "Текущий аккаунт не имеет доступа к этому вложению."
+                        user_id, "Текущий аккаунт не имеет доступа к этому вложению"
                     )
                     return True
 
@@ -290,7 +292,7 @@ class TelegramHandler:
             )
 
         municipalityDistrictId = self.askUserWithButtons(
-            user_id, message_id, "Выберите округ", districts
+            user_id, message_id, "Выберите округ:", districts
         )
         if not municipalityDistrictId:
             return
@@ -302,7 +304,7 @@ class TelegramHandler:
                     addresses.append(school["addressString"])
 
         account["address"] = self.askUserWithButtons(
-            user_id, message_id, "Выберите адрес", addresses
+            user_id, message_id, "Выберите адрес:", addresses
         )
         if not account["address"]:
             return
@@ -313,7 +315,7 @@ class TelegramHandler:
                 schools.append(school["name"])
 
         account["school"] = self.askUserWithButtons(
-            user_id, message_id, "Выберите школу", schools
+            user_id, message_id, "Выберите школу:", schools
         )
         if not account["school"]:
             return
@@ -333,7 +335,7 @@ class TelegramHandler:
         student_buttons = [student["name"] for student in students]
 
         account["student"] = self.askUserWithButtons(
-            user_id, message_id, "Выберите ученика", student_buttons
+            user_id, message_id, "Выберите ученика:", student_buttons
         )
         if not account["student"]:
             return

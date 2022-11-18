@@ -205,7 +205,9 @@ class NetSchoolSessionHandler:
                                         user_id, attachmentText, attachment
                                     )
 
-                                    attachments_text.append(f"<b>{attachmentText}</b>\n")
+                                    attachments_text.append(
+                                        f"<b>{attachmentText}</b>\n"
+                                    )
                                     buttons.append(attachmentButton)
 
                 name = lesson["subjectName"]
