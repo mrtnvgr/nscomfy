@@ -55,7 +55,7 @@ def shortenSubjectName(subject):
 
 
 def checkAccountName(name):
-    if name == "Назад":
+    if name in ["Назад", "Добавить аккаунт"]:
         return
     if len(name) >= 128:
         return

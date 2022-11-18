@@ -112,22 +112,17 @@ class TelegramHandler:
                     self.sendKeyboard(user_id, "diary")
                     return True
 
+                elif text == "Настройки":
+
+                    self.sendKeyboard(user_id, "settings")
+                    return True
+
             elif current_keyboard == "account_selection":
 
                 if text == "Добавить аккаунт":
 
                     self.askForAccount(user_id)
 
-                elif text == "Удалить аккаунт":
-
-                    if self.master.config["users"][user_id]["accounts"]:
-                        self.sendKeyboard(user_id, "account_deletion")
-                        return True
-                elif text == "Переименовать аккаунт":
-
-                    if self.master.config["users"][user_id]["accounts"]:
-                        self.sendKeyboard(user_id, "account_renaming")
-                        return True
                 else:
 
                     if text in self.master.config["users"][user_id]["accounts"]:
@@ -163,43 +158,6 @@ class TelegramHandler:
                     else:
                         self.tg_api.sendMessage(user_id, "Такого аккаунта нет")
 
-            elif current_keyboard == "account_deletion":
-
-                if text != "Назад":
-
-                    if text in self.master.config["users"][user_id]["accounts"]:
-                        self.master.config["users"][user_id]["accounts"].pop(text)
-                        self.master.saveConfig()
-
-            elif current_keyboard == "account_renaming":
-
-                if text != "Назад":
-
-                    if text in self.master.config["users"][user_id]["accounts"]:
-                        newName = self.askUser(
-                            user_id, "Напишите новое название аккаунта:"
-                        )
-
-                        if not util.checkAccountName(newName):
-                            self.tg_api.sendMessage(
-                                user_id, "Такое имя аккаунта запрещено"
-                            )
-
-                        if newName:
-
-                            account = self.master.config["users"][user_id][
-                                "accounts"
-                            ].pop(text)
-
-                            self.master.config["users"][user_id]["accounts"][
-                                newName
-                            ] = account
-                            self.master.saveConfig()
-
-                            self.tg_api.sendMessage(
-                                user_id, f'Аккаунт "{text}" переименован в "{newName}"'
-                            )
-
             elif current_keyboard == "diary":
 
                 if text in ["Всё", "Расписание", "Задания", "Оценки"]:
@@ -231,6 +189,64 @@ class TelegramHandler:
                     )
 
                     return True
+
+            elif current_keyboard == "settings":
+
+                if text == "Аккаунт":
+
+                    self.sendKeyboard(user_id, "settings_account")
+
+                    return True
+
+            elif current_keyboard == "settings_account":
+
+                if text == "Удалить":
+
+                    if self.master.config["users"][user_id]["accounts"]:
+                        
+                        if self.askUser(user_id, 'Для продолжения напишите "Согласен":') == "Согласен":
+
+                            current_account = self.master.config["users"][user_id]["current_account"]
+                            self.master.config["users"][user_id]["accounts"].pop(current_account)
+
+                            self.ns.logout(user_id)
+                            self.master.config["users"][user_id]["current_account"] = None
+
+                            self.master.saveConfig()
+
+                elif text == "Переименовать":
+
+                    if self.master.config["users"][user_id]["accounts"]:
+                        newName = self.askUser(
+                            user_id, "Напишите новое название аккаунта:"
+                        )
+
+                        if not util.checkAccountName(newName):
+                            self.tg_api.sendMessage(
+                                user_id, "Такое имя аккаунта запрещено"
+                            )
+                            return True
+
+                        if newName:
+
+                            current_account = self.master.config["users"][user_id]["current_account"]
+
+                            account = self.master.config["users"][user_id][
+                                "accounts"
+                            ].pop(current_account)
+
+                            self.master.config["users"][user_id]["accounts"][
+                                newName
+                            ] = account
+                            self.master.config["users"][user_id]["current_account"] = newName
+                            self.master.saveConfig()
+
+                            self.tg_api.sendMessage(
+                                user_id, f'Аккаунт "{current_account}" переименован в "{newName}"'
+                            )
+
+                        return True
+
 
         elif "callback_query" in update:
 
@@ -399,24 +415,14 @@ class TelegramHandler:
         keyboard = {"keyboard": [], "one_time_keyboard": True, "resize_keyboard": True}
         text = ""
 
-        if ktype in ["account_selection", "account_deletion", "account_renaming"]:
+        if ktype == "account_selection":
             text = "Выберите аккаунт"
 
             accounts = self.master.config["users"][user_id]["accounts"]
             for name in sorted(accounts):
                 keyboard["keyboard"].append([name])
 
-            if ktype == "account_selection":
-                misc = ["Добавить аккаунт"]
-
-                if self.master.config["users"][user_id]["accounts"] != {}:
-                    misc.append("Удалить аккаунт")
-                keyboard["keyboard"].append(misc)
-
-                keyboard["keyboard"].append(["Переименовать аккаунт"])
-
-            if ktype in ["account_deletion", "account_renaming"]:
-                keyboard["keyboard"].append(["Назад"])
+            keyboard["keyboard"].append(["Добавить аккаунт"])
 
         elif ktype == "mm":
 
@@ -436,6 +442,7 @@ class TelegramHandler:
             text = f"Главное меню\n\n{student_info}{overdueCount}\n\n{activeSessions}"
 
             keyboard["keyboard"].append(firstRow)
+            keyboard["keyboard"].append(["Настройки"])
             keyboard["keyboard"].append(["Выйти"])
 
             keyboard["one_time_keyboard"] = False
@@ -448,6 +455,24 @@ class TelegramHandler:
             keyboard["keyboard"].append(["Расписание"])
             keyboard["keyboard"].append(["Задания", "Оценки"])
             keyboard["keyboard"].append(["Назад"])
+
+            keyboard["one_time_keyboard"] = False
+
+        elif ktype == "settings":
+
+            text = "Настройки:"
+
+            keyboard["keyboard"].append(["Аккаунт"])
+            keyboard["keyboard"].append(["Назад"])
+
+            keyboard["one_time_keyboard"] = False
+
+        elif ktype == "settings_account":
+
+            text = "Настройки аккаунта:"
+
+            keyboard["keyboard"].append(["Переименовать", "Удалить"])
+            # keyboard["keyboard"].append(["Сменить ученика"])
 
             keyboard["one_time_keyboard"] = False
 
