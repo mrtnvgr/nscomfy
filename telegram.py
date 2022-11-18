@@ -425,14 +425,17 @@ class TelegramHandler:
             student_info = f"Ученик: {api.student_info['name']}"
             activeSessions = f"Пользователей в сети: {len(api._active_sessions)}"
 
+            firstRow = ["Дневник"]
+
             if api._overdue_count > 0:
                 overdueCount = f"\nТочки: {api._overdue_count}"
+                firstRow.append("Точки")
             else:
                 overdueCount = ""
 
             text = f"Главное меню\n\n{student_info}{overdueCount}\n\n{activeSessions}"
 
-            keyboard["keyboard"].append(["Дневник", "Точки"])
+            keyboard["keyboard"].append(firstRow)
             keyboard["keyboard"].append(["Выйти"])
 
             keyboard["one_time_keyboard"] = False
