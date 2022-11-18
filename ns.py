@@ -61,7 +61,7 @@ class NetSchoolSessionHandler:
 
         for date in dates:
 
-            output.append(f"<b>{date}</b>")
+            output.append(f"\n<b>{date}</b>")
 
             overdues = dates[date]
 
@@ -73,7 +73,7 @@ class NetSchoolSessionHandler:
                 assignment = util.normalizeHTMLText(assignment)
 
                 output.append(f"{subject} ({overdue['type']}):")
-                output.append(f"<pre>{assignment}</pre>")
+                output.append(f"<pre>{assignment}</pre>\n")
 
         if output == []:
 
