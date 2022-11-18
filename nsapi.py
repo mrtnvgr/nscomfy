@@ -141,9 +141,6 @@ class NetSchoolAPI:
     def login(self, username, password, school_name):
         """Log into user account"""
 
-        # Reset logged-in status
-        self._logged_in = False
-
         # Make sure that we have school info
         self.getSchoolList()
 
@@ -170,7 +167,7 @@ class NetSchoolAPI:
             raise SchoolNotFoundError(school_name)
 
         # Get auth data (var, lt, salt)
-        authdata = self.request("auth/getdata", method="POST").json()
+        authdata = self.request("auth/getdata", method="POST", relogin=False).json()
 
         # Pop salt from auth data
         salt = authdata.pop("salt")
@@ -188,7 +185,7 @@ class NetSchoolAPI:
         payload.update(authdata)
 
         # Log in
-        login_response = self.request("login", method="POST", data=payload).json()
+        login_response = self.request("login", method="POST", data=payload, relogin=False).json()
 
         # Check if we logged in successfully
         if "at" not in login_response:
@@ -224,9 +221,6 @@ class NetSchoolAPI:
         # Get active sessions info
         self._active_sessions = self.request("context/activeSessions").json()
 
-        # Set logged-in status
-        self._logged_in = True
-
         return login_response
 
     def setStudent(self, student_name):
@@ -237,7 +231,7 @@ class NetSchoolAPI:
                 self.student_info = student
                 break
 
-    def request(self, url, method="GET", headers={}, **kwargs):
+    def request(self, url, method="GET", headers={}, relogin=True, **kwargs):
         """Session request wrapper"""
 
         # Check if url is relative
@@ -255,7 +249,7 @@ class NetSchoolAPI:
             return self.request(url, method, headers, **kwargs)
 
         # If access denied and we are logged in, try to relogin
-        if response.status_code == 500 and self._logged_in:
+        if response.status_code == 500 and relogin:
 
             # Check if we have stored login data
             if self._login_data:
@@ -284,7 +278,6 @@ class NetSchoolAPI:
     def _reset_logindata(self):
         """Reset login data variables"""
         self._login_data = None
-        self._logged_in = False
 
         self.ns_info = {}
 
