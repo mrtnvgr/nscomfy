@@ -1,5 +1,6 @@
 from html import escape as html_escape
 from unicodedata import lookup as unilookup
+from datetime import timedelta
 
 
 def formatDate(string: str):
@@ -60,3 +61,20 @@ def checkAccountName(name):
     if len(name) >= 128:
         return
     return True
+
+def getTomorrowDelta(day):
+    # Monday => Tuesday
+    # Friday => Monday
+    if day.weekday() > 3:
+        return timedelta(days=7 - day.weekday())
+    else:
+        return timedelta(days=1)
+
+def getYesterdayDelta(day):
+    # Sunday => Friday
+    if day.weekday() > 4:
+        return timedelta(days=day.weekday() - 4)
+    elif day.weekday() == 0:
+        return timedelta(days=3)
+    else:
+        return timedelta(days=1)

@@ -124,10 +124,10 @@ class NetSchoolSessionHandler:
             start = today
             end = start
         elif date == "Завтра":
-            start = today + timedelta(days=1)
+            start = today + util.getTomorrowDelta(today)
             end = start
         elif date == "Вчера":
-            start = today - timedelta(days=1)
+            start = today - util.getYesterdayDelta(today)
             end = start
         elif date == "Текущая":
             start = monday
