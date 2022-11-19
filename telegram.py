@@ -289,6 +289,8 @@ class TelegramHandler:
         account = {}
 
         account["url"] = self.askUser(user_id, "Напишите ссылку на нет город:")
+        if not account["url"]:
+            return
 
         try:
             api = NetSchoolAPI(account["url"])
