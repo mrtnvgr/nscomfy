@@ -248,7 +248,6 @@ class TelegramHandler:
                                 user_id, f'Аккаунт "{current_account}" переименован в "{newName}"'
                             )
 
-                        return True
 
 
         elif "callback_query" in update:
