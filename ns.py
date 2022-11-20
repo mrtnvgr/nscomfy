@@ -74,7 +74,7 @@ class NetSchoolSessionHandler:
 
         for date in dates:
 
-            output.append(f"\n<b>{date}</b>")
+            output.append(f"\n<b>{date}:</b>")
 
             overdues = dates[date]
 
