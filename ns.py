@@ -36,12 +36,16 @@ class NetSchoolSessionHandler:
             try:
                 self.login(user_id, url, username, password, student, school)
             except SchoolNotFoundError:
-                self.master.editButtons(user_id, msg_id, "Такой школы не существует", [])
+                self.master.editButtons(
+                    user_id, msg_id, "Такой школы не существует", []
+                )
                 self.master.forceLogout(user_id)
                 self.master.sendKeyboard(user_id, "account_selection")
                 return
             except LoginError:
-                self.master.editButtons(user_id, msg_id, "Неправильный логин или пароль", [])
+                self.master.editButtons(
+                    user_id, msg_id, "Неправильный логин или пароль", []
+                )
                 self.master.forceLogout(user_id)
                 self.master.sendKeyboard(user_id, "account_selection")
                 return
@@ -183,21 +187,27 @@ class NetSchoolSessionHandler:
                                 marks.append(mark_sign)
                                 showAttachments = True
 
-                        if (
-                            show_tasks
-                            and "assignmentName" in assignment
-                            and not only_marks
-                        ):
-
-                            # Получим id типа домашнего задания
-                            typeid = api.getAssignmentTypeId("Домашнее задание")
+                        if show_tasks and "assignmentName" in assignment:
 
                             assignmentName = assignment["assignmentName"]
                             isEmpty = util.detectEmptyTask(assignmentName)
 
-                            if not isEmpty and assignment["typeId"] == typeid:
-                                tasks.append(assignmentName)
-                                showAttachments = True
+                            if not isEmpty:
+
+                                if not only_marks:
+
+                                    # Получим id типа домашнего задания
+                                    typeid = api.getAssignmentTypeId("Домашнее задание")
+
+                                    if assignment["typeId"] == typeid:
+                                        tasks.append(assignmentName)
+                                        showAttachments = True
+
+                                else:
+
+                                    if "mark" in assignment:
+
+                                        tasks.append(assignmentName)
 
                         if showAttachments:
 

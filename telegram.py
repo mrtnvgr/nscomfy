@@ -206,14 +206,25 @@ class TelegramHandler:
                 if text == "Удалить":
 
                     if self.master.config["users"][user_id]["accounts"]:
-                        
-                        if self.askUser(user_id, 'Для продолжения напишите "Согласен":') == "Согласен":
 
-                            current_account = self.master.config["users"][user_id]["current_account"]
-                            self.master.config["users"][user_id]["accounts"].pop(current_account)
+                        if (
+                            self.askUser(
+                                user_id, 'Для продолжения напишите "Согласен":'
+                            )
+                            == "Согласен"
+                        ):
+
+                            current_account = self.master.config["users"][user_id][
+                                "current_account"
+                            ]
+                            self.master.config["users"][user_id]["accounts"].pop(
+                                current_account
+                            )
 
                             self.ns.logout(user_id)
-                            self.master.config["users"][user_id]["current_account"] = None
+                            self.master.config["users"][user_id][
+                                "current_account"
+                            ] = None
 
                             self.master.saveConfig()
 
@@ -232,7 +243,9 @@ class TelegramHandler:
 
                         if newName:
 
-                            current_account = self.master.config["users"][user_id]["current_account"]
+                            current_account = self.master.config["users"][user_id][
+                                "current_account"
+                            ]
 
                             account = self.master.config["users"][user_id][
                                 "accounts"
@@ -241,14 +254,15 @@ class TelegramHandler:
                             self.master.config["users"][user_id]["accounts"][
                                 newName
                             ] = account
-                            self.master.config["users"][user_id]["current_account"] = newName
+                            self.master.config["users"][user_id][
+                                "current_account"
+                            ] = newName
                             self.master.saveConfig()
 
                             self.tg_api.sendMessage(
-                                user_id, f'Аккаунт "{current_account}" переименован в "{newName}"'
+                                user_id,
+                                f'Аккаунт "{current_account}" переименован в "{newName}"',
                             )
-
-
 
         elif "callback_query" in update:
 

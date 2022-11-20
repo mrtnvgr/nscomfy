@@ -185,7 +185,9 @@ class NetSchoolAPI:
         payload.update(authdata)
 
         # Log in
-        login_response = self.request("login", method="POST", data=payload, relogin=False).json()
+        login_response = self.request(
+            "login", method="POST", data=payload, relogin=False
+        ).json()
 
         # Check if we logged in successfully
         if "at" not in login_response:

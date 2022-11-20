@@ -39,7 +39,8 @@ def detectEmptyTask(task):
     task = task.lower()
     task = task.rstrip(" ")
     task = task.removesuffix(".")
-    if task == "не задано":
+    task = task.strip("-")
+    if task in ["не задано", "не указана"]:
         return True
 
 
@@ -62,6 +63,7 @@ def checkAccountName(name):
         return
     return True
 
+
 def getTomorrowDelta(day):
     # Monday => Tuesday
     # Friday => Monday
@@ -69,6 +71,7 @@ def getTomorrowDelta(day):
         return timedelta(days=7 - day.weekday())
     else:
         return timedelta(days=1)
+
 
 def getYesterdayDelta(day):
     # Sunday => Friday
