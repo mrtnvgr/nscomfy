@@ -248,7 +248,7 @@ class NetSchoolAPI:
             response = self._session.request(method, url, headers=headers, **kwargs)
         except requests.exceptions.ReadTimeout:
             # Retry request
-            return self.request(url, method, headers, **kwargs)
+            return self.request(url, method, headers, relogin, **kwargs)
 
         # If access denied and we are logged in, try to relogin
         if response.status_code == 500 and relogin:
@@ -260,7 +260,7 @@ class NetSchoolAPI:
                 self.login(*self._login_data)
 
                 # Retry request
-                return self.request(url, method, headers, **kwargs)
+                return self.request(url, method, headers, relogin, **kwargs)
             else:
 
                 raise RequestError(
