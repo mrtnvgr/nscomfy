@@ -304,3 +304,9 @@ class NetSchoolSessionHandler:
         if user_id in self.sessions:
             self.sessions[user_id].logout()
             self.sessions.pop(user_id)
+
+    def allLogout(self):
+
+        for user_id in self.sessions.copy():
+            print(f"Logging out: {user_id}")
+            self.logout(user_id)
