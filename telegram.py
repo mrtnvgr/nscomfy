@@ -205,64 +205,78 @@ class TelegramHandler:
 
                 if text == "Удалить":
 
-                    if self.master.config["users"][user_id]["accounts"]:
+                    if (
+                        self.askUser(user_id, 'Для продолжения напишите "Согласен":')
+                        == "Согласен"
+                    ):
 
-                        if (
-                            self.askUser(
-                                user_id, 'Для продолжения напишите "Согласен":'
-                            )
-                            == "Согласен"
-                        ):
+                        current_account = self.master.config["users"][user_id][
+                            "current_account"
+                        ]
+                        self.master.config["users"][user_id]["accounts"].pop(
+                            current_account
+                        )
 
-                            current_account = self.master.config["users"][user_id][
-                                "current_account"
-                            ]
-                            self.master.config["users"][user_id]["accounts"].pop(
-                                current_account
-                            )
+                        self.ns.logout(user_id)
+                        self.master.config["users"][user_id]["current_account"] = None
 
-                            self.ns.logout(user_id)
-                            self.master.config["users"][user_id][
-                                "current_account"
-                            ] = None
-
-                            self.master.saveConfig()
+                        self.master.saveConfig()
 
                 elif text == "Переименовать":
 
-                    if self.master.config["users"][user_id]["accounts"]:
-                        newName = self.askUser(
-                            user_id, "Напишите новое название аккаунта:"
-                        )
+                    newName = self.askUser(user_id, "Напишите новое название аккаунта:")
 
-                        if not util.checkAccountName(newName):
-                            self.tg_api.sendMessage(
-                                user_id, "Такое имя аккаунта запрещено"
-                            )
-                            return True
+                    if not util.checkAccountName(newName):
+                        self.tg_api.sendMessage(user_id, "Такое имя аккаунта запрещено")
+                        return True
 
-                        if newName:
+                    if not newName:
+                        return
 
-                            current_account = self.master.config["users"][user_id][
-                                "current_account"
-                            ]
+                    current_account = self.master.config["users"][user_id][
+                        "current_account"
+                    ]
 
-                            account = self.master.config["users"][user_id][
-                                "accounts"
-                            ].pop(current_account)
+                    account = self.master.config["users"][user_id]["accounts"].pop(
+                        current_account
+                    )
 
-                            self.master.config["users"][user_id]["accounts"][
-                                newName
-                            ] = account
-                            self.master.config["users"][user_id][
-                                "current_account"
-                            ] = newName
-                            self.master.saveConfig()
+                    self.master.config["users"][user_id]["accounts"][newName] = account
+                    self.master.config["users"][user_id]["current_account"] = newName
+                    self.master.saveConfig()
 
-                            self.tg_api.sendMessage(
-                                user_id,
-                                f'Аккаунт "{current_account}" переименован в "{newName}"',
-                            )
+                    self.tg_api.sendMessage(
+                        user_id,
+                        f'Аккаунт "{current_account}" переименован в "{newName}"',
+                    )
+
+                elif text == "Сменить ученика":
+
+                    if not self.ns.checkSession(user_id):
+                        return
+                    api = self.ns.sessions[user_id]
+
+                    buttons = [[student["name"]] for student in api._students]
+
+                    resp = self.sendButtons(user_id, "Выберите ученика:", buttons)
+                    message_id = resp["message_id"]
+
+                    answer = self.getButtonAnswer()
+                    if not answer:
+                        return
+
+                    if answer not in [student["name"] for student in api._students]:
+                        return
+
+                    current_account = self.master.config["users"][user_id][
+                        "current_account"
+                    ]
+                    self.master.config["users"][user_id]["accounts"][current_account][
+                        "student"
+                    ] = answer
+                    self.master.saveConfig()
+
+                    self.forceLogout(user_id)
 
         elif "callback_query" in update:
 
@@ -488,10 +502,18 @@ class TelegramHandler:
 
         elif ktype == "settings_account":
 
+            if not self.ns.checkSession(user_id):
+                return
+            api = self.ns.sessions[user_id]
+
             text = "Настройки аккаунта:"
 
             keyboard["keyboard"].append(["Переименовать", "Удалить"])
-            # keyboard["keyboard"].append(["Сменить ученика"])
+
+            if len(api._students) > 1:
+                keyboard["keyboard"].append(["Сменить ученика"])
+
+            keyboard["keyboard"].append(["Назад"])
 
             keyboard["one_time_keyboard"] = False
 
