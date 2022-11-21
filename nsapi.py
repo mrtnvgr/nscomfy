@@ -260,7 +260,7 @@ class NetSchoolAPI:
                 self.login(*self._login_data)
 
                 # Retry request
-                return self.request(url, method, headers, relogin, **kwargs)
+                return self.request(url, method, headers, relogin=False, **kwargs)
             else:
 
                 raise RequestError(
