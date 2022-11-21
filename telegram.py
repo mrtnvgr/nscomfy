@@ -283,6 +283,16 @@ class TelegramHandler:
 
                     self.forceLogout(user_id)
 
+            elif current_keyboard == "info":
+
+                if text == "Школа":
+
+                    school_info = self.ns.getSchoolInfo(user_id)
+                    if school_info:
+                        self.tg_api.sendMessage(user_id, school_info)
+
+                    return True
+
         elif "callback_query" in update:
 
             button_data = self.parseButtonUpdate(update)
@@ -488,10 +498,6 @@ class TelegramHandler:
 
         elif ktype == "diary":
 
-            if not self.ns.checkSession(user_id):
-                return
-            api = self.ns.sessions[user_id]
-
             text = "Выберите тип информации:"
 
             keyboard["keyboard"].append(["Всё"])
@@ -529,13 +535,10 @@ class TelegramHandler:
 
         elif ktype == "info":
 
-            if not self.ns.checkSession(user_id):
-                return
-            api = self.ns.sessions[user_id]
-
             text = "Информация:"
 
             keyboard["keyboard"].append(["Школа"])
+            keyboard["keyboard"].append(["Назад"])
 
             keyboard["one_time_keyboard"] = False
 

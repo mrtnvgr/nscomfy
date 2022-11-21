@@ -278,6 +278,60 @@ class NetSchoolSessionHandler:
 
         return "".join(text), buttons
 
+    def getSchoolInfo(self, user_id):
+
+        if not self.checkSession(user_id):
+            return
+        api = self.sessions[user_id]
+
+        school_info = api.getSchoolInfo()
+        if not school_info:
+            return
+
+        commonInfo = school_info["commonInfo"]
+        managementInfo = school_info["managementInfo"]
+        contactInfo = school_info["contactInfo"]
+        otherInfo = school_info["otherInfo"]
+
+        params = {
+            "Главное:": "--SPACER--",
+            "Название": commonInfo["schoolName"],
+            "Полное название": commonInfo["fullSchoolName"],
+            "Контакты:": "--SPACER--",
+            "Адрес": contactInfo["juridicalAddress"],
+            "Номер телефона": contactInfo["phones"],
+            "Факс": contactInfo["fax"],
+            "Почта": contactInfo["email"],
+            "Сайт": contactInfo["web"],
+            "Работники:": "--SPACER--",
+            "Директор": managementInfo["director"],
+            "Зам директора по УВР": managementInfo["principalUVR"],
+            "Зам директора по АХЧ": managementInfo["principalAHC"],
+            "Зам директора по ИТ": managementInfo["principalIT"],
+            "Юридические данные:": "--SPACER--",
+            "ИНН": otherInfo["inn"],
+            "КПП": otherInfo["kpp"],
+            "ОГРН/ОГРНИП": otherInfo["ogrn"],
+            "Код ОКПО": otherInfo["okpo"],
+            "Код ОКАТО": otherInfo["okato"],
+            "Код ОКОГУ": otherInfo["okogu"],
+            "ОКОПФ": otherInfo["okopf"],
+            "ОКФС": otherInfo["okfs"],
+            "ОКВЕД": otherInfo["okved"],
+        }
+
+        text = []
+
+        for param_key, param_value in params.items():
+            if param_value:
+                if param_value == "--SPACER--":
+                    text.append(f"\n\n<b>{param_key}</b>")
+                else:
+                    param_value = util.normalizeHTMLText(param_value)
+                    text.append(f"\n{param_key}: <pre>{param_value}</pre>")
+
+        return "\n".join(text)
+
     def getAssignIds(self, days):
 
         assignIds = []
