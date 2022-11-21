@@ -116,6 +116,11 @@ class TelegramHandler:
                     self.sendKeyboard(user_id, "settings")
                     return True
 
+                elif text == "Информация":
+
+                    self.sendKeyboard(user_id, "info")
+                    return True
+
             elif current_keyboard == "account_selection":
 
                 if text == "Добавить аккаунт":
@@ -475,12 +480,17 @@ class TelegramHandler:
             text = f"Главное меню\n\n{student_info}{overdueCount}\n\n{activeSessions}"
 
             keyboard["keyboard"].append(firstRow)
+            keyboard["keyboard"].append(["Информация"])
             keyboard["keyboard"].append(["Настройки"])
             keyboard["keyboard"].append(["Выйти"])
 
             keyboard["one_time_keyboard"] = False
 
         elif ktype == "diary":
+
+            if not self.ns.checkSession(user_id):
+                return
+            api = self.ns.sessions[user_id]
 
             text = "Выберите тип информации:"
 
@@ -514,6 +524,18 @@ class TelegramHandler:
                 keyboard["keyboard"].append(["Сменить ученика"])
 
             keyboard["keyboard"].append(["Назад"])
+
+            keyboard["one_time_keyboard"] = False
+
+        elif ktype == "info":
+
+            if not self.ns.checkSession(user_id):
+                return
+            api = self.ns.sessions[user_id]
+
+            text = "Информация:"
+
+            keyboard["keyboard"].append(["Школа"])
 
             keyboard["one_time_keyboard"] = False
 
