@@ -3,7 +3,7 @@ from datetime import timedelta
 
 import util
 from nsapi import NetSchoolAPI
-from errors import SchoolNotFoundError, LoginError
+from errors import *
 
 
 class NetSchoolSessionHandler:
@@ -46,6 +46,11 @@ class NetSchoolSessionHandler:
                 self.master.editButtons(
                     user_id, msg_id, "Неправильный логин или пароль", []
                 )
+                self.master.forceLogout(user_id)
+                self.master.sendKeyboard(user_id, "account_selection")
+                return
+            except UnsupportedRole:
+                self.master.editButtons(user_id, msg_id, "Ваш тип аккаунта не поддерживается", [])
                 self.master.forceLogout(user_id)
                 self.master.sendKeyboard(user_id, "account_selection")
                 return

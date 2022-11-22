@@ -196,6 +196,12 @@ class NetSchoolAPI:
         # Add at to headers for request access
         self._session_headers["at"] = login_response["at"]
 
+        # Check if we have a supported role
+        mysettings = self.request("mysettings").json()
+        roles = mysettings["roles"]
+        if not ("Student" in roles or "Parent" in roles):
+            raise UnsupportedRole(roles)
+
         # Save current login data for auto-relogin
         self._login_data = (username, password, school_name)
 

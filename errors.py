@@ -12,3 +12,7 @@ class SchoolNotFoundError(Exception):
 
 class InvalidUrlError(Exception):
     pass
+
+
+class UnsupportedRole(Exception):
+    pass

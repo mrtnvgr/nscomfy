@@ -1,5 +1,5 @@
 from nsapi import NetSchoolAPI
-from errors import InvalidUrlError, SchoolNotFoundError, LoginError
+from errors import *
 from ns import NetSchoolSessionHandler
 from tgapi import TelegramAPI
 import util
@@ -154,6 +154,11 @@ class TelegramHandler:
                             self.editButtons(
                                 user_id, message_id, "Неправильный логин или пароль", []
                             )
+                            self.master.config["users"][user_id]["accounts"].pop(text)
+                            self.master.saveConfig()
+                            return
+                        except UnsupportedRole:
+                            self.editButtons(user_id, message_id, "Ваш тип аккаунта не поддерживается", [])
                             self.master.config["users"][user_id]["accounts"].pop(text)
                             self.master.saveConfig()
                             return
@@ -388,10 +393,13 @@ class TelegramHandler:
         try:
             api.login(account["login"], account["password"], account["school"])
         except SchoolNotFoundError:
-            self.tg_api.sendMessage(user_id, "Такой школы не существует")
+            self.editButtons(user_id, message_id, "Такой школы не существует", [])
             return
         except LoginError:
-            self.tg_api.sendMessage(user_id, "Неправильный логин или пароль")
+            self.editButtons(user_id, message_id, "Неправильный логин или пароль", [])
+            return
+        except UnsupportedRole:
+            self.editButtons(user_id, message_id, "Ваш тип аккаунта не поддерживается", [])
             return
 
         students = api._students
