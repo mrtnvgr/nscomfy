@@ -487,7 +487,12 @@ class TelegramHandler:
             else:
                 overdueCount = ""
 
-            text = f"Главное меню\n\n{student_info}{overdueCount}\n\n{activeSessions}"
+            if api._unreaded_mail_messages > 0:
+                unreaded = f"\nНепрочитанные письма: {api._unreaded_mail_messages}"
+            else:
+                unreaded = ""
+
+            text = f"Главное меню\n\n{student_info}{overdueCount}{unreaded}\n\n{activeSessions}"
 
             keyboard["keyboard"].append(firstRow)
             keyboard["keyboard"].append(["Информация"])

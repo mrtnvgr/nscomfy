@@ -220,8 +220,11 @@ class NetSchoolAPI:
             assignment["id"]: assignment["name"] for assignment in assignment_types
         }
 
-        # Get active sessions info
+        # Get active sessions count
         self._active_sessions = self.request("context/activeSessions").json()
+
+        # Get unreaded mail messages count
+        self._unreaded_mail_messages = self.request("mail/messages/unreaded").json()
 
         return login_response
 
@@ -291,6 +294,9 @@ class NetSchoolAPI:
         self._year_end = None
 
         self._school_id = None
+
+        self._active_sessions = None
+        self._unreaded_mail_messages = None
 
     @staticmethod
     def _format_url(url):
