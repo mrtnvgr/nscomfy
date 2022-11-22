@@ -283,7 +283,7 @@ class NetSchoolSessionHandler:
 
         return "".join(text), buttons
 
-    def getSchoolInfo(self, user_id):
+    def getSchoolInfo(self, user_id, full: bool):
 
         if not self.checkSession(user_id):
             return
@@ -298,42 +298,46 @@ class NetSchoolSessionHandler:
         contactInfo = school_info["contactInfo"]
         otherInfo = school_info["otherInfo"]
 
-        params = {
-            "Главное:": "--SPACER--",
-            "Название": commonInfo["schoolName"],
-            "Полное название": commonInfo["fullSchoolName"],
-            "Контакты:": "--SPACER--",
-            "Адрес": contactInfo["juridicalAddress"],
-            "Номер телефона": contactInfo["phones"],
-            "Факс": contactInfo["fax"],
-            "Почта": contactInfo["email"],
-            "Сайт": contactInfo["web"],
-            "Работники:": "--SPACER--",
-            "Директор": managementInfo["director"],
-            "Зам директора по УВР": managementInfo["principalUVR"],
-            "Зам директора по АХЧ": managementInfo["principalAHC"],
-            "Зам директора по ИТ": managementInfo["principalIT"],
-            "Юридические данные:": "--SPACER--",
-            "ИНН": otherInfo["inn"],
-            "КПП": otherInfo["kpp"],
-            "ОГРН/ОГРНИП": otherInfo["ogrn"],
-            "Код ОКПО": otherInfo["okpo"],
-            "Код ОКАТО": otherInfo["okato"],
-            "Код ОКОГУ": otherInfo["okogu"],
-            "ОКОПФ": otherInfo["okopf"],
-            "ОКФС": otherInfo["okfs"],
-            "ОКВЕД": otherInfo["okved"],
-        }
+        params = [
+            ["Главное:", "--SPACER--", False],
+            ["Название", commonInfo["schoolName"], True],
+            ["Полное название", commonInfo["fullSchoolName"], False],
+            ["Контакты:", "--SPACER--", False],
+            ["Адрес", contactInfo["juridicalAddress"], True],
+            ["Номер телефона", contactInfo["phones"], True],
+            ["Факс", contactInfo["fax"], False],
+            ["Почта", contactInfo["email"], True],
+            ["Сайт", contactInfo["web"], True],
+            ["Работники:", "--SPACER--", False],
+            ["Директор", managementInfo["director"], True],
+            ["Зам директора по УВР", managementInfo["principalUVR"], False],
+            ["Зам директора по АХЧ", managementInfo["principalAHC"], False],
+            ["Зам директора по ИТ", managementInfo["principalIT"], False],
+            ["Юридические данные:", "--SPACER--", False],
+            ["ИНН", otherInfo["inn"], True],
+            ["КПП", otherInfo["kpp"], False],
+            ["ОГРН/ОГРНИП", otherInfo["ogrn"], False],
+            ["Код ОКПО", otherInfo["okpo"], False],
+            ["Код ОКАТО", otherInfo["okato"], False],
+            ["Код ОКОГУ", otherInfo["okogu"], False],
+            ["ОКОПФ", otherInfo["okopf"], False],
+            ["ОКФС", otherInfo["okfs"], False],
+            ["ОКВЕД", otherInfo["okved"], False],
+        ]
 
         text = []
 
-        for param_key, param_value in params.items():
-            if param_value:
-                if param_value == "--SPACER--":
-                    text.append(f"\n\n<b>{param_key}</b>")
-                else:
-                    param_value = util.normalizeHTMLText(param_value)
-                    text.append(f"\n{param_key}: <pre>{param_value}</pre>")
+        for param_key, param_value, param_full in params:
+
+            if param_full or full:
+
+                if param_value:
+
+                    if param_value == "--SPACER--":
+                        text.append(f"\n\n<b>{param_key}</b>")
+                    else:
+                        param_value = util.normalizeHTMLText(param_value)
+                        text.append(f"\n{param_key}: <pre>{param_value}</pre>")
 
         return "\n".join(text)
 

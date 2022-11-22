@@ -292,9 +292,17 @@ class TelegramHandler:
 
                 if text == "Школа":
 
-                    school_info = self.ns.getSchoolInfo(user_id)
+                    school_info = self.ns.getSchoolInfo(user_id, full=False)
                     if school_info:
-                        self.tg_api.sendMessage(user_id, school_info)
+
+                        buttons = [
+                            {
+                                "text": "Полные данные",
+                                "callback_data": "/getFullSchoolInfo",
+                            }
+                        ]
+
+                        self.sendButtons(user_id, school_info, buttons)
 
                     return True
 
@@ -328,6 +336,18 @@ class TelegramHandler:
                 attachmentId = button_data[2]
 
                 self.tg_api.sendMessage(user_id, attachmentId)
+
+                return True
+
+            elif button_data[0] == "/getFullSchoolInfo":
+
+                message_id = update["callback_query"]["message"]["message_id"]
+
+                school_info = self.ns.getSchoolInfo(user_id, full=True)
+                if school_info:
+                    self.editButtons(
+                        user_id, message_id, school_info, [], parse_mode="HTML"
+                    )
 
                 return True
 
