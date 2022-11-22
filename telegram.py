@@ -158,7 +158,12 @@ class TelegramHandler:
                             self.master.saveConfig()
                             return
                         except UnsupportedRole:
-                            self.editButtons(user_id, message_id, "Ваш тип аккаунта не поддерживается", [])
+                            self.editButtons(
+                                user_id,
+                                message_id,
+                                "Ваш тип аккаунта не поддерживается",
+                                [],
+                            )
                             self.master.config["users"][user_id]["accounts"].pop(text)
                             self.master.saveConfig()
                             return
@@ -419,7 +424,9 @@ class TelegramHandler:
             self.editButtons(user_id, message_id, "Неправильный логин или пароль", [])
             return
         except UnsupportedRole:
-            self.editButtons(user_id, message_id, "Ваш тип аккаунта не поддерживается", [])
+            self.editButtons(
+                user_id, message_id, "Ваш тип аккаунта не поддерживается", []
+            )
             return
 
         students = api._students
@@ -524,8 +531,7 @@ class TelegramHandler:
 
             keyboard["keyboard"].append(firstRow)
             keyboard["keyboard"].append(["Информация"])
-            keyboard["keyboard"].append(["Настройки"])
-            keyboard["keyboard"].append(["Выйти"])
+            keyboard["keyboard"].append(["Настройки", "Выйти"])
 
             keyboard["one_time_keyboard"] = False
 
