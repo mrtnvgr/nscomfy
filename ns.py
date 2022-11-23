@@ -223,27 +223,27 @@ class NetSchoolSessionHandler:
                             marks.append(mark_sign)
                             showAttachments = True
 
-                        if show_tasks and "assignmentName" in assignment:
+                    if show_tasks and "assignmentName" in assignment:
 
-                            assignmentName = assignment["assignmentName"]
-                            isEmpty = util.detectEmptyTask(assignmentName)
+                        assignmentName = assignment["assignmentName"]
+                        isEmpty = util.detectEmptyTask(assignmentName)
 
-                            if not isEmpty:
+                        if not isEmpty:
 
-                                if not only_marks:
+                            if not only_marks:
 
-                                    # Получим id типа домашнего задания
-                                    typeid = api.getAssignmentTypeId("Домашнее задание")
+                                # Получим id типа домашнего задания
+                                typeid = api.getAssignmentTypeId("Домашнее задание")
 
-                                    if assignment["typeId"] == typeid:
-                                        tasks.append(assignmentName)
-                                        showAttachments = True
+                                if assignment["typeId"] == typeid:
+                                    tasks.append(assignmentName)
+                                    showAttachments = True
 
-                                else:
+                            else:
 
-                                    if "mark" in assignment:
+                                if "mark" in assignment:
 
-                                        tasks.append(assignmentName)
+                                    tasks.append(assignmentName)
 
                         if showAttachments:
 
