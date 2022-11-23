@@ -516,6 +516,7 @@ class TelegramHandler:
 
             firstRow = ["Дневник"]
 
+            self.ns.setOverdueCount(user_id)
             if api._overdue_count > 0:
                 overdueCount = f"\nТочки: {api._overdue_count}"
                 firstRow.append("Точки")
