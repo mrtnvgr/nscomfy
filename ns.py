@@ -303,8 +303,8 @@ class NetSchoolSessionHandler:
 
                     text.extend(attachments_text)
 
-            if text:
-                text.insert(0, f"<b>{daydate}:</b>")
+        if text:
+            text.insert(0, f"<b>{daydate}:</b>")
 
         return "".join(text), buttons
 
