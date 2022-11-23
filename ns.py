@@ -71,7 +71,6 @@ class NetSchoolSessionHandler:
         if not self.checkSession(user_id):
             return
 
-        output = []
         response = self.sessions[user_id].getOverdueTasks()
 
         dates = {}
@@ -82,9 +81,12 @@ class NetSchoolSessionHandler:
                 dates[date] = []
             dates[date].append(task)
 
+        days = []
         for date in dates:
 
-            output.append(f"\n<b>{date}:</b>")
+            day = []
+
+            day.append(f"\n<b>{date}:</b>")
 
             overdues = dates[date]
 
@@ -95,14 +97,12 @@ class NetSchoolSessionHandler:
 
                 assignment = util.normalizeHTMLText(assignment)
 
-                output.append(f"{subject} ({overdue['type']}):")
-                output.append(f"<pre>{assignment}</pre>\n")
+                day.append(f"{subject} ({overdue['type']}):")
+                day.append(f"<pre>{assignment}</pre>\n")
 
-        if output == []:
+            days.append("\n".join(day))
 
-            return "Нету! :3"
-
-        return "\n".join(output)
+        return days
 
     def setOverdueCount(self, user_id):
 

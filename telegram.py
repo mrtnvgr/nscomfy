@@ -101,9 +101,12 @@ class TelegramHandler:
 
                 elif text == "Точки":
 
-                    text = self.ns.getOverdueTasks(user_id)
-                    if text:
-                        self.tg_api.sendMessage(user_id, text)
+                    days = self.ns.getOverdueTasks(user_id)
+                    if days:
+                        for day in days:
+                            self.tg_api.sendMessage(user_id, day)
+                    else:
+                        self.tg_api.sendMessage(user_id, "Нету! :3")
                     return True
 
                 elif text == "Дневник":
