@@ -71,20 +71,18 @@ class TelegramHandler:
 
         # First time
         if user_id not in self.master.config["users"]:
-            self.askForAccount(user_id)
+            self.addNewUser(user_id)
 
-        if user_id in self.master.config["users"]:
+        if self.menuAnswerHandler(user_id, update):
+            return
 
-            if self.menuAnswerHandler(user_id, update):
-                return
+        # Check if user is currently logged in
+        if self.master.config["users"][user_id]["current_account"]:
+            self.sendKeyboard(user_id, "mm")
 
-            # Check if user is currently logged in
-            if self.master.config["users"][user_id]["current_account"]:
-                self.sendKeyboard(user_id, "mm")
-
-            # Login menu
-            if not self.master.config["users"][user_id]["current_account"]:
-                self.sendKeyboard(user_id, "account_selection")
+        # Login menu
+        if not self.master.config["users"][user_id]["current_account"]:
+            self.sendKeyboard(user_id, "account_selection")
 
     def menuAnswerHandler(self, user_id, update):
 
