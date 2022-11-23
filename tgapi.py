@@ -58,14 +58,19 @@ class TelegramAPI:
             "sendMessage", {"text": text, "reply_markup": keyboard}, user_id
         )
 
-    def sendButtons(self, user_id, text, markup):
+    def sendButtons(self, user_id, text, markup, parse_mode):
 
         if type(markup) is dict:
             markup = json.dumps(markup)
 
+        payload = {"text": text, "reply_markup": markup}
+
+        if parse_mode:
+            payload["parse_mode"] = parse_mode
+
         return self.method(
             "sendMessage",
-            {"text": text, "reply_markup": markup},
+            payload,
             user_id,
         )
 

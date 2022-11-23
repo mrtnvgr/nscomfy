@@ -155,43 +155,73 @@ class NetSchoolSessionHandler:
 
         diary = api.getDiary(start, end)
 
-        text = []
-        buttons = []
-
         assignIds = self.getAssignIds(diary["weekDays"])
         attachments = api.getDiaryAttachments(assignIds)
 
+        days = []
+
         for day in diary["weekDays"]:
 
-            daydate = util.formatDate(day["date"])
+            day_output = self.parseDiaryDay(
+                user_id,
+                api,
+                day,
+                attachments,
+                show_tasks,
+                show_marks,
+                only_tasks,
+                only_marks,
+            )
+            if day_output[0]:
+                days.append(day_output)
 
-            day_text = []
+        if not days:
+            days.append(["На эти числа информации нет!", []])
 
-            for lesson in day["lessons"]:
+        return days
 
-                marks = []
-                tasks = []
-                attachments_text = []
+    def parseDiaryDay(
+        self,
+        user_id,
+        api,
+        day,
+        attachments,
+        show_tasks,
+        show_marks,
+        only_tasks,
+        only_marks,
+    ):
 
-                showAttachments = False
+        daydate = util.formatDate(day["date"])
 
-                if "assignments" in lesson:
+        text = []
+        buttons = []
 
-                    assignments = lesson["assignments"]
-                    for assignment in assignments:
+        for lesson in day["lessons"]:
 
-                        if show_marks and "mark" in assignment:
+            marks = []
+            tasks = []
+            attachments_text = []
 
-                            mark = assignment["mark"]
-                            mark_sign = util.mark_to_sign(mark["mark"])
-                            mark_typeid = assignment["typeId"]
-                            mark_type = api._assignment_types[mark_typeid]
+            showAttachments = False
 
-                            if only_marks:
-                                marks.append(f"{mark_sign} | {mark_type}")
-                            else:
-                                marks.append(mark_sign)
-                                showAttachments = True
+            if "assignments" in lesson:
+
+                assignments = lesson["assignments"]
+                for assignment in assignments:
+
+                    if show_marks and "mark" in assignment:
+
+                        mark = assignment["mark"]
+                        mark_sign = util.mark_to_sign(mark["mark"])
+                        mark_typeid = assignment["typeId"]
+                        mark_type = api._assignment_types[mark_typeid]
+
+                        if only_marks:
+                            marks.append(f"{mark_sign} | {mark_type}")
+                        else:
+                            marks.append(mark_sign)
+                            showAttachments = True
 
                         if show_tasks and "assignmentName" in assignment:
 
@@ -261,26 +291,20 @@ class NetSchoolSessionHandler:
                         line += f"\n{marks_text}"
                     else:
                         line += f" <b>[{', '.join(marks)}]</b>"
-                day_text.append(f"{line}\n")
+                text.append(f"{line}\n")
 
                 if tasks:
 
                     for task in tasks:
                         task = util.normalizeHTMLText(task)
-                        day_text.append(f"<pre>{task}</pre>\n")
+                        text.append(f"<pre>{task}</pre>\n")
 
                 if attachments_text:
 
-                    day_text.extend(attachments_text)
+                    text.extend(attachments_text)
 
-            if day_text:
-                text.append("\n")
-                text.append("\n")
-                text.append(f"<b>{daydate}:</b>")
-                text += day_text
-
-        if text == []:
-            text.append("На эти числа информации нет!")
+            if text:
+                text.insert(0, f"<b>{daydate}:</b>")
 
         return "".join(text), buttons
 

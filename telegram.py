@@ -200,11 +200,13 @@ class TelegramHandler:
 
                     if not diary:
                         return True
-                    text, buttons = diary
 
-                    self.editButtons(
-                        user_id, message_id, text, buttons, parse_mode="HTML"
-                    )
+                    self.tg_api.deleteMessage(user_id, message_id)
+
+                    for day in diary:
+                        text, buttons = day
+
+                        self.sendButtons(user_id, text, buttons, parse_mode="HTML")
 
                     return True
 
@@ -587,11 +589,11 @@ class TelegramHandler:
         self.master.config["users"][user_id]["current_keyboard"] = ktype
         self.master.saveConfig()
 
-    def sendButtons(self, user_id, text, values):
+    def sendButtons(self, user_id, text, values, parse_mode=None):
 
         markup = self._parseButtons(values)
 
-        return self.tg_api.sendButtons(user_id, text, markup)
+        return self.tg_api.sendButtons(user_id, text, markup, parse_mode)
 
     def editButtons(self, user_id, message_id, text, values, parse_mode=""):
 
