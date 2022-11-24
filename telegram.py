@@ -314,9 +314,18 @@ class TelegramHandler:
 
                 elif text == "Аккаунт":
 
-                    student_info = self.ns.getAccountInfo(user_id)
-                    if student_info:
-                        self.tg_api.sendMessage(user_id, student_info)
+                    account_info = self.ns.getAccountInfo(user_id)
+
+                    user_photo = self.ns.getUserPhoto(user_id)
+
+                    if account_info:
+                        self.tg_api.editPhoto(
+                            user_id,
+                            message_id,
+                            user_photo,
+                            account_info,
+                            parse_mode="HTML",
+                        )
 
                     return True
 

@@ -65,6 +65,17 @@ class NetSchoolAPI:
 
         return self.request("mysettings").json()
 
+    def getUserPhoto(self):
+        """Get user photo"""
+
+        params = {
+            "ver": self.ns_info.get("ver"),
+            "at": self._session_headers.get("at"),
+            "userId": self.student_info.get("id"),
+        }
+
+        return self.request("users/photo", params=params).content
+
     def getDiary(self, start: Optional[date] = None, end: Optional[date] = None):
         """Get diary info"""
 

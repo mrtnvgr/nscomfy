@@ -91,6 +91,24 @@ class TelegramAPI:
 
         return self.method("editMessageText", payload)
 
+    def editPhoto(self, user_id, photo, caption, parse_mode):
+
+        payload = {
+            "chat_id": user_id,
+            "caption": caption,
+        }
+        files = {}
+
+        if type(photo) is bytes:
+            files["photo"] = photo
+        else:
+            raise Exception(f"invalid photo type: {type(photo)}")
+
+        if parse_mode:
+            payload["parse_mode"] = parse_mode
+
+        return self.method("sendPhoto", payload, files=files)
+
     @staticmethod
     def getUserIdFromUpdate(update):
         if "message" in update:

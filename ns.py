@@ -402,6 +402,16 @@ class NetSchoolSessionHandler:
 
         return "\n".join(text)
 
+    def getUserPhoto(self, user_id):
+
+        if not self.checkSession(user_id):
+            return
+        api = self.sessions[user_id]
+
+        photo = api.getUserPhoto()
+
+        return photo
+
     def getAssignIds(self, days):
 
         assignIds = []
