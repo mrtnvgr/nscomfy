@@ -321,7 +321,6 @@ class TelegramHandler:
                     if account_info:
                         self.tg_api.editPhoto(
                             user_id,
-                            message_id,
                             user_photo,
                             account_info,
                             parse_mode="HTML",
