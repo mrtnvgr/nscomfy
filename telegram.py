@@ -69,9 +69,7 @@ class TelegramHandler:
     def updateHandler(self, update):
         user_id = str(self.tg_api.getUserIdFromUpdate(update))
 
-        # First time
-        if user_id not in self.master.config["users"]:
-            self.addNewUser(user_id)
+        self.addNewUser(user_id)
 
         if self.menuAnswerHandler(user_id, update):
             return
