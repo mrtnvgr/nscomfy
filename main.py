@@ -50,7 +50,6 @@ class Main:
             try:
                 updates = self.telegram.getUpdates(timeout=60000)
                 for update in updates:
-                    print(update)
                     self.telegram.updateHandler(update)
             except Exception as ex:
                 self.exit()
