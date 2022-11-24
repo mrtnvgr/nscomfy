@@ -377,7 +377,8 @@ class NetSchoolSessionHandler:
             return
 
         birthDate = account_info["birthDate"]
-        birthDate = util.formatDate(birthDate)
+        if birthDate:
+            birthDate = util.formatDate(birthDate)
 
         firstName = account_info["firstName"]
         lastName = account_info["lastName"]
