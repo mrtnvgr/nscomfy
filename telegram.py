@@ -312,6 +312,14 @@ class TelegramHandler:
 
                     return True
 
+                elif text == "Аккаунт":
+
+                    student_info = self.ns.getAccountInfo(user_id)
+                    if student_info:
+                        self.tg_api.sendMessage(user_id, student_info)
+
+                    return True
+
         elif "callback_query" in update:
 
             button_data = self.parseButtonUpdate(update)
@@ -578,7 +586,7 @@ class TelegramHandler:
 
             text = "Информация:"
 
-            keyboard["keyboard"].append(["Школа"])
+            keyboard["keyboard"].append(["Аккаунт", "Школа"])
             keyboard["keyboard"].append(["Назад"])
 
             keyboard["one_time_keyboard"] = False

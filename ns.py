@@ -366,6 +366,41 @@ class NetSchoolSessionHandler:
 
         return "\n".join(text)
 
+    def getAccountInfo(self, user_id):
+
+        if not self.checkSession(user_id):
+            return
+        api = self.sessions[user_id]
+
+        account_info = api.getAccountInfo()
+        if not account_info:
+            return
+
+        birthDate = account_info["birthDate"]
+        birthDate = util.formatDate(birthDate)
+
+        firstName = account_info["firstName"]
+        lastName = account_info["lastName"]
+        middleName = account_info["middleName"]
+        name = f"{firstName} {lastName} {middleName}"
+
+        params = [
+            ["Имя", name],
+            ["Логин", account_info["loginName"]],
+            ["Дата рождения", birthDate],
+            ["Телефон", account_info["mobilePhone"]],
+            ["Почта", account_info["email"]],
+        ]
+
+        text = []
+
+        for param_name, param_value in params:
+            if param_value:
+                param_value = util.normalizeHTMLText(param_value)
+                text.append(f"\n{param_name}: <pre>{param_value}</pre>")
+
+        return "\n".join(text)
+
     def getAssignIds(self, days):
 
         assignIds = []

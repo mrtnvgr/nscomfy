@@ -60,6 +60,11 @@ class NetSchoolAPI:
 
         return self.request(f"schools/{self._school_id}/card").json()
 
+    def getAccountInfo(self):
+        """Get account information"""
+
+        return self.request("mysettings").json()
+
     def getDiary(self, start: Optional[date] = None, end: Optional[date] = None):
         """Get diary info"""
 
