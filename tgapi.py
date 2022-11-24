@@ -26,7 +26,7 @@ class TelegramAPI:
         else:
 
             # Get rid of annoying bad gateway errors
-            if response["error_code"] != 502:
+            if response["error_code"] not in [502, 429]:
                 raise Exception(f'{response["error_code"]}: {response["description"]}')
             return {}
 
