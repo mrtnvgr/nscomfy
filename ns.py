@@ -207,6 +207,7 @@ class NetSchoolSessionHandler:
         for lesson in day["lessons"]:
 
             marks = []
+            markComments = []
             tasks = []
             attachments_text = []
 
@@ -217,18 +218,26 @@ class NetSchoolSessionHandler:
                 assignments = lesson["assignments"]
                 for assignment in assignments:
 
-                    if show_marks and "mark" in assignment:
+                    if show_marks and not only_tasks:
 
-                        mark = assignment["mark"]
-                        mark_sign = util.mark_to_sign(mark["mark"])
-                        mark_typeid = assignment["typeId"]
-                        mark_type = api._assignment_types[mark_typeid]
+                        if "mark" in assignment:
 
-                        if only_marks:
-                            marks.append(f"{mark_sign} | {mark_type}")
-                        else:
-                            marks.append(mark_sign)
-                            showAttachments = True
+                            mark = assignment["mark"]
+                            mark_sign = util.mark_to_sign(mark["mark"])
+                            mark_typeid = assignment["typeId"]
+                            mark_type = api._assignment_types[mark_typeid]
+
+                            if only_marks:
+                                marks.append(f"{mark_sign} | {mark_type}")
+                            else:
+                                marks.append(mark_sign)
+                                showAttachments = True
+
+                        if "markComment" in assignment:
+
+                            comment = assignment["markComment"]["name"]
+
+                            markComments.append(comment)
 
                     if show_tasks and "assignmentName" in assignment:
 
@@ -292,13 +301,17 @@ class NetSchoolSessionHandler:
 
                 line = f"\n{number}: {name} ({start} - {end})"
                 line = util.normalizeHTMLText(line)
-                if marks and not only_tasks:
+                if marks:
                     if only_marks:
                         marks_text = "\n".join(marks)
                         line += f"\n{marks_text}"
                     else:
                         line += f" <b>[{', '.join(marks)}]</b>"
                 text.append(f"{line}\n")
+
+                cloud = util.getEmoji("SPEECH BALLOON")
+                for comment in markComments:
+                    text.append(f"{cloud}: {comment}\n")
 
                 if tasks:
 
