@@ -367,7 +367,12 @@ class TelegramHandler:
 
                 attachmentId = button_data[2]
 
-                self.tg_api.sendMessage(user_id, attachmentId)
+                attachmentUrl = api.getAttachmentUrl(attachmentId)
+
+                # attachment = api.request(attachmentUrl)
+                # print(attachment)
+
+                # self.tg_api.sendMessage(user_id, attachmentUrl)
 
                 return True
 
@@ -402,8 +407,14 @@ class TelegramHandler:
 
         message_id = self.tg_api.sendMessage(user_id, "Подождите...")["message_id"]
 
-        districts_response = api.getMunicipalityDistrictList()
-        schools_response = api.getSchoolList()
+        try:
+            districts_response = api.getMunicipalityDistrictList()
+            schools_response = api.getSchoolList()
+        except:
+            self.editButtons(
+                user_id, message_id, "Что-то пошло не так! Попробуйте еще раз.", []
+            )
+            return
 
         districts = []
         for district in districts_response:
@@ -453,11 +464,6 @@ class TelegramHandler:
         except UnsupportedRole:
             self.editButtons(
                 user_id, message_id, "Ваш тип аккаунта не поддерживается", []
-            )
-            return
-        except:
-            self.editButtons(
-                user_id, message_id, "Что-то пошло не так! Попробуйте еще раз.", []
             )
             return
 

@@ -69,7 +69,7 @@ class NetSchoolAPI:
         """Get user photo"""
 
         params = {
-            "ver": self.ns_info.get("ver"),
+            "ver": self.ns_info.get("version"),
             "at": self._session_headers.get("at"),
             "userId": self.student_info.get("id"),
         }
@@ -120,7 +120,12 @@ class NetSchoolAPI:
         }
 
     def getAttachmentUrl(self, attachmentId):
-        return f"{self._url}/webapi/attachments/{attachmentId}"
+        ver = self.ns_info.get("version", "")
+        userId = self.student_info.get("id", "")
+        at = self._session_headers.get("at", "")
+        url = f"{self._url}/webapi/attachments/{attachmentId}"
+        url += f"?ver={ver}&at={at}&userId={userId}"
+        return url
 
     def getOverdueTasks(self):
         """Get overdue tasks"""
