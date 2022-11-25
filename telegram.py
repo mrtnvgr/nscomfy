@@ -166,6 +166,14 @@ class TelegramHandler:
                             self.master.config["users"][user_id]["accounts"].pop(text)
                             self.master.saveConfig()
                             return
+                        except:
+                            self.editButtons(
+                                user_id,
+                                message_id,
+                                "Что-то пошло не так! Попробуйте еще раз.",
+                                [],
+                            )
+                            return
 
                         self.master.config["users"][user_id]["current_account"] = text
                         self.master.saveConfig()
@@ -443,6 +451,11 @@ class TelegramHandler:
         except UnsupportedRole:
             self.editButtons(
                 user_id, message_id, "Ваш тип аккаунта не поддерживается", []
+            )
+            return
+        except:
+            self.editButtons(
+                user_id, message_id, "Что-то пошло не так! Попробуйте еще раз.", []
             )
             return
 

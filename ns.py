@@ -56,6 +56,13 @@ class NetSchoolSessionHandler:
                 self.master.forceLogout(user_id)
                 self.master.sendKeyboard(user_id, "account_selection")
                 return
+            except:
+                self.master.editButtons(
+                    user_id, msg_id, "Что-то пошло не так! Попробуйте еще раз.", []
+                )
+                self.master.forceLogout(user_id)
+                self.master.sendKeyboard(user_id, "account_selection")
+                return
 
             self.master.tg_api.deleteMessage(user_id, msg_id)
 
