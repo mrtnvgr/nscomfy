@@ -393,7 +393,7 @@ class NetSchoolSessionHandler:
         name = f"{firstName} {lastName} {middleName}"
 
         params = [
-            ["Имя", name],
+            ["ФИО", name],
             ["Логин", account_info["loginName"]],
             ["Дата рождения", birthDate],
             ["Телефон", account_info["mobilePhone"]],
