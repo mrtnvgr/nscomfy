@@ -292,6 +292,8 @@ class TelegramHandler:
                     if answer not in [student["name"] for student in api._students]:
                         return
 
+                    self.tg_api.deleteMessage(user_id, message_id)
+
                     current_account = self.master.config["users"][user_id][
                         "current_account"
                     ]
