@@ -186,7 +186,7 @@ class TelegramHandler:
                     else:
                         self.tg_api.sendMessage(
                             user_id,
-                            "Такого аккаунта нет! Для выбора, нужно нажимать на кнопки.",
+                            "Такого аккаунта нет! Пожалуйста используйте кнопки!",
                         )
 
             elif current_keyboard == "diary":
@@ -479,14 +479,22 @@ class TelegramHandler:
         student_buttons = [student["name"] for student in students]
 
         account["student"] = self.askUserWithButtons(
-            user_id, message_id, "Выберите ученика:", student_buttons
+            user_id,
+            message_id,
+            "Выберите ученика:\n(можно изменить в настройках)",
+            student_buttons,
         )
         if not account["student"]:
             return
 
         api.logout()
 
-        self.editButtons(user_id, message_id, "Напишите имя аккаунта:", [])
+        self.editButtons(
+            user_id,
+            message_id,
+            "Напишите имя аккаунта:\n(можно изменить в настройках)",
+            [],
+        )
         name = self.getUpdate()
 
         if not util.checkAccountName(name):
