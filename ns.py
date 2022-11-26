@@ -37,21 +37,21 @@ class NetSchoolSessionHandler:
                 self.login(user_id, url, username, password, student, school)
             except SchoolNotFoundError:
                 self.master.editButtons(
-                    user_id, msg_id, "Такой школы не существует", []
+                    user_id, msg_id, "Такой школы не существует!", []
                 )
                 self.master.forceLogout(user_id)
                 self.master.sendKeyboard(user_id, "account_selection")
                 return
             except LoginError:
                 self.master.editButtons(
-                    user_id, msg_id, "Неправильный логин или пароль", []
+                    user_id, msg_id, "Неправильный логин или пароль!", []
                 )
                 self.master.forceLogout(user_id)
                 self.master.sendKeyboard(user_id, "account_selection")
                 return
             except UnsupportedRole:
                 self.master.editButtons(
-                    user_id, msg_id, "Ваш тип аккаунта не поддерживается", []
+                    user_id, msg_id, "Ваш тип аккаунта не поддерживается!", []
                 )
                 self.master.forceLogout(user_id)
                 self.master.sendKeyboard(user_id, "account_selection")

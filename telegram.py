@@ -144,14 +144,17 @@ class TelegramHandler:
                             )
                         except SchoolNotFoundError:
                             self.editButtons(
-                                user_id, message_id, "Такой школы не существует", []
+                                user_id, message_id, "Такой школы не существует!", []
                             )
                             self.master.config["users"][user_id]["accounts"].pop(text)
                             self.master.saveConfig()
                             return
                         except LoginError:
                             self.editButtons(
-                                user_id, message_id, "Неправильный логин или пароль", []
+                                user_id,
+                                message_id,
+                                "Неправильный логин или пароль!",
+                                [],
                             )
                             self.master.config["users"][user_id]["accounts"].pop(text)
                             self.master.saveConfig()
@@ -160,7 +163,7 @@ class TelegramHandler:
                             self.editButtons(
                                 user_id,
                                 message_id,
-                                "Ваш тип аккаунта не поддерживается",
+                                "Ваш тип аккаунта не поддерживается!",
                                 [],
                             )
                             self.master.config["users"][user_id]["accounts"].pop(text)
@@ -181,7 +184,10 @@ class TelegramHandler:
                         self.tg_api.deleteMessage(user_id, message_id)
 
                     else:
-                        self.tg_api.sendMessage(user_id, "Такого аккаунта нет")
+                        self.tg_api.sendMessage(
+                            user_id,
+                            "Такого аккаунта нет! Для выбора, нужно нажимать на кнопки.",
+                        )
 
             elif current_keyboard == "diary":
 
@@ -251,7 +257,9 @@ class TelegramHandler:
                     newName = self.askUser(user_id, "Напишите новое название аккаунта:")
 
                     if not util.checkAccountName(newName):
-                        self.tg_api.sendMessage(user_id, "Такое имя аккаунта запрещено")
+                        self.tg_api.sendMessage(
+                            user_id, "Такое имя аккаунта запрещено!"
+                        )
                         return True
 
                     if not newName:
@@ -399,7 +407,7 @@ class TelegramHandler:
         try:
             api = NetSchoolAPI(account["url"])
         except InvalidUrlError:
-            self.tg_api.sendMessage(user_id, "Неправильная ссылка")
+            self.tg_api.sendMessage(user_id, "Неправильная ссылка!")
             return
 
         account["login"] = self.askUser(user_id, "Напишите логин:")
@@ -456,14 +464,14 @@ class TelegramHandler:
         try:
             api.login(account["login"], account["password"], account["school"])
         except SchoolNotFoundError:
-            self.editButtons(user_id, message_id, "Такой школы не существует", [])
+            self.editButtons(user_id, message_id, "Такой школы не существует!", [])
             return
         except LoginError:
-            self.editButtons(user_id, message_id, "Неправильный логин или пароль", [])
+            self.editButtons(user_id, message_id, "Неправильный логин или пароль!", [])
             return
         except UnsupportedRole:
             self.editButtons(
-                user_id, message_id, "Ваш тип аккаунта не поддерживается", []
+                user_id, message_id, "Ваш тип аккаунта не поддерживается!", []
             )
             return
 
@@ -482,7 +490,7 @@ class TelegramHandler:
         name = self.getUpdate()
 
         if not util.checkAccountName(name):
-            self.tg_api.sendMessage(user_id, "Такое имя аккаунта запрещено")
+            self.tg_api.sendMessage(user_id, "Такое имя аккаунта запрещено!")
             return
 
         if not name:
@@ -536,7 +544,7 @@ class TelegramHandler:
         text = ""
 
         if ktype == "account_selection":
-            text = "Выберите аккаунт"
+            text = "Выберите аккаунт:"
 
             accounts = self.master.config["users"][user_id]["accounts"]
             for name in sorted(accounts):
