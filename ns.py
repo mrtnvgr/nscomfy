@@ -1,5 +1,6 @@
 from datetime import date as datetime
 from datetime import timedelta
+from itertools import zip_longest
 
 import util
 from nsapi import NetSchoolAPI
@@ -302,26 +303,29 @@ class NetSchoolSessionHandler:
                 line = f"\n{number}: {name} ({start} - {end})"
                 line = util.normalizeHTMLText(line)
                 if marks:
-                    if only_marks:
-                        marks_text = "\n".join(marks)
-                        line += f"\n{marks_text}"
-                    else:
+                    if not only_marks:
                         line += f" <b>[{', '.join(marks)}]</b>"
                 text.append(f"{line}\n")
 
                 cloud = util.getEmoji("SPEECH BALLOON")
-                for comment in markComments:
-                    text.append(f"{cloud}: {comment}\n")
 
-                if tasks:
+                for mark, comm, task, attach in zip_longest(
+                    marks, markComments, tasks, attachments_text
+                ):
 
-                    for task in tasks:
+                    if mark and only_marks:
+                        text.append(f"{mark}\n")
+
+                    if comm:
+                        comm = util.normalizeHTMLText(comm)
+                        text.append(f"{cloud}: {comm}\n")
+
+                    if task:
                         task = util.normalizeHTMLText(task)
                         text.append(f"<pre>{task}</pre>\n")
 
-                if attachments_text:
-
-                    text.extend(attachments_text)
+                    if attach:
+                        text.extend(attach)
 
         if text:
             text.insert(0, f"<b>{daydate}:</b>")
