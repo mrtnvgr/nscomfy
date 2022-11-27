@@ -42,8 +42,8 @@ class TelegramAPI:
         }
         return self.method("getUpdates", payload)
 
-    def sendMessage(self, user_id, text):
-        return self.method("sendMessage", {"text": text}, user_id)
+    def sendMessage(self, user_id, text, params={}):
+        return self.method("sendMessage", {"text": text} | params, user_id)
 
     def deleteMessage(self, user_id, msg_id):
         return self.method("deleteMessage", {"chat_id": user_id, "message_id": msg_id})

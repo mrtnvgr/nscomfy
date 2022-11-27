@@ -346,6 +346,34 @@ class TelegramHandler:
 
                     return True
 
+                elif text == "Бот":
+
+                    text = []
+
+                    users = self.master.config["users"]
+
+                    userCount = len(users)
+
+                    accCount = 0
+                    for user in users:
+                        accounts = users[user]["accounts"]
+                        accCount += len(accounts)
+
+                    giturl = "https://github.com/mrtnvgr/nscomfy"
+                    text.append(f"Страница проекта: <a href = '{giturl}'>тут</a>")
+                    text.append("Автор: @p13d3z\n")
+
+                    text.append(f"Количество пользователей: <b>{userCount}</b>")
+                    text.append(f"Количество аккаунтов: <b>{accCount}</b>")
+
+                    self.tg_api.sendMessage(
+                        user_id,
+                        "\n".join(text),
+                        params={"disable_web_page_preview": True},
+                    )
+
+                    return True
+
         elif "callback_query" in update:
 
             button_data = self.parseButtonUpdate(update)
@@ -629,9 +657,10 @@ class TelegramHandler:
 
         elif ktype == "info":
 
-            text = "Информация:"
+            text = "Выберите тип информации:"
 
             keyboard["keyboard"].append(["Аккаунт", "Школа"])
+            keyboard["keyboard"].append(["Бот"])
             keyboard["keyboard"].append(["Назад"])
 
             keyboard["one_time_keyboard"] = False
