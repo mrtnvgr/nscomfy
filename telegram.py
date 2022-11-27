@@ -173,7 +173,7 @@ class TelegramHandler:
                             self.editButtons(
                                 user_id,
                                 message_id,
-                                "Что-то пошло не так! Попробуйте еще раз.",
+                                "Что-то пошло не так! Повторите попытку позже.",
                                 [],
                             )
                             return
@@ -448,7 +448,7 @@ class TelegramHandler:
             schools_response = api.getSchoolList()
         except:
             self.editButtons(
-                user_id, message_id, "Что-то пошло не так! Попробуйте еще раз.", []
+                user_id, message_id, "Что-то пошло не так! Повторите попытку позже.", []
             )
             return
 

@@ -59,7 +59,7 @@ class NetSchoolSessionHandler:
                 return
             except:
                 self.master.editButtons(
-                    user_id, msg_id, "Что-то пошло не так! Попробуйте еще раз.", []
+                    user_id, msg_id, "Что-то пошло не так! Повторите попытку позже.", []
                 )
                 self.master.forceLogout(user_id)
                 self.master.sendKeyboard(user_id, "account_selection")
