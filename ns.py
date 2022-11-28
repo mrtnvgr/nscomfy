@@ -94,7 +94,7 @@ class NetSchoolSessionHandler:
 
             day = []
 
-            day.append(f"\n<b>{date}:</b>")
+            day.append(f"<b>{date}</b>\n")
 
             overdues = dates[date]
 
@@ -328,7 +328,7 @@ class NetSchoolSessionHandler:
                         text.extend(attach)
 
         if text:
-            text.insert(0, f"<b>{daydate}:</b>")
+            text.insert(0, f"<b>{daydate}</b>\n")
 
         return "".join(text), buttons
 
