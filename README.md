@@ -1,4 +1,5 @@
 <h3 align="center"><img src="https://i.imgur.com/gn8EsrJ.png" width="250px"></h3>
+<h3 align="center">~nscomfy~</h3>
 <p align="center">Синхронный телеграм бот для нет города.</p>
 <p align="center">Cтатус: бета</p>
 
