@@ -86,7 +86,7 @@ class TelegramHandler:
     def menuAnswerHandler(self, user_id, update):
 
         if "message" in update:
-            text = update["message"]["text"]
+            text = update["message"].get("text", "")
 
             current_keyboard = self.master.config["users"][user_id]["current_keyboard"]
 
