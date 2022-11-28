@@ -32,12 +32,12 @@ class TelegramHandler:
     def getInstantUpdates(self):
         return self.getUpdates(timeout=0)
 
-    def getUpdate(self):
+    def getUpdateText(self):
         update = self.getUpdates(limit=1)
 
         if update:
             if "message" in update[0]:
-                return update[0]["message"]["text"]
+                return update[0]["message"].get("text", "")
 
     def getButtonAnswer(self):
         updates = self.getUpdates(limit=1)
@@ -524,7 +524,7 @@ class TelegramHandler:
             "Напишите имя аккаунта:\n(можно изменить в настройках)",
             [],
         )
-        name = self.getUpdate()
+        name = self.getUpdateText()
 
         if not util.checkAccountName(name):
             self.tg_api.sendMessage(user_id, "Такое имя аккаунта запрещено!")
@@ -550,7 +550,7 @@ class TelegramHandler:
     def askUser(self, user_id, msg):
         self.tg_api.sendMessage(user_id, msg)
 
-        return self.getUpdate()
+        return self.getUpdateText()
 
     def askUserWithButtons(self, user_id, message_id, msg, buttons):
 
