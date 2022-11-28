@@ -40,8 +40,9 @@ class TelegramHandler:
                 return update[0]["message"]["text"]
 
     def getButtonAnswer(self):
-        update = self.getUpdates(limit=1)[0]
-        return self.parseButtonUpdate(update)
+        updates = self.getUpdates(limit=1)
+        if updates:
+            return self.parseButtonUpdate(updates[0])
 
     def parseButtonUpdate(self, update):
 
