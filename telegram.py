@@ -381,9 +381,11 @@ class TelegramHandler:
 
             if button_data[0] == "/downloadAttachment":
 
+                message_id = self.tg_api.sendMessage(user_id, "Подождите...")["message_id"]
+
                 if not self.ns.checkSession(user_id):
-                    self.tg_api.sendMessage(
-                        user_id, "Перед тем как скачивать, нужно зайти в аккаунт"
+                    self.editButtons(
+                        user_id, message_id, "Перед тем как скачивать, нужно зайти в аккаунт!", []
                     )
                     return True
 
@@ -392,8 +394,8 @@ class TelegramHandler:
                 studentId = api.student_info["id"]
 
                 if str(studentId) != button_data[1]:
-                    self.tg_api.sendMessage(
-                        user_id, "Текущий аккаунт не имеет доступа к этому вложению!"
+                    self.editButtons(
+                        user_id, message_id, "Текущий аккаунт не имеет доступа к этому вложению!", []
                     )
                     return True
 
@@ -415,10 +417,12 @@ class TelegramHandler:
                     maxSize *= 50
 
                 if attachmentSize > maxSize:
-                    self.tg_api.sendMessage(user_id, "Размер файла слишком большой!")
+                    self.editButtons(user_id, message_id, "Размер файла слишком большой!", [])
                     return True
 
                 attachmentName = self.parseButtonUpdate(update, getText=True)
+
+                self.tg_api.deleteMessage(user_id, message_id)
 
                 self.tg_api.sendFile(user_id, attachmentName, attachment)
 
