@@ -43,10 +43,14 @@ class NetSchoolSessionHandler:
                 self.handleLoginError(user_id, msg_id, "Неправильный логин или пароль!")
                 return
             except UnsupportedRole:
-                self.handleLoginError(user_id, msg_id, "Ваш тип аккаунта не поддерживается!")
+                self.handleLoginError(
+                    user_id, msg_id, "Ваш тип аккаунта не поддерживается!"
+                )
                 return
             except:
-                self.handleLoginError(user_id, msg_id, "Что-то пошло не так! Повторите попытку позже.")
+                self.handleLoginError(
+                    user_id, msg_id, "Что-то пошло не так! Повторите попытку позже."
+                )
                 return
 
             self.master.tg_api.deleteMessage(user_id, msg_id)

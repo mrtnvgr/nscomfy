@@ -144,16 +144,36 @@ class TelegramHandler:
                                 account["school"],
                             )
                         except SchoolNotFoundError:
-                            self.handleLoginError(user_id, message_id, "Такой школы не существует!", pop=text)
+                            self.handleLoginError(
+                                user_id,
+                                message_id,
+                                "Такой школы не существует!",
+                                pop=text,
+                            )
                             return
                         except LoginError:
-                            self.handleLoginError(user_id, message_id, "Неправильный логин или пароль!", pop=text)
+                            self.handleLoginError(
+                                user_id,
+                                message_id,
+                                "Неправильный логин или пароль!",
+                                pop=text,
+                            )
                             return
                         except UnsupportedRole:
-                            self.handleLoginError(user_id, message_id, "Ваш тип аккаунта не поддерживается!", pop=text)
+                            self.handleLoginError(
+                                user_id,
+                                message_id,
+                                "Ваш тип аккаунта не поддерживается!",
+                                pop=text,
+                            )
                             return
                         except:
-                            self.handleLoginError(user_id, message_id, "Что-то пошло не так! Повторите попытку позже.", pop=text)
+                            self.handleLoginError(
+                                user_id,
+                                message_id,
+                                "Что-то пошло не так! Повторите попытку позже.",
+                                pop=text,
+                            )
                             return
 
                         self.master.config["users"][user_id]["current_account"] = text
@@ -233,15 +253,14 @@ class TelegramHandler:
                 elif text == "Переименовать":
 
                     newName = self.askUser(user_id, "Напишите новое название аккаунта:")
+                    if not newName:
+                        return
 
                     if not util.checkAccountName(newName):
                         self.tg_api.sendMessage(
                             user_id, "Такое имя аккаунта запрещено!"
                         )
                         return True
-
-                    if not newName:
-                        return
 
                     current_account = self.master.config["users"][user_id][
                         "current_account"
@@ -417,7 +436,11 @@ class TelegramHandler:
             return
 
         account["login"] = self.askUser(user_id, "Напишите логин:")
+        if not account["login"]:
+            return
         account["password"] = self.askUser(user_id, "Напишите пароль:")
+        if not account["password"]:
+            return
 
         message_id = self.tg_api.sendMessage(user_id, "Подождите...")["message_id"]
 
@@ -502,12 +525,11 @@ class TelegramHandler:
             [],
         )
         name = self.getUpdateText()
+        if not name:
+            return
 
         if not util.checkAccountName(name):
             self.tg_api.sendMessage(user_id, "Такое имя аккаунта запрещено!")
-            return
-
-        if not name:
             return
 
         self.addNewUser(user_id)
