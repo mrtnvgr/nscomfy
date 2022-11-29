@@ -150,6 +150,8 @@ class NetSchoolSessionHandler:
         api = self.sessions[user_id]
 
         diary = api.getDiary(start, end)
+        if not diary:
+            return
 
         assignIds = self.getAssignIds(diary["weekDays"])
         attachments = api.getDiaryAttachments(assignIds)

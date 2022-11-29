@@ -208,7 +208,6 @@ class TelegramHandler:
                     self.editButtons(user_id, message_id, "Подождите...", [])
 
                     diary = self.ns.getDiary(user_id, dateanswer, **diary_kwargs)
-
                     if not diary:
                         return True
 
