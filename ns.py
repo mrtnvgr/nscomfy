@@ -37,32 +37,16 @@ class NetSchoolSessionHandler:
             try:
                 self.login(user_id, url, username, password, student, school)
             except SchoolNotFoundError:
-                self.master.editButtons(
-                    user_id, msg_id, "Такой школы не существует!", []
-                )
-                self.master.forceLogout(user_id)
-                self.master.sendKeyboard(user_id, "account_selection")
+                self.handleLoginError(user_id, msg_id, "Такой школы не существует!")
                 return
             except LoginError:
-                self.master.editButtons(
-                    user_id, msg_id, "Неправильный логин или пароль!", []
-                )
-                self.master.forceLogout(user_id)
-                self.master.sendKeyboard(user_id, "account_selection")
+                self.handleLoginError(user_id, msg_id, "Неправильный логин или пароль!")
                 return
             except UnsupportedRole:
-                self.master.editButtons(
-                    user_id, msg_id, "Ваш тип аккаунта не поддерживается!", []
-                )
-                self.master.forceLogout(user_id)
-                self.master.sendKeyboard(user_id, "account_selection")
+                self.handleLoginError(user_id, msg_id, "Ваш тип аккаунта не поддерживается!")
                 return
             except:
-                self.master.editButtons(
-                    user_id, msg_id, "Что-то пошло не так! Повторите попытку позже.", []
-                )
-                self.master.forceLogout(user_id)
-                self.master.sendKeyboard(user_id, "account_selection")
+                self.handleLoginError(user_id, msg_id, "Что-то пошло не так! Повторите попытку позже.")
                 return
 
             self.master.tg_api.deleteMessage(user_id, msg_id)
@@ -456,6 +440,11 @@ class NetSchoolSessionHandler:
 
         data = f"/downloadAttachment {studentId} {aId}"
         return {"text": text, "callback_data": data}
+
+    def handleLoginError(self, user_id, msg_id, error_msg):
+        self.master.editButtons(user_id, msg_id, error_msg, [])
+        self.master.forceLogout(user_id)
+        self.master.sendKeyboard(user_id, "account_selection")
 
     def logout(self, user_id):
 

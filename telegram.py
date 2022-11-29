@@ -144,39 +144,16 @@ class TelegramHandler:
                                 account["school"],
                             )
                         except SchoolNotFoundError:
-                            self.editButtons(
-                                user_id, message_id, "Такой школы не существует!", []
-                            )
-                            self.master.config["users"][user_id]["accounts"].pop(text)
-                            self.master.saveConfig()
+                            self.handleLoginError(user_id, message_id, "Такой школы не существует!", pop=text)
                             return
                         except LoginError:
-                            self.editButtons(
-                                user_id,
-                                message_id,
-                                "Неправильный логин или пароль!",
-                                [],
-                            )
-                            self.master.config["users"][user_id]["accounts"].pop(text)
-                            self.master.saveConfig()
+                            self.handleLoginError(user_id, message_id, "Неправильный логин или пароль!", pop=text)
                             return
                         except UnsupportedRole:
-                            self.editButtons(
-                                user_id,
-                                message_id,
-                                "Ваш тип аккаунта не поддерживается!",
-                                [],
-                            )
-                            self.master.config["users"][user_id]["accounts"].pop(text)
-                            self.master.saveConfig()
+                            self.handleLoginError(user_id, message_id, "Ваш тип аккаунта не поддерживается!", pop=text)
                             return
                         except:
-                            self.editButtons(
-                                user_id,
-                                message_id,
-                                "Что-то пошло не так! Повторите попытку позже.",
-                                [],
-                            )
+                            self.handleLoginError(user_id, message_id, "Что-то пошло не так! Повторите попытку позже.", pop=text)
                             return
 
                         self.master.config["users"][user_id]["current_account"] = text
@@ -682,6 +659,12 @@ class TelegramHandler:
         markup = self._parseButtons(values)
 
         return self.tg_api.editButtons(user_id, message_id, text, markup, parse_mode)
+
+    def handleLoginError(self, user_id, message_id, error_msg, pop: str = ""):
+        self.editButtons(user_id, message_id, error_msg, [])
+        if pop:
+            self.master.config["users"][user_id]["accounts"].pop(pop)
+            self.master.saveConfig()
 
     def forceLogout(self, user_id):
         self.ns.logout(user_id)
