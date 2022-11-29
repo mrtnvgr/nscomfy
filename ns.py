@@ -444,12 +444,11 @@ class NetSchoolSessionHandler:
     def createAttachmentButton(self, user_id, assignId, text, attachment):
 
         attachId = attachment["id"]
-        attachType = text.split(".")[-1]
 
         api = self.sessions[user_id]
         studentId = api.student_info["id"]
 
-        data = f"/downloadAttachment {studentId} {assignId} {attachType} {attachId}"
+        data = f"/downloadAttachment {studentId} {assignId} {attachId}"
         return {"text": text, "callback_data": data}
 
     def handleLoginError(self, user_id, msg_id, error_msg):

@@ -403,15 +403,16 @@ class TelegramHandler:
                 # Для получения доступа к вложению нужно запросить список вложений задания
                 api.getDiaryAttachments(assignmentId)
 
-                attachmentType = button_data[3]
-                attachmentId = button_data[4]
+                attachmentId = button_data[3]
 
                 attachmentUrl = api.getAttachmentUrl(attachmentId)
-                attachment = api.request(attachmentUrl).content
-                attachmentSize = len(attachment)
+                attachment = api.request(attachmentUrl)
+                attachmentData = attachment.content
+                attachmentSize = int(attachment.headers.get("content-length", 0))
+                attachmentType = attachment.headers.get("content-type", "")
 
                 maxSize = 1000000
-                if attachmentType in ["jpg", "jpeg", "png"]:
+                if attachmentType.startswith("image/"):
                     maxSize *= 10
                 else:
                     maxSize *= 50
@@ -424,7 +425,7 @@ class TelegramHandler:
 
                 self.tg_api.deleteMessage(user_id, message_id)
 
-                self.tg_api.sendFile(user_id, attachmentName, attachment)
+                self.tg_api.sendFile(user_id, attachmentName, attachmentData)
 
                 return True
 
