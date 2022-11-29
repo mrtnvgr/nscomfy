@@ -4,8 +4,8 @@ from telegram import TelegramHandler
 
 import json
 import os
-
 import signal
+import logging
 
 
 class Main:
@@ -13,6 +13,9 @@ class Main:
 
         for sig in [signal.SIGTERM, signal.SIGINT]:
             signal.signal(sig, self.exitSignal)
+
+        logging.basicConfig(format="[%(levelname)s] %(message)s", level=logging.INFO)
+        logging.addLevelName(21, "EXIT")
 
         if os.path.exists("config.json"):
             self.config = json.load(open("config.json"))
@@ -53,15 +56,14 @@ class Main:
                     self.telegram.updateHandler(update)
             except Exception as ex:
                 self.exit()
-                print("EXIT: Raising exception for debug")
+                logging.log(21, "Raising exception for debug")
                 raise ex
 
     def exit(self):
-        print("EXIT: Logging out of all sessions")
         self.telegram.ns.allLogout()
 
     def exitSignal(self, *args):
-        print(f"EXIT: Signal catched: {args}")
+        logging.log(21, f"Signal catched: {args}")
         self.exit()
         exit(1)
 

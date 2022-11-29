@@ -1,6 +1,7 @@
 from datetime import date as datetime
 from datetime import timedelta
 from itertools import zip_longest
+import logging
 
 import util
 from nsapi import NetSchoolAPI
@@ -455,11 +456,13 @@ class NetSchoolSessionHandler:
     def logout(self, user_id):
 
         if user_id in self.sessions:
+            logging.info(f"{user_id}: logout")
             self.sessions[user_id].logout()
             self.sessions.pop(user_id)
 
     def allLogout(self):
-
-        for user_id in self.sessions.copy():
-            print(f"Logging out: {user_id}")
-            self.logout(user_id)
+        sessions = self.sessions.copy()
+        if sessions:
+            logging.log(21, "Logging out of all sessions")
+            for user_id in sessions:
+                self.logout(user_id)
