@@ -44,7 +44,7 @@ class TelegramHandler:
         if updates:
             return self.parseButtonUpdate(updates[0])
 
-    def parseButtonUpdate(self, update):
+    def parseButtonUpdate(self, update, getText=False):
 
         if update:
 
@@ -62,7 +62,7 @@ class TelegramHandler:
 
                         if button["callback_data"] == data:
 
-                            if button["callback_data"].startswith("/button"):
+                            if button["callback_data"].startswith("/button") or getText:
                                 return button["text"]
                             else:
                                 return button["callback_data"]
@@ -393,18 +393,34 @@ class TelegramHandler:
 
                 if str(studentId) != button_data[1]:
                     self.tg_api.sendMessage(
-                        user_id, "Текущий аккаунт не имеет доступа к этому вложению"
+                        user_id, "Текущий аккаунт не имеет доступа к этому вложению!"
                     )
                     return True
 
-                attachmentId = button_data[2]
+                assignmentId = button_data[2]
+                # Для получения доступа к вложению нужно запросить список вложений задания
+                api.getDiaryAttachments(assignmentId)
+
+                attachmentType = button_data[3]
+                attachmentId = button_data[4]
 
                 attachmentUrl = api.getAttachmentUrl(attachmentId)
+                attachment = api.request(attachmentUrl).content
+                attachmentSize = len(attachment)
 
-                # attachment = api.request(attachmentUrl)
-                # print(attachment)
+                maxSize = 1000000
+                if attachmentType in ["jpg", "jpeg", "png"]:
+                    maxSize *= 10
+                else:
+                    maxSize *= 50
 
-                # self.tg_api.sendMessage(user_id, attachmentUrl)
+                if attachmentSize > maxSize:
+                    self.tg_api.sendMessage(user_id, "Размер файла слишком большой!")
+                    return True
+
+                attachmentName = self.parseButtonUpdate(update, getText=True)
+
+                self.tg_api.sendFile(user_id, attachmentName, attachment)
 
                 return True
 

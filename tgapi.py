@@ -109,6 +109,18 @@ class TelegramAPI:
 
         return self.method("sendPhoto", payload, files=files)
 
+    def sendFile(self, user_id, filename, filebytes: bytes):
+
+        payload = {
+            "chat_id": user_id,
+        }
+
+        files = {
+            "document": (filename, filebytes),
+        }
+
+        return self.method("sendDocument", payload, files=files)
+
     @staticmethod
     def getUserIdFromUpdate(update):
         if "message" in update:

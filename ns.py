@@ -270,7 +270,10 @@ class NetSchoolSessionHandler:
                                     attachmentText = f"{clip} {attachmentName}"
 
                                     attachmentButton = self.createAttachmentButton(
-                                        user_id, attachmentText, attachment
+                                        user_id,
+                                        assignment["id"],
+                                        attachmentText,
+                                        attachment,
                                     )
 
                                     attachments_text.append(
@@ -438,14 +441,15 @@ class NetSchoolSessionHandler:
 
         return assignIds
 
-    def createAttachmentButton(self, user_id, text, attachment):
+    def createAttachmentButton(self, user_id, assignId, text, attachment):
 
-        aId = attachment["id"]
+        attachId = attachment["id"]
+        attachType = text.split(".")[-1]
 
         api = self.sessions[user_id]
         studentId = api.student_info["id"]
 
-        data = f"/downloadAttachment {studentId} {aId}"
+        data = f"/downloadAttachment {studentId} {assignId} {attachType} {attachId}"
         return {"text": text, "callback_data": data}
 
     def handleLoginError(self, user_id, msg_id, error_msg):
