@@ -2,6 +2,7 @@ from nsapi import NetSchoolAPI
 from errors import *
 from ns import NetSchoolSessionHandler
 from tgapi import TelegramAPI
+import keyboards
 import util
 
 
@@ -381,11 +382,16 @@ class TelegramHandler:
 
             if button_data[0] == "/downloadAttachment":
 
-                message_id = self.tg_api.sendMessage(user_id, "Подождите...")["message_id"]
+                message_id = self.tg_api.sendMessage(user_id, "Подождите...")[
+                    "message_id"
+                ]
 
                 if not self.ns.checkSession(user_id):
                     self.editButtons(
-                        user_id, message_id, "Перед тем как скачивать, нужно зайти в аккаунт!", []
+                        user_id,
+                        message_id,
+                        "Перед тем как скачивать, нужно зайти в аккаунт!",
+                        [],
                     )
                     return True
 
@@ -395,7 +401,10 @@ class TelegramHandler:
 
                 if str(studentId) != button_data[1]:
                     self.editButtons(
-                        user_id, message_id, "Текущий аккаунт не имеет доступа к этому вложению!", []
+                        user_id,
+                        message_id,
+                        "Текущий аккаунт не имеет доступа к этому вложению!",
+                        [],
                     )
                     return True
 
@@ -418,7 +427,9 @@ class TelegramHandler:
                     maxSize *= 50
 
                 if attachmentSize > maxSize:
-                    self.editButtons(user_id, message_id, "Размер файла слишком большой!", [])
+                    self.editButtons(
+                        user_id, message_id, "Размер файла слишком большой!", []
+                    )
                     return True
 
                 attachmentName = self.parseButtonUpdate(update, getText=True)
@@ -595,100 +606,15 @@ class TelegramHandler:
     def sendKeyboard(self, user_id, ktype):
         """Send different keyboards to user"""
 
-        # Default keyboard values
-        keyboard = {"keyboard": [], "one_time_keyboard": True, "resize_keyboard": True}
-        text = ""
+        keyboard_func = keyboards.KEYBOARDS[ktype]
+        keyboard = keyboard_func(user_id, self)
 
-        if ktype == "account_selection":
-            text = "Выберите аккаунт:"
+        if keyboard.ok:
 
-            accounts = self.master.config["users"][user_id]["accounts"]
-            for name in sorted(accounts):
-                keyboard["keyboard"].append([name])
+            self.tg_api.sendKeyboard(user_id, keyboard.text, keyboard.data)
 
-            keyboard["keyboard"].append(["Добавить аккаунт"])
-
-        elif ktype == "mm":
-
-            if not self.ns.checkSession(user_id):
-                return
-            api = self.ns.sessions[user_id]
-            student_info = f"Ученик: {api.student_info['name']}"
-            activeSessions = f"Пользователей в сети: {len(api._active_sessions)}"
-
-            firstRow = ["Дневник"]
-
-            self.ns.setOverdueCount(user_id)
-            if api._overdue_count > 0:
-                overdueCount = f"\nТочки: {api._overdue_count}"
-                firstRow.append("Точки")
-            else:
-                overdueCount = ""
-
-            if api._unreaded_mail_messages > 0:
-                unreaded = f"\nНепрочитанные письма: {api._unreaded_mail_messages}"
-            else:
-                unreaded = ""
-
-            text = f"Главное меню\n\n{student_info}{overdueCount}{unreaded}\n\n{activeSessions}"
-
-            keyboard["keyboard"].append(firstRow)
-            keyboard["keyboard"].append(["Информация"])
-            keyboard["keyboard"].append(["Настройки", "Выйти"])
-
-            keyboard["one_time_keyboard"] = False
-
-        elif ktype == "diary":
-
-            text = "Выберите тип информации:"
-
-            keyboard["keyboard"].append(["Всё"])
-            keyboard["keyboard"].append(["Расписание"])
-            keyboard["keyboard"].append(["Задания", "Оценки"])
-            keyboard["keyboard"].append(["Назад"])
-
-            keyboard["one_time_keyboard"] = False
-
-        elif ktype == "settings":
-
-            text = "Настройки:"
-
-            keyboard["keyboard"].append(["Аккаунт"])
-            keyboard["keyboard"].append(["Назад"])
-
-            keyboard["one_time_keyboard"] = False
-
-        elif ktype == "settings_account":
-
-            if not self.ns.checkSession(user_id):
-                return
-            api = self.ns.sessions[user_id]
-
-            text = "Настройки аккаунта:"
-
-            keyboard["keyboard"].append(["Переименовать", "Удалить"])
-
-            if len(api._students) > 1:
-                keyboard["keyboard"].append(["Сменить ученика"])
-
-            keyboard["keyboard"].append(["Назад"])
-
-            keyboard["one_time_keyboard"] = False
-
-        elif ktype == "info":
-
-            text = "Выберите тип информации:"
-
-            keyboard["keyboard"].append(["Аккаунт", "Школа"])
-            keyboard["keyboard"].append(["Бот"])
-            keyboard["keyboard"].append(["Назад"])
-
-            keyboard["one_time_keyboard"] = False
-
-        self.tg_api.sendKeyboard(user_id, text, keyboard)
-
-        self.master.config["users"][user_id]["current_keyboard"] = ktype
-        self.master.saveConfig()
+            self.master.config["users"][user_id]["current_keyboard"] = ktype
+            self.master.saveConfig()
 
     def sendButtons(self, user_id, text, values, parse_mode=None):
 
