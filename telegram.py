@@ -616,17 +616,17 @@ class TelegramHandler:
             self.master.config["users"][user_id]["current_keyboard"] = ktype
             self.master.saveConfig()
 
-    def sendButtons(self, user_id, text, values, parse_mode=None):
+    def sendButtons(self, user_id, text, values, **kwargs):
 
         markup = self._parseButtons(values)
 
-        return self.tg_api.sendButtons(user_id, text, markup, parse_mode)
+        return self.tg_api.sendButtons(user_id, text, markup, **kwargs)
 
-    def editButtons(self, user_id, message_id, text, values, parse_mode=""):
+    def editButtons(self, user_id, message_id, text, values, **kwargs):
 
         markup = self._parseButtons(values)
 
-        return self.tg_api.editButtons(user_id, message_id, text, markup, parse_mode)
+        return self.tg_api.editButtons(user_id, message_id, text, markup, **kwargs)
 
     def handleLoginError(self, user_id, message_id, error_msg, pop: str = ""):
         self.editButtons(user_id, message_id, error_msg, [])

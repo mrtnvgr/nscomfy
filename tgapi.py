@@ -58,15 +58,12 @@ class TelegramAPI:
             "sendMessage", {"text": text, "reply_markup": keyboard}, user_id
         )
 
-    def sendButtons(self, user_id, text, markup, parse_mode):
+    def sendButtons(self, user_id, text, markup, **kwargs):
 
         if type(markup) is dict:
             markup = json.dumps(markup)
 
-        payload = {"text": text, "reply_markup": markup}
-
-        if parse_mode:
-            payload["parse_mode"] = parse_mode
+        payload = {"text": text, "reply_markup": markup, **kwargs}
 
         return self.method(
             "sendMessage",
@@ -74,7 +71,7 @@ class TelegramAPI:
             user_id,
         )
 
-    def editButtons(self, user_id, message_id, text, markup, parse_mode):
+    def editButtons(self, user_id, message_id, text, markup, **kwargs):
 
         if type(markup) is dict:
             markup = json.dumps(markup)
@@ -84,18 +81,17 @@ class TelegramAPI:
             "message_id": message_id,
             "text": text,
             "reply_markup": markup,
+            **kwargs,
         }
-
-        if parse_mode:
-            payload["parse_mode"] = parse_mode
 
         return self.method("editMessageText", payload)
 
-    def editPhoto(self, user_id, photo, caption, parse_mode):
+    def editPhoto(self, user_id, photo, caption, **kwargs):
 
         payload = {
             "chat_id": user_id,
             "caption": caption,
+            **kwargs,
         }
         files = {}
 
@@ -103,9 +99,6 @@ class TelegramAPI:
             files["photo"] = photo
         else:
             raise Exception(f"invalid photo type: {type(photo)}")
-
-        if parse_mode:
-            payload["parse_mode"] = parse_mode
 
         return self.method("sendPhoto", payload, files=files)
 
