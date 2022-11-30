@@ -124,8 +124,6 @@ class NetSchoolSessionHandler:
         only_marks=False,
     ):
 
-        logging.info(f"{user_id}: diary request")
-
         if not self.checkSession(user_id):
             return
 
