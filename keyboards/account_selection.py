@@ -1,6 +1,8 @@
 from keyboards.keyboard import Keyboard
 from errors import *
 
+import logging
+
 
 class AccountSelection(Keyboard):
     def __init__(self, *args, **kwargs):
@@ -18,6 +20,8 @@ class AccountSelection(Keyboard):
 
     def parse(self, text):
         if text == "Добавить аккаунт":
+
+            logging.info("{self.user_id}: add account")
 
             self.master.askForAccount(self.user_id)
             return True

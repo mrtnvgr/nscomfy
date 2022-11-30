@@ -1,6 +1,8 @@
 from keyboards.keyboard import Keyboard
 from util import checkAccountName
 
+import logging
+
 
 class SettingsAccount(Keyboard):
     def __init__(self, *args, **kwargs):
@@ -33,6 +35,8 @@ class SettingsAccount(Keyboard):
             if userAnswer != "Согласен":
                 return
 
+            logging.info(f"{self.user_id}: delete account")
+
             user = self.master.master.config["users"][self.user_id]
             current_account = user["current_account"]
             user["accounts"].pop(current_account)
@@ -55,6 +59,8 @@ class SettingsAccount(Keyboard):
                     self.user_id, "Такое имя аккаунта запрещено!"
                 )
                 return True
+
+            logging.info(f"{self.user_id}: rename account")
 
             user = self.master.master.config["users"][self.user_id]
             current_account = user["current_account"]
@@ -86,6 +92,8 @@ class SettingsAccount(Keyboard):
 
             if answer not in [student["name"] for student in api._students]:
                 return
+
+            logging.info(f"{self.user_id}: change student of account")
 
             self.master.tg_api.deleteMessage(self.user_id, message_id)
 
