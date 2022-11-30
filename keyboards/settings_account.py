@@ -6,7 +6,7 @@ import logging
 
 class SettingsAccount(Keyboard):
     def __init__(self, *args, **kwargs):
-        super().__init__(self, *args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def set(self):
         if not self.master.ns.checkSession(self.user_id):
