@@ -66,6 +66,8 @@ class NetSchoolSessionHandler:
 
     def getOverdueTasks(self, user_id):
 
+        logging.info(f"{user_id}: overdue tasks request")
+
         if not self.checkSession(user_id):
             return
 
@@ -121,6 +123,8 @@ class NetSchoolSessionHandler:
         only_tasks=False,
         only_marks=False,
     ):
+
+        logging.info(f"{user_id}: diary request")
 
         if not self.checkSession(user_id):
             return
@@ -328,6 +332,8 @@ class NetSchoolSessionHandler:
         return "".join(text), buttons
 
     def getSchoolInfo(self, user_id, full: bool):
+
+        logging.info(f"{user_id}: school info request")
 
         if not self.checkSession(user_id):
             return
