@@ -270,45 +270,44 @@ class NetSchoolSessionHandler:
                                     )
                                     buttons.append(attachmentButton)
 
-                name = lesson["subjectName"]
-                number = lesson["number"]
-                start = lesson["startTime"]
-                end = lesson["endTime"]
+            name = lesson["subjectName"]
+            number = lesson["number"]
+            start = lesson["startTime"]
+            end = lesson["endTime"]
 
-                name = util.shortenSubjectName(name)
+            name = util.shortenSubjectName(name)
 
-                if only_marks and not marks:
-                    continue
+            if only_marks and not marks:
+                continue
 
-                if only_tasks and not tasks:
-                    continue
+            if only_tasks and not tasks:
+                continue
 
-                line = f"\n{number}: {name} ({start} - {end})"
-                line = util.normalizeHTMLText(line)
-                if marks:
-                    if not only_marks:
-                        line += f" <b>[{', '.join(marks)}]</b>"
-                text.append(f"{line}\n")
+            line = f"\n{number}: {name} ({start} - {end})"
+            line = util.normalizeHTMLText(line)
+            if marks and not only_marks:
+                line += f" <b>[{', '.join(marks)}]</b>"
+            text.append(f"{line}\n")
 
-                cloud = util.getEmoji("SPEECH BALLOON")
+            cloud = util.getEmoji("SPEECH BALLOON")
 
-                for mark, comm, task, attach in zip_longest(
-                    marks, markComments, tasks, attachments_text
-                ):
+            for mark, comm, task, attach in zip_longest(
+                marks, markComments, tasks, attachments_text
+            ):
 
-                    if mark and only_marks:
-                        text.append(f"{mark}\n")
+                if mark and only_marks:
+                    text.append(f"{mark}\n")
 
-                    if comm:
-                        comm = util.normalizeHTMLText(comm)
-                        text.append(f"{cloud}: {comm}\n")
+                if comm:
+                    comm = util.normalizeHTMLText(comm)
+                    text.append(f"{cloud}: {comm}\n")
 
-                    if task:
-                        task = util.normalizeHTMLText(task)
-                        text.append(f"<pre>{task}</pre>\n")
+                if task:
+                    task = util.normalizeHTMLText(task)
+                    text.append(f"<pre>{task}</pre>\n")
 
-                    if attach:
-                        text.extend(attach)
+                if attach:
+                    text.extend(attach)
 
         if text:
             text.insert(0, f"<b>{daydate}</b>\n")
