@@ -1,4 +1,6 @@
 from keyboards.keyboard import Keyboard
+from errors import *
+
 
 class AccountSelection(Keyboard):
     def __init__(self, *args, **kwargs):
@@ -13,3 +15,46 @@ class AccountSelection(Keyboard):
             self.keyboard.append([name])
 
         self.keyboard.append(["Добавить аккаунт"])
+
+    def parse(self, text):
+        if text == "Добавить аккаунт":
+
+            self.master.askForAccount(self.user_id)
+            return True
+
+        user = self.master.master.config["users"][self.user_id]
+        accounts = user["accounts"]
+
+        if text not in accounts:
+            self.master.tg_api.sendMessage(
+                self.user_id,
+                "Такого аккаунта нет! Пожалуйста используйте кнопки!",
+            )
+            return
+
+        message_id = self.master.tg_api.sendMessage(self.user_id, "Подождите...")[
+            "message_id"
+        ]
+        account = accounts[text]
+        try:
+            self.master.ns.login(
+                self.user_id,
+                account["url"],
+                account["login"],
+                account["password"],
+                account["student"],
+                account["school"],
+            )
+        except Exception as ex:
+            self.master.handleLoginError(
+                self.user_id,
+                message_id,
+                ex,
+                pop=text,
+            )
+            return
+
+        user["current_account"] = text
+        self.master.master.saveConfig()
+
+        self.master.tg_api.deleteMessage(self.user_id, message_id)

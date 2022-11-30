@@ -20,3 +20,6 @@ class Keyboard:
 
     def set(self):
         pass
+
+    def parse(self, text):
+        pass

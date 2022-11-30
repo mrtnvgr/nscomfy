@@ -91,285 +91,13 @@ class TelegramHandler:
 
             current_keyboard = self.master.config["users"][user_id]["current_keyboard"]
 
-            if current_keyboard == "mm":  # Main menu
+            if not current_keyboard:
+                return True
 
-                if text == "Выйти":
+            keyboard_func = keyboards.KEYBOARDS[current_keyboard]
+            keyboard = keyboard_func(user_id, self)
 
-                    self.forceLogout(user_id)
-
-                elif text == "Точки":
-
-                    days = self.ns.getOverdueTasks(user_id)
-                    if days:
-                        for day in days:
-                            self.tg_api.sendMessage(user_id, day)
-                    else:
-                        self.tg_api.sendMessage(user_id, "Нету! :3")
-                    return True
-
-                elif text == "Дневник":
-
-                    self.sendKeyboard(user_id, "diary")
-                    return True
-
-                elif text == "Настройки":
-
-                    self.sendKeyboard(user_id, "settings")
-                    return True
-
-                elif text == "Информация":
-
-                    self.sendKeyboard(user_id, "info")
-                    return True
-
-            elif current_keyboard == "account_selection":
-
-                if text == "Добавить аккаунт":
-
-                    self.askForAccount(user_id)
-
-                else:
-
-                    if text in self.master.config["users"][user_id]["accounts"]:
-                        message_id = self.tg_api.sendMessage(user_id, "Подождите...")[
-                            "message_id"
-                        ]
-                        account = self.master.config["users"][user_id]["accounts"][text]
-                        try:
-                            self.ns.login(
-                                user_id,
-                                account["url"],
-                                account["login"],
-                                account["password"],
-                                account["student"],
-                                account["school"],
-                            )
-                        except SchoolNotFoundError:
-                            self.handleLoginError(
-                                user_id,
-                                message_id,
-                                "Такой школы не существует!",
-                                pop=text,
-                            )
-                            return
-                        except LoginError:
-                            self.handleLoginError(
-                                user_id,
-                                message_id,
-                                "Неправильный логин или пароль!",
-                                pop=text,
-                            )
-                            return
-                        except UnsupportedRole:
-                            self.handleLoginError(
-                                user_id,
-                                message_id,
-                                "Ваш тип аккаунта не поддерживается!",
-                                pop=text,
-                            )
-                            return
-                        except:
-                            self.handleLoginError(
-                                user_id,
-                                message_id,
-                                "Что-то пошло не так! Повторите попытку позже.",
-                                pop=text,
-                            )
-                            return
-
-                        self.master.config["users"][user_id]["current_account"] = text
-                        self.master.saveConfig()
-
-                        self.tg_api.deleteMessage(user_id, message_id)
-
-                    else:
-                        self.tg_api.sendMessage(
-                            user_id,
-                            "Такого аккаунта нет! Пожалуйста используйте кнопки!",
-                        )
-
-            elif current_keyboard == "diary":
-
-                if text in ["Всё", "Расписание", "Задания", "Оценки"]:
-
-                    dateanswer, message_id = self.askUserAboutDate(user_id)
-                    if not dateanswer:
-                        return True
-
-                    diary_kwargs = {}
-
-                    if text == "Расписание":
-                        diary_kwargs["show_tasks"] = False
-                        diary_kwargs["show_marks"] = False
-                    elif text == "Задания":
-                        diary_kwargs["only_tasks"] = True
-                    elif text == "Оценки":
-                        diary_kwargs["only_marks"] = True
-
-                    self.editButtons(user_id, message_id, "Подождите...", [])
-
-                    diary = self.ns.getDiary(user_id, dateanswer, **diary_kwargs)
-                    if not diary:
-                        return True
-
-                    self.tg_api.deleteMessage(user_id, message_id)
-
-                    for day in diary:
-                        text, buttons = day
-
-                        self.sendButtons(user_id, text, buttons, parse_mode="HTML")
-
-                    return True
-
-            elif current_keyboard == "settings":
-
-                if text == "Аккаунт":
-
-                    self.sendKeyboard(user_id, "settings_account")
-
-                    return True
-
-            elif current_keyboard == "settings_account":
-
-                if text == "Удалить":
-
-                    if (
-                        self.askUser(user_id, 'Для продолжения напишите "Согласен":')
-                        == "Согласен"
-                    ):
-
-                        current_account = self.master.config["users"][user_id][
-                            "current_account"
-                        ]
-                        self.master.config["users"][user_id]["accounts"].pop(
-                            current_account
-                        )
-
-                        self.ns.logout(user_id)
-                        self.master.config["users"][user_id]["current_account"] = None
-
-                        self.master.saveConfig()
-
-                elif text == "Переименовать":
-
-                    newName = self.askUser(user_id, "Напишите новое название аккаунта:")
-                    if not newName:
-                        return
-
-                    if not util.checkAccountName(newName):
-                        self.tg_api.sendMessage(
-                            user_id, "Такое имя аккаунта запрещено!"
-                        )
-                        return True
-
-                    current_account = self.master.config["users"][user_id][
-                        "current_account"
-                    ]
-
-                    account = self.master.config["users"][user_id]["accounts"].pop(
-                        current_account
-                    )
-
-                    self.master.config["users"][user_id]["accounts"][newName] = account
-                    self.master.config["users"][user_id]["current_account"] = newName
-                    self.master.saveConfig()
-
-                    self.tg_api.sendMessage(
-                        user_id,
-                        f'Аккаунт "{current_account}" переименован в "{newName}"',
-                    )
-
-                elif text == "Сменить ученика":
-
-                    if not self.ns.checkSession(user_id):
-                        return
-                    api = self.ns.sessions[user_id]
-
-                    buttons = [[student["name"]] for student in api._students]
-
-                    resp = self.sendButtons(user_id, "Выберите ученика:", buttons)
-                    message_id = resp["message_id"]
-
-                    answer = self.getButtonAnswer()
-                    if not answer:
-                        return
-
-                    if answer not in [student["name"] for student in api._students]:
-                        return
-
-                    self.tg_api.deleteMessage(user_id, message_id)
-
-                    current_account = self.master.config["users"][user_id][
-                        "current_account"
-                    ]
-                    self.master.config["users"][user_id]["accounts"][current_account][
-                        "student"
-                    ] = answer
-                    self.master.saveConfig()
-
-                    self.forceLogout(user_id)
-
-            elif current_keyboard == "info":
-
-                if text == "Школа":
-
-                    school_info = self.ns.getSchoolInfo(user_id, full=False)
-                    if school_info:
-
-                        buttons = [
-                            {
-                                "text": "Полные данные",
-                                "callback_data": "/getFullSchoolInfo",
-                            }
-                        ]
-
-                        self.sendButtons(user_id, school_info, buttons)
-
-                    return True
-
-                elif text == "Аккаунт":
-
-                    account_info = self.ns.getAccountInfo(user_id)
-
-                    user_photo = self.ns.getUserPhoto(user_id)
-
-                    if account_info:
-                        self.tg_api.editPhoto(
-                            user_id,
-                            user_photo,
-                            account_info,
-                            parse_mode="HTML",
-                        )
-
-                    return True
-
-                elif text == "Бот":
-
-                    text = []
-
-                    users = self.master.config["users"]
-
-                    userCount = len(users)
-
-                    accCount = 0
-                    for user in users:
-                        accounts = users[user]["accounts"]
-                        accCount += len(accounts)
-
-                    giturl = "https://github.com/mrtnvgr/nscomfy"
-                    text.append(f"Страница проекта: <a href = '{giturl}'>тут</a>")
-                    text.append("Автор: @p13d3z\n")
-
-                    text.append(f"Количество пользователей: <b>{userCount}</b>")
-                    text.append(f"Количество аккаунтов: <b>{accCount}</b>")
-
-                    self.tg_api.sendMessage(
-                        user_id,
-                        "\n".join(text),
-                        params={"disable_web_page_preview": True},
-                    )
-
-                    return True
+            return keyboard.parse(text)
 
         elif "callback_query" in update:
 
@@ -628,7 +356,17 @@ class TelegramHandler:
 
         return self.tg_api.editButtons(user_id, message_id, text, markup, **kwargs)
 
-    def handleLoginError(self, user_id, message_id, error_msg, pop: str = ""):
+    def handleLoginError(self, user_id, message_id, exception, pop: str = ""):
+
+        errorMessages = {
+            SchoolNotFoundError: "Такой школы не существует!",
+            LoginError: "Неправильный логин или пароль!",
+            UnsupportedRole: "Ваш тип аккаунта не поддерживается!",
+        }
+        error_msg = errorMessages.get(
+            exception.__class__, "Что-то пошло не так! Повторите попытку позже."
+        )
+
         self.editButtons(user_id, message_id, error_msg, [])
         if pop:
             self.master.config["users"][user_id]["accounts"].pop(pop)
