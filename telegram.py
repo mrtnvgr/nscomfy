@@ -1,5 +1,4 @@
 from nsapi import NetSchoolAPI
-from errors import *
 from ns import NetSchoolSessionHandler
 from tgapi import TelegramAPI
 import keyboards
@@ -190,8 +189,9 @@ class TelegramHandler:
 
         try:
             api = NetSchoolAPI(account["url"])
-        except InvalidUrlError:
-            self.tg_api.sendMessage(user_id, "Неправильная ссылка!")
+        except Exception as exception:
+            error_msg = self.master.handleError(user_id, exception)
+            self.tg_api.sendMessage(user_id, error_msg)
             return
 
         account["login"] = self.askUser(user_id, "Напишите логин:")
@@ -251,16 +251,8 @@ class TelegramHandler:
 
         try:
             api.login(account["login"], account["password"], account["school"])
-        except SchoolNotFoundError:
-            self.editButtons(user_id, message_id, "Такой школы не существует!", [])
-            return
-        except LoginError:
-            self.editButtons(user_id, message_id, "Неправильный логин или пароль!", [])
-            return
-        except UnsupportedRole:
-            self.editButtons(
-                user_id, message_id, "Ваш тип аккаунта не поддерживается!", []
-            )
+        except Exception as exception:
+            self.handleLoginError(user_id, message_id, exception)
             return
 
         students = api._students
@@ -358,14 +350,7 @@ class TelegramHandler:
 
     def handleLoginError(self, user_id, message_id, exception, pop: str = ""):
 
-        errorMessages = {
-            SchoolNotFoundError: "Такой школы не существует!",
-            LoginError: "Неправильный логин или пароль!",
-            UnsupportedRole: "Ваш тип аккаунта не поддерживается!",
-        }
-        error_msg = errorMessages.get(
-            exception.__class__, "Что-то пошло не так! Повторите попытку позже."
-        )
+        error_msg = self.master.handleError(user_id, exception)
 
         self.editButtons(user_id, message_id, error_msg, [])
         if pop:

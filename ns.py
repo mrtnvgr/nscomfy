@@ -5,7 +5,6 @@ import logging
 
 import util
 from nsapi import NetSchoolAPI
-from errors import *
 
 
 class NetSchoolSessionHandler:
@@ -37,21 +36,8 @@ class NetSchoolSessionHandler:
 
             try:
                 self.login(user_id, url, username, password, student, school)
-            except SchoolNotFoundError:
-                self.handleLoginError(user_id, msg_id, "Такой школы не существует!")
-                return
-            except LoginError:
-                self.handleLoginError(user_id, msg_id, "Неправильный логин или пароль!")
-                return
-            except UnsupportedRole:
-                self.handleLoginError(
-                    user_id, msg_id, "Ваш тип аккаунта не поддерживается!"
-                )
-                return
-            except:
-                self.handleLoginError(
-                    user_id, msg_id, "Что-то пошло не так! Повторите попытку позже."
-                )
+            except Exception as exception:
+                self.handleLoginError(user_id, msg_id, exception)
                 return
 
             self.master.tg_api.deleteMessage(user_id, msg_id)
@@ -454,7 +440,8 @@ class NetSchoolSessionHandler:
         data = f"/downloadAttachment {studentId} {assignId} {attachId}"
         return {"text": text, "callback_data": data}
 
-    def handleLoginError(self, user_id, msg_id, error_msg):
+    def handleLoginError(self, user_id, msg_id, exception):
+        error_msg = self.master.handleError(user_id, exception)
         self.master.editButtons(user_id, msg_id, error_msg, [])
         self.master.forceLogout(user_id)
         self.master.sendKeyboard(user_id, "account_selection")

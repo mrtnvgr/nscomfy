@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from telegram import TelegramHandler
+from errors import *
 
 import json
 import os
@@ -58,6 +59,21 @@ class Main:
                 self.exit()
                 logging.log(21, "Raising exception for debug")
                 raise ex
+
+    def handleError(self, user_id, exception):
+
+        errorMessages = {
+            SchoolNotFoundError: "Такой школы не существует!",
+            LoginError: "Неправильный логин или пароль!",
+            UnsupportedRole: "Ваш тип аккаунта не поддерживается!",
+            InvalidUrlError: "Неправильная ссылка!",
+        }
+
+        logging.info(f"{user_id}: {exception.__class__} exception")
+
+        return errorMessages.get(
+            exception.__class__, "Что-то пошло не так! Повторите попытку позже."
+        )
 
     def exit(self):
         self.telegram.ns.allLogout()
