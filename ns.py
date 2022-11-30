@@ -333,8 +333,6 @@ class NetSchoolSessionHandler:
 
     def getSchoolInfo(self, user_id, full: bool):
 
-        logging.info(f"{user_id}: school info request")
-
         if not self.checkSession(user_id):
             return
         api = self.sessions[user_id]

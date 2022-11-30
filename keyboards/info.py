@@ -1,5 +1,7 @@
 from keyboards.keyboard import Keyboard
 
+import logging
+
 
 class Info(Keyboard):
     def __init__(self, *args, **kwargs):
@@ -18,6 +20,8 @@ class Info(Keyboard):
 
         if text == "Школа":
 
+            logging.info(f"{self.user_id}: school info request")
+
             school_info = self.master.ns.getSchoolInfo(self.user_id, full=False)
             if school_info:
 
@@ -34,6 +38,8 @@ class Info(Keyboard):
 
         elif text == "Аккаунт":
 
+            logging.info(f"{self.user_id}: account info request")
+
             account_info = self.master.ns.getAccountInfo(self.user_id)
 
             user_photo = self.master.ns.getUserPhoto(self.user_id)
@@ -49,6 +55,8 @@ class Info(Keyboard):
             return True
 
         elif text == "Бот":
+
+            logging.info(f"{self.user_id}: bot info request")
 
             text = []
 
