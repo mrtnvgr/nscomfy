@@ -25,6 +25,8 @@ class AccountSelection(Keyboard):
 
             if self.master.askForAccount(self.user_id):
                 return True
+            else:
+                return
 
         user = self.master.master.config["users"][self.user_id]
         accounts = user["accounts"]
