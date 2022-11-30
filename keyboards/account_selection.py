@@ -23,8 +23,8 @@ class AccountSelection(Keyboard):
 
             logging.info(f"{self.user_id}: add account")
 
-            self.master.askForAccount(self.user_id)
-            return True
+            if not self.master.askForAccount(self.user_id):
+                return True
 
         user = self.master.master.config["users"][self.user_id]
         accounts = user["accounts"]
