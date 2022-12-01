@@ -7,6 +7,7 @@ from typing import Optional
 from datetime import date, timedelta
 
 from errors import *
+from requests.exceptions import ConnectionError, InvalidURL
 from json.decoder import JSONDecodeError
 
 
@@ -28,7 +29,7 @@ class NetSchoolAPI:
         # Get version info and NSSESSIONID cookie
         try:
             self.ns_info = self.request(f"logindata").json()
-        except (JSONDecodeError, requests.exceptions.ConnectionError):
+        except (JSONDecodeError, ConnectionError, InvalidURL):
             raise InvalidUrlError("given url isn't a net school url")
 
     def getSchoolList(self, force=False):
