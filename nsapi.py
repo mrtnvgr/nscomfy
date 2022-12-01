@@ -136,12 +136,10 @@ class NetSchoolAPI:
         ).json()
 
         # Add task type info
-        for task in response:
+        for index, task in enumerate(response):
 
-            # Get task index in response
-            index = response.index(task)
             # Get type id value
-            typeId = response[index]["typeId"]
+            typeId = task["typeId"]
             # Get type value from assignment types
             typeName = self._assignment_types[typeId]
             # Append value to task
