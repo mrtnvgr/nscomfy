@@ -55,10 +55,8 @@ class Main:
                 updates = self.telegram.getUpdates(timeout=60000)
                 for update in updates:
                     self.telegram.updateHandler(update)
-            except Exception as ex:
-                self.exit()
-                logging.log(21, "Raising exception for debug")
-                raise ex
+            except Exception:
+                logging.exception("Exception catched!", exc_info=True)
 
     def handleError(self, user_id, exception):
 
