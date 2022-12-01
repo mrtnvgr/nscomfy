@@ -15,7 +15,9 @@ class Main:
         for sig in [signal.SIGTERM, signal.SIGINT]:
             signal.signal(sig, self.exitSignal)
 
-        logging.basicConfig(format="[%(levelname)s] %(message)s", level=logging.INFO)
+        logging.basicConfig(
+            format="[%(levelname)s] %(message)s", level=logging.INFO, encoding="UTF-8"
+        )
         logging.addLevelName(21, "EXIT")
 
         if os.path.exists("config.json"):
