@@ -283,9 +283,16 @@ class TelegramHandler:
             self.tg_api.sendMessage(user_id, "Такое имя аккаунта запрещено!")
             return
 
+        user = self.master.config["users"][user_id]
+
+        if name in user["accounts"]:
+            msg = "У вас уже есть аккаунт под таким названием!"
+            if not self.askUserAgreement(user_id, msg, "перезаписи"):
+                return
+
         self.addNewUser(user_id)
 
-        self.master.config["users"][user_id]["accounts"][name] = account
+        user["accounts"][name] = account
         self.master.saveConfig()
 
         return True
@@ -322,6 +329,16 @@ class TelegramHandler:
         dateanswer = self.getButtonAnswer()
 
         return dateanswer, message_id
+
+    def askUserAgreement(self, user_id, reason="", action="продолжения"):
+        message = f'Для {action} напишите "Согласен":'
+
+        if reason:
+            message = f"{reason}\n{message}"
+
+        userAnswer = self.askUser(user_id, message)
+        if userAnswer == "Согласен":
+            return True
 
     def sendKeyboard(self, user_id, ktype):
         """Send different keyboards to user"""

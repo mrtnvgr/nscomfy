@@ -28,11 +28,9 @@ class SettingsAccount(Keyboard):
     def parse(self, text):
         if text == "Удалить":
 
-            userAnswer = self.master.askUser(
-                self.user_id, 'Для продолжения напишите "Согласен":'
-            )
-
-            if userAnswer != "Согласен":
+            msg = "Вы точно хотите удалить текущий аккаунт?"
+            userAnswer = self.master.askUserAgreement(self.user_id, msg)
+            if not userAnswer:
                 return
 
             logging.info(f"{self.user_id}: delete account")
