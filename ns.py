@@ -92,8 +92,6 @@ class NetSchoolSessionHandler:
 
     def setOverdueCount(self, user_id):
 
-        self.checkSession(user_id)
-
         overdues = self.sessions[user_id].getOverdueTasks()
         self.sessions[user_id]._overdue_count = len(overdues)
 
