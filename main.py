@@ -65,6 +65,7 @@ class Main:
             LoginError: "Неправильный логин или пароль!",
             UnsupportedRole: "Ваш тип аккаунта не поддерживается!",
             InvalidUrlError: "Неправильная ссылка!",
+            NSInternalError: "Ваша сессия аккаунта истекла.\nПожалуйста перезайдите в аккаунт!\n(Это временная мера.)",
         }
 
         logging.info(f"{user_id}: {exception.__class__} exception")

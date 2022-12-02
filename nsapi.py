@@ -296,6 +296,9 @@ class NetSchoolAPI:
                     "login before using requests that need authorization"
                 )
 
+        if "errorMessage" in response:
+            raise NSInternalError(response["errorMessage"])
+
         return response
 
     def logout(self):
