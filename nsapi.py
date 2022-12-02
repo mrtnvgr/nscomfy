@@ -21,6 +21,7 @@ class NetSchoolAPI:
         # Reset login variables
         self._reset_logindata()
 
+        # Create headers
         self._session_headers = {"referer": self._url}
 
         # Create new requests session
@@ -270,11 +271,11 @@ class NetSchoolAPI:
             url = f"{self._url}/webapi/{url}"
 
         # Update request headers
-        headers = self._session_headers | headers
+        rheaders = self._session_headers | headers
 
         # Make a request
         try:
-            response = self._session.request(method, url, headers=headers, **kwargs)
+            response = self._session.request(method, url, headers=rheaders, **kwargs)
         except requests.exceptions.ReadTimeout:
             # Retry request
             return self.request(url, method, headers, relogin, **kwargs)
@@ -296,9 +297,6 @@ class NetSchoolAPI:
                     "login before using requests that need authorization"
                 )
 
-        if "exceptionMessage" in response:
-            raise NSInternalError(response["exceptionMessage"])
-
         return response
 
     def logout(self):
@@ -311,7 +309,7 @@ class NetSchoolAPI:
 
     def _reset_logindata(self):
         """Reset login data variables"""
-        self._login_data = None
+        self._login_data = ()
 
         self.ns_info = {}
 
