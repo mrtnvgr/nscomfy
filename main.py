@@ -61,7 +61,7 @@ class Main:
         while True:
 
             try:
-                updates = self.telegram.getUpdates(timeout=60000)
+                updates = self.telegram.getUpdates(timeout=999999)
                 for update in updates:
                     self.telegram.updateHandler(update)
             except Exception:
