@@ -25,8 +25,8 @@ class TelegramAPI:
         status_code = response.status_code
         response = response.json()
 
-        if user_id:
-            logging.debug(f"[TG] {user_id}: {method} {status_code}")
+        if "chat_id" in payload:
+            logging.debug(f"[TG] {payload['chat_id']}: {method} {status_code}")
 
         if response["ok"]:
             return response["result"]
