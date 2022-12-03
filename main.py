@@ -7,6 +7,7 @@ import json
 import os
 import signal
 import logging
+import argparse
 
 
 class Main:
@@ -15,7 +16,15 @@ class Main:
         for sig in [signal.SIGTERM, signal.SIGINT]:
             signal.signal(sig, self.exitSignal)
 
-        logging.basicConfig(format="[%(levelname)s] %(message)s", level=logging.INFO)
+        parser = argparse.ArgumentParser()
+        parser.add_argument(
+            "--log-level", choices=["info", "debug", "error"], default="info"
+        )
+        self.args = parser.parse_args()
+
+        logging.basicConfig(
+            format="[%(levelname)s] %(message)s", level=self.args.log_level.upper()
+        )
         logging.addLevelName(21, "EXIT")
 
         if os.path.exists("config.json"):
