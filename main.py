@@ -25,7 +25,15 @@ class Main:
         logging.basicConfig(
             format="[%(levelname)s] %(message)s", level=self.args.log_level.upper()
         )
-        logging.addLevelName(21, "EXIT")
+
+        level_names = {
+            logging.INFO: "II",
+            logging.WARNING: "WW",
+            logging.ERROR: "EE",
+            21: "EX", # EXIT
+        }
+        for level, name in level_names.items():
+            logging.addLevelName(level, name)
 
         # Turn off requests logger
         logging.getLogger("requests").setLevel(logging.WARNING)
