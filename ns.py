@@ -46,7 +46,7 @@ class NetSchoolSessionHandler:
 
     def login(self, user_id, url, username, password, student, school):
         logging.info(f"[NS] {user_id}: log in")
-        self.sessions[user_id] = NetSchoolAPI(url)
+        self.sessions[user_id] = NetSchoolAPI(user_id, url)
         self.sessions[user_id].login(username, password, school)
         self.setStudent(user_id, student)
 

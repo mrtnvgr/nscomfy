@@ -13,7 +13,9 @@ from json.decoder import JSONDecodeError
 
 
 class NetSchoolAPI:
-    def __init__(self, url):
+    def __init__(self, user_id: int, url: str):
+
+        self.user_id = user_id
 
         self._url = self._format_url(url)
         self._schools = []
@@ -302,7 +304,7 @@ class NetSchoolAPI:
                     "login before using requests that need authorization"
                 )
 
-        logging.debug(f"[NS]: {rurl} {status_code} relogin={relogin}")
+        logging.debug(f"[NS] {self.user_id}: {rurl} {status_code} relogin={relogin}")
 
         return response
 

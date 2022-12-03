@@ -188,7 +188,7 @@ class TelegramHandler:
             return
 
         try:
-            api = NetSchoolAPI(account["url"])
+            api = NetSchoolAPI(user_id, account["url"])
         except Exception as exception:
             error_msg = self.master.handleError(user_id, exception)
             self.tg_api.sendMessage(user_id, error_msg)
