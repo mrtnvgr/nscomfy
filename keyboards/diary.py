@@ -41,6 +41,7 @@ class Diary(Keyboard):
 
         diary = self.master.ns.getDiary(self.user_id, dateanswer, **diary_kwargs)
         if not diary:
+            self.master.tg_api.deleteMessage(self.user_id, message_id)
             return True
 
         self.master.tg_api.deleteMessage(self.user_id, message_id)
