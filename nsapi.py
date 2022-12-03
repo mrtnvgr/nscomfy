@@ -2,6 +2,7 @@
 
 import requests
 import hashlib
+import logging
 
 from typing import Optional
 from datetime import date, timedelta
@@ -266,6 +267,8 @@ class NetSchoolAPI:
     def request(self, url, method="GET", headers={}, relogin=True, **kwargs):
         """Session request wrapper"""
 
+        rurl = url
+
         # Check if url is relative
         if not url.startswith(self._url):
             url = f"{self._url}/webapi/{url}"
@@ -280,8 +283,10 @@ class NetSchoolAPI:
             # Retry request
             return self.request(url, method, headers, relogin, **kwargs)
 
+        status_code = response.status_code
+
         # If access denied and we are logged in, try to relogin
-        if response.status_code == 500 and relogin:
+        if status_code == 500 and relogin:
 
             # Check if we have stored login data
             if self._login_data:
@@ -296,6 +301,8 @@ class NetSchoolAPI:
                 raise RequestError(
                     "login before using requests that need authorization"
                 )
+
+        logging.debug(f"[NS]: {rurl} {status_code} relogin={relogin}")
 
         return response
 

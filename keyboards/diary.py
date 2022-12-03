@@ -35,7 +35,7 @@ class Diary(Keyboard):
         elif text == "Оценки":
             diary_kwargs["only_marks"] = True
 
-        logging.info(f'{self.user_id}: "{text}" diary request')
+        logging.info(f'[NS] {self.user_id}: "{text}" diary request')
 
         self.master.editButtons(self.user_id, message_id, "Подождите...", [])
 

@@ -45,14 +45,14 @@ class NetSchoolSessionHandler:
         return True
 
     def login(self, user_id, url, username, password, student, school):
-        logging.info(f"{user_id}: log in")
+        logging.info(f"[NS] {user_id}: log in")
         self.sessions[user_id] = NetSchoolAPI(url)
         self.sessions[user_id].login(username, password, school)
         self.setStudent(user_id, student)
 
     def getOverdueTasks(self, user_id):
 
-        logging.info(f"{user_id}: overdue tasks request")
+        logging.info(f"[NS] {user_id}: overdue tasks request")
 
         if not self.checkSession(user_id):
             return
@@ -446,7 +446,7 @@ class NetSchoolSessionHandler:
     def logout(self, user_id):
 
         if user_id in self.sessions:
-            logging.info(f"{user_id}: log out")
+            logging.info(f"[NS] {user_id}: log out")
             self.sessions[user_id].logout()
             self.sessions.pop(user_id)
 

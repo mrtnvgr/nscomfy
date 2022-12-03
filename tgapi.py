@@ -1,6 +1,7 @@
 from typing import Dict
 import requests
 import json
+import logging
 
 
 class TelegramAPI:
@@ -19,7 +20,13 @@ class TelegramAPI:
             f"https://api.telegram.org/bot{self.token}/{method}",
             params=payload,
             **kwargs,
-        ).json()
+        )
+
+        status_code = response.status_code
+        response = response.json()
+
+        if user_id:
+            logging.debug(f"[TG] {user_id}: {method} {status_code}")
 
         if response["ok"]:
             return response["result"]

@@ -33,7 +33,7 @@ class SettingsAccount(Keyboard):
             if not userAnswer:
                 return
 
-            logging.info(f"{self.user_id}: delete account")
+            logging.info(f"[NS] {self.user_id}: delete account")
 
             user = self.master.master.config["users"][self.user_id]
             current_account = user["current_account"]
@@ -58,7 +58,7 @@ class SettingsAccount(Keyboard):
                 )
                 return True
 
-            logging.info(f"{self.user_id}: rename account")
+            logging.info(f"[NS] {self.user_id}: rename account")
 
             user = self.master.master.config["users"][self.user_id]
             current_account = user["current_account"]
@@ -91,7 +91,7 @@ class SettingsAccount(Keyboard):
             if answer not in [student["name"] for student in api._students]:
                 return
 
-            logging.info(f"{self.user_id}: change student of account")
+            logging.info(f"[NS] {self.user_id}: change student of account")
 
             self.master.tg_api.deleteMessage(self.user_id, message_id)
 

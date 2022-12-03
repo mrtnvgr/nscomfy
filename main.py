@@ -27,6 +27,10 @@ class Main:
         )
         logging.addLevelName(21, "EXIT")
 
+        # Turn off requests logger
+        logging.getLogger("requests").setLevel(logging.WARNING)
+        logging.getLogger("urllib3").setLevel(logging.WARNING)
+
         if os.path.exists("config.json"):
             self.config = json.load(open("config.json"))
         else:
@@ -76,7 +80,7 @@ class Main:
             InvalidUrlError: "Неправильная ссылка!",
         }
 
-        logging.info(f"{user_id}: {exception.__class__} exception")
+        logging.error(f"[NS] {user_id}: {exception.__class__} exception")
 
         return errorMessages.get(
             exception.__class__, "Что-то пошло не так! Повторите попытку позже."

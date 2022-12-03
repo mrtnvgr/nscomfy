@@ -21,7 +21,7 @@ class AccountSelection(Keyboard):
     def parse(self, text):
         if text == "Добавить аккаунт":
 
-            logging.info(f"{self.user_id}: add account")
+            logging.info(f"[NS] {self.user_id}: add account")
 
             self.master.askForAccount(self.user_id)
             return
