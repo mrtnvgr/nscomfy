@@ -190,7 +190,7 @@ class TelegramHandler:
         try:
             api = NetSchoolAPI(user_id, account["url"])
         except Exception as exception:
-            error_msg = self.master.handleError(user_id, exception)
+            error_msg, _ = self.master.handleError(user_id, exception)
             self.tg_api.sendMessage(user_id, error_msg)
             return
 
@@ -367,10 +367,10 @@ class TelegramHandler:
 
     def handleLoginError(self, user_id, message_id, exception, pop: str = ""):
 
-        error_msg = self.master.handleError(user_id, exception)
+        error_msg, unknown_err = self.master.handleError(user_id, exception)
 
         self.editButtons(user_id, message_id, error_msg, [])
-        if pop:
+        if pop and not unknown_err:
             self.master.config["users"][user_id]["accounts"].pop(pop)
             self.master.saveConfig()
 

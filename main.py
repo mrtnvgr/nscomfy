@@ -91,11 +91,14 @@ class Main:
             InvalidUrlError: "Неправильная ссылка!",
         }
 
+        unknownMessage = "Что-то пошло не так! Повторите попытку позже."
+
         logging.error(f"[NS] {user_id}: {exception.__class__} exception")
 
-        return errorMessages.get(
-            exception.__class__, "Что-то пошло не так! Повторите попытку позже."
-        )
+        unknownErr = exception.__class__ not in errorMessages
+        errorMessage = errorMessages.get(exception.__class__, unknownMessage)
+
+        return errorMessage, unknownErr
 
     def exit(self):
         self.telegram.ns.allLogout()

@@ -438,7 +438,7 @@ class NetSchoolSessionHandler:
         return {"text": text, "callback_data": data}
 
     def handleLoginError(self, user_id, msg_id, exception):
-        error_msg = self.master.master.handleError(user_id, exception)
+        error_msg, _ = self.master.master.handleError(user_id, exception)
         self.master.editButtons(user_id, msg_id, error_msg, [])
         self.master.forceLogout(user_id)
         self.master.sendKeyboard(user_id, "account_selection")
