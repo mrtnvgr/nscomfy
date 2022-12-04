@@ -93,7 +93,7 @@ class Main:
 
         unknownMessage = "Что-то пошло не так! Повторите попытку позже."
 
-        logging.error(f'[NS] {user_id}: "{exception.__class__.name}" exception')
+        logging.error(f'[NS] {user_id}: "{exception.__class__.__name__}" exception')
 
         unknownErr = exception.__class__ not in errorMessages
         errorMessage = errorMessages.get(exception.__class__, unknownMessage)
