@@ -26,12 +26,14 @@ class Main:
             format="[%(levelname)s] %(message)s", level=self.args.log_level.upper()
         )
 
+        logging.EXIT = 21
+
         level_names = {
             logging.INFO: "II",
             logging.DEBUG: "DD",
             logging.WARNING: "WW",
             logging.ERROR: "EE",
-            21: "EX",  # EXIT
+            logging.EXIT: "EX",
         }
         for level, name in level_names.items():
             logging.addLevelName(level, name)
@@ -99,7 +101,7 @@ class Main:
         self.telegram.ns.allLogout()
 
     def exitSignal(self, *args):
-        logging.log(21, f"Signal catched: {args}")
+        logging.log(logging.EXIT, f"Signal catched: {args}")
         self.exit()
         exit(1)
 

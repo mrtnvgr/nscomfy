@@ -453,6 +453,6 @@ class NetSchoolSessionHandler:
     def allLogout(self):
         sessions = self.sessions.copy()
         if sessions:
-            logging.log(21, "Logging out of all sessions")
+            logging.log(logging.EXIT, "Logging out of all sessions")
             for user_id in sessions:
                 self.logout(user_id)
