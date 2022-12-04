@@ -28,9 +28,10 @@ class Main:
 
         level_names = {
             logging.INFO: "II",
+            logging.DEBUG: "DD",
             logging.WARNING: "WW",
             logging.ERROR: "EE",
-            21: "EX", # EXIT
+            21: "EX",  # EXIT
         }
         for level, name in level_names.items():
             logging.addLevelName(level, name)

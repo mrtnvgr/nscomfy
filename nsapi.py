@@ -293,6 +293,8 @@ class NetSchoolAPI:
             # Check if we have stored login data
             if self._login_data:
 
+                logging.debug(f"[NS] {self.user_id}: {rurl} RELOGIN")
+
                 # Try to login again
                 self.login(*self._login_data)
 
