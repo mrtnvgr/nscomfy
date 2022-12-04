@@ -206,10 +206,9 @@ class TelegramHandler:
         try:
             districts_response = api.getMunicipalityDistrictList()
             schools_response = api.getSchoolList()
-        except:
-            self.editButtons(
-                user_id, message_id, "Что-то пошло не так! Повторите попытку позже.", []
-            )
+        except Exception as exception:
+            error_msg, _ = self.master.handleError(user_id, exception)
+            self.editButtons(user_id, message_id, error_msg, [])
             return
 
         districts = []
