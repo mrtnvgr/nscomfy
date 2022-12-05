@@ -20,7 +20,7 @@ class Main:
 
         parser = argparse.ArgumentParser()
         parser.add_argument(
-            "--log-level", choices=["info", "debug", "error"], default="info"
+            "--log-level", choices=["info", "debug", "error"], default="debug"
         )
         self.args = parser.parse_args()
 
