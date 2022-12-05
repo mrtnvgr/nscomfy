@@ -128,7 +128,7 @@ class NetSchoolAPI:
         ver = self.ns_info.get("version", "")
         userId = self.student_info.get("id", "")
         at = self._session_headers.get("at", "")
-        url = f"{self._url}/webapi/attachments/{attachmentId}"
+        url = f"attachments/{attachmentId}"
         url += f"?ver={ver}&at={at}&userId={userId}"
         return url
 
