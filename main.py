@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
 from telegram import TelegramHandler
+
 from errors import *
+from requests.exceptions import JSONDecodeError
 
 import json
 import os
@@ -91,12 +93,23 @@ class Main:
             InvalidUrlError: "Неправильная ссылка!",
         }
 
+        ignoreErrors = [
+            JSONDecodeError,  # Битые данные с нет города
+        ]
+
         unknownMessage = "Что-то пошло не так! Повторите попытку позже."
 
-        logging.error(f'[NS] {user_id}: "{exception.__class__.__name__}" exception')
+        exceptionName = exception.__class__.__name__
 
         unknownErr = exception.__class__ not in errorMessages
+        ignoreErr = exception.__class__ in ignoreErrors
+
         errorMessage = errorMessages.get(exception.__class__, unknownMessage)
+
+        if not unknownErr or ignoreErr:
+            logging.error(f'[NS] {user_id}: "{exceptionName}" exception')
+        else:
+            logging.exception(f"[NS] {user_id}: unknown exception!")
 
         return errorMessage, unknownErr
 
