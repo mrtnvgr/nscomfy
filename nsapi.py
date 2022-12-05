@@ -269,8 +269,6 @@ class NetSchoolAPI:
     def request(self, url, method="GET", headers={}, relogin=True, **kwargs):
         """Session request wrapper"""
 
-        rurl = url
-
         # Check if url is relative
         if not url.startswith(self._url):
             url = f"{self._url}/webapi/{url}"
@@ -293,6 +291,7 @@ class NetSchoolAPI:
             # Check if we have stored login data
             if self._login_data:
 
+                rurl = self._getMethodNameFromUrl(url)
                 logging.debug(f"[NS] {self.user_id}: {rurl} RELOGIN")
 
                 # Try to login again
@@ -306,6 +305,7 @@ class NetSchoolAPI:
                     "login before using requests that need authorization"
                 )
 
+        rurl = self._getMethodNameFromUrl(url)
         logging.debug(f"[NS] {self.user_id}: {rurl} {status_code} relogin={relogin}")
 
         return response
@@ -335,6 +335,12 @@ class NetSchoolAPI:
 
         self._active_sessions = None
         self._unreaded_mail_messages = None
+
+    def _getMethodNameFromUrl(self, url):
+        """.../method?somestuff=... -> method"""
+        url = url.removeprefix(f"{self._url}/webapi/")
+        url = url.split("?")[0]
+        return url
 
     @staticmethod
     def _format_url(url):
