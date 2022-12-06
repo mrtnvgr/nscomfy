@@ -28,7 +28,7 @@ class MainMenu(Keyboard):
         else:
             unreaded = ""
 
-        self.text = f"Главное меню\n\n{student_info}{overdueCount}{unreaded}\n\n{activeSessions}"
+        self.text = f"<b>Главное меню</b>\n\n{student_info}{overdueCount}{unreaded}\n\n{activeSessions}"
 
         self.keyboard.append(firstRow)
         self.keyboard.append(["Информация"])
