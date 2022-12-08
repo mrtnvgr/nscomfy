@@ -70,6 +70,22 @@ class NetSchoolAPI:
 
         return self.request("mysettings").json()
 
+    def getBirthdays(self, monthId):
+        """Get birthdays information"""
+
+        params = {
+            "classId": "-1",
+            "month": monthId,
+            "roles": "0",
+        }
+
+        return self.request("schedule/month/birthdays", params=params).json()
+
+    def getBirthdayFilters(self):
+        """Get birthday filters"""
+
+        return self.request("schedule/month/filterpanel?month=").json()
+
     def getUserPhoto(self):
         """Get user photo"""
 

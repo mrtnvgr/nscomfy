@@ -11,7 +11,7 @@ class Info(Keyboard):
         self.text = "Выберите тип информации:"
 
         self.keyboard.append(["Аккаунт", "Школа"])
-        self.keyboard.append(["Бот"])
+        self.keyboard.append(["Дни рождения", "Бот"])
         self.keyboard.append(["Назад"])
 
         self.one_time_keyboard = False
@@ -80,6 +80,15 @@ class Info(Keyboard):
                 self.user_id,
                 "\n".join(text),
                 params={"disable_web_page_preview": True},
+            )
+
+            return True
+
+        elif text == "Дни рождения":
+
+            message_id, birthdays = self.master.ns.getBirthdays(self.user_id)
+            self.master.editButtons(
+                self.user_id, message_id, birthdays, [], parse_mode="HTML"
             )
 
             return True

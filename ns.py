@@ -406,6 +406,85 @@ class NetSchoolSessionHandler:
 
         return "\n".join(text)
 
+    def getBirthdays(self, user_id):
+
+        if not self.checkSession(user_id):
+            return
+        api = self.sessions[user_id]
+
+        months = self.getBirthdayMonths(user_id)
+        if not months:
+            return
+
+        buttons = []
+        for month_name, month_value in months.items():
+            buttons.append({"text": month_name, "callback_data": month_value})
+
+        resp = self.master.sendButtons(user_id, "Выберите месяц:", buttons)
+        message_id = resp["message_id"]
+
+        resp = self.master.getButtonAnswer()
+        if not resp:
+            return
+
+        monthId = resp.split("_")[1]
+
+        birthdays = api.getBirthdays(monthId)
+        if not birthdays:
+            return
+
+        bd_sorted = {}
+
+        # Restructure birthdays info
+
+        for birthday in birthdays:
+
+            bd_date = util.formatDate(birthday["birthdate"])
+
+            if bd_date not in bd_sorted:
+                bd_sorted[bd_date] = []
+
+            bd_sorted[bd_date].append(
+                {
+                    "fio": birthday["fio"],
+                    "role": util.getRole(birthday["role"]),
+                }
+            )
+
+        # Convert data to text
+
+        text = []
+
+        for bd_date, bd_list in bd_sorted.items():
+
+            text.append(f"\n\n<b>{bd_date}:</b>\n")
+            for bd_data in bd_list:
+                fio = bd_data["fio"]
+                role = bd_data["role"]
+                text.append(f"{fio}")
+                text.append(f"Роль: {role}")
+
+        return message_id, "\n".join(text)
+
+    def getBirthdayMonths(self, user_id):
+
+        if not self.checkSession(user_id):
+            return
+        api = self.sessions[user_id]
+
+        filters = api.getBirthdayFilters()
+        if not filters:
+            return
+
+        if "filterSources" not in filters:
+            return
+
+        sources = filters["filterSources"]
+        for source in sources:
+            if source["filterId"] == "MonthsFilter":
+                months = source["items"]
+                return {month["title"]: month["value"] for month in months}
+
     def getUserPhoto(self, user_id):
 
         if not self.checkSession(user_id):

@@ -81,3 +81,25 @@ def getYesterdayDelta(day):
         return timedelta(days=3)
     else:
         return timedelta(days=1)
+
+
+def getRole(role):
+
+    # Convert numeric roles to strings
+    # NOTE: возможно это делается не так
+    nums = {
+        0: "Teacher",
+        1: "Student",
+        2: "Parent",
+    }
+
+    role = nums.get(role, role)
+
+    # Translate english roles to russian
+    translations = {
+        "Teacher": "Учитель",
+        "Student": "Ученик",
+        "Parent": "Родитель",
+    }
+
+    return translations.get(role, role)
