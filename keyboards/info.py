@@ -71,7 +71,7 @@ class Info(Keyboard):
 
             giturl = "github.com/mrtnvgr/nscomfy"
             text.append("<b>Контакты:</b>")
-            text.append("Автор: @p13d3z")
+            text.append("Автор: @mrtnvgr")
             text.append(f"Страница проекта: {giturl}")
 
             text.append("\n<b>Статистика:</b>")
