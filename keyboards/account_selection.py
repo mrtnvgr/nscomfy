@@ -9,7 +9,7 @@ class AccountSelection(Keyboard):
         super().__init__(*args, **kwargs)
 
     def set(self):
-        self.text = "Выберите аккаунт:"
+        self.text = "Чтобы начать работу добавьте свой аккаунт или выберите из существующих:"
 
         users = self.master.master.config["users"]
         accounts = users[self.user_id]["accounts"]
@@ -32,7 +32,7 @@ class AccountSelection(Keyboard):
         if text not in accounts:
             self.master.tg_api.sendMessage(
                 self.user_id,
-                "Такого аккаунта нет! Пожалуйста используйте кнопки!",
+                "Такого аккаунта не существует. Для выбора аккаунта используйте кнопки клавиатуры телеграмма.",
             )
             return
 
