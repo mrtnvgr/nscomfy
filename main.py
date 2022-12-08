@@ -89,17 +89,18 @@ class Main:
     def handleError(self, user_id, exception):
 
         errorMessages = {
-            SchoolNotFoundError: "Такой школы не существует!",
-            LoginError: "Неправильный логин или пароль!",
-            UnsupportedRole: "Ваш тип аккаунта не поддерживается!",
-            InvalidUrlError: "Неправильная ссылка!",
+            SchoolNotFoundError: "Такой школы не существует.",
+            LoginError: "Неправильные данные для входа в аккаунт.",
+            UnsupportedRole: "Ваш тип аккаунта не поддерживается."
+            'Бот предназначен для аккаунтов с ролями "Student"(Ученик) или "Parent"(Родитель)',
+            InvalidUrlError: "Введённая ссылка неправильная или не является нетгородом.",
         }
 
         ignoreErrors = [
             JSONDecodeError,  # Битые данные с нет города
         ]
 
-        unknownMessage = "Что-то пошло не так! Повторите попытку позже."
+        unknownMessage = "Что-то пошло не так, повторите попытку позже."
 
         exceptionName = exception.__class__.__name__
 
