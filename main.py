@@ -3,7 +3,7 @@
 from telegram import TelegramHandler
 
 from errors import *
-from requests.exceptions import JSONDecodeError
+from requests.exceptions import JSONDecodeError, ConnectionError
 
 import json
 import os
@@ -81,6 +81,8 @@ class Main:
                 updates = self.telegram.getUpdates(timeout=999999)
                 for update in updates:
                     self.telegram.updateHandler(update)
+            except ConnectionError:
+                pass
             except Exception:
                 logging.exception("Exception catched!", exc_info=True)
 
