@@ -25,7 +25,11 @@ class AccountSelection(Keyboard):
 
             logging.info(f"[NS] {self.user_id}: add account")
 
-            self.master.askForAccount(self.user_id)
+            if not self.master.askForAccount(self.user_id):
+                self.master.tg_api.sendMessage(
+                    self.user_id,
+                    "Ваше отведённое время на ответ истекло. Попробуйте еще раз.",
+                )
             return
 
         user = self.master.master.config["users"][self.user_id]
