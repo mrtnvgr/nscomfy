@@ -389,8 +389,16 @@ class NetSchoolSessionHandler:
         middleName = account_info["middleName"]
         name = f"{firstName} {lastName} {middleName}"
 
+        roles = account_info["roles"]
+        roles = list(map(util.getRole, roles))
+        roles = ["Роль", roles]
+        if len(roles[1]) > 1:
+            roles[0] = "Роли"
+        roles[1] = ", ".join(roles[1])
+
         params = [
             ["ФИО", name],
+            roles,
             ["Логин", account_info["loginName"]],
             ["Дата рождения", birthDate],
             ["Телефон", account_info["mobilePhone"]],
