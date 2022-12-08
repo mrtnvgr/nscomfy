@@ -195,7 +195,7 @@ class TelegramHandler:
             "\n(формат ссылки не важен)",
         )
         if not account["url"]:
-            return
+            return "TIMEOUT"
 
         try:
             api = NetSchoolAPI(user_id, account["url"])
@@ -206,10 +206,10 @@ class TelegramHandler:
 
         account["login"] = self.askUser(user_id, "Напишите логин от аккаунта:")
         if not account["login"]:
-            return
+            return "TIMEOUT"
         account["password"] = self.askUser(user_id, "Напишите пароль от аккаунта:")
         if not account["password"]:
-            return
+            return "TIMEOUT"
 
         message_id = self.tg_api.sendMessage(user_id, "Подождите...")["message_id"]
 
@@ -231,7 +231,7 @@ class TelegramHandler:
             user_id, message_id, "Выберите округ:", districts
         )
         if not municipalityDistrictId:
-            return
+            return "TIMEOUT"
 
         addresses = []
         for school in schools_response:
@@ -243,7 +243,7 @@ class TelegramHandler:
             user_id, message_id, "Выберите адрес:", addresses
         )
         if not account["address"]:
-            return
+            return "TIMEOUT"
 
         schools = []
         for school in schools_response:
@@ -254,7 +254,7 @@ class TelegramHandler:
             user_id, message_id, "Выберите школу:", schools
         )
         if not account["school"]:
-            return
+            return "TIMEOUT"
 
         self.editButtons(user_id, message_id, "Подождите...", [])
 
@@ -274,7 +274,7 @@ class TelegramHandler:
             student_buttons,
         )
         if not account["student"]:
-            return
+            return "TIMEOUT"
 
         api.logout()
 
@@ -286,7 +286,7 @@ class TelegramHandler:
         )
         name = self.getUpdateText()
         if not name:
-            return
+            return "TIMEOUT"
 
         if not util.checkAccountName(name):
             self.tg_api.sendMessage(

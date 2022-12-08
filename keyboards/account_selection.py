@@ -25,7 +25,8 @@ class AccountSelection(Keyboard):
 
             logging.info(f"[NS] {self.user_id}: add account")
 
-            if not self.master.askForAccount(self.user_id):
+            status = self.master.askForAccount(self.user_id)
+            if status == "TIMEOUT":
                 self.master.tg_api.sendMessage(
                     self.user_id,
                     "Ваше отведённое время на ответ истекло. Попробуйте еще раз.",
