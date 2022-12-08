@@ -46,17 +46,20 @@ class SettingsAccount(Keyboard):
 
         elif text == "Переименовать":
 
-            newName = self.master.askUser(
-                self.user_id, "Напишите новое название аккаунта:"
-            )
-            if not newName:
-                return
-
-            if not checkAccountName(newName):
-                self.master.tg_api.sendMessage(
-                    self.user_id, "Такое имя аккаунта запрещено!"
+            while True:
+                newName = self.master.askUser(
+                    self.user_id, "Напишите новое название аккаунта:"
                 )
-                return True
+                if not newName:
+                    return
+
+                if not checkAccountName(newName):
+                    self.master.tg_api.sendMessage(
+                        self.user_id,
+                        "Такое имя аккаунта нельзя использовать. Попробуйте что-нибудь другое.",
+                    )
+                    continue
+                break
 
             logging.info(f"[NS] {self.user_id}: rename account")
 
@@ -81,7 +84,9 @@ class SettingsAccount(Keyboard):
 
             buttons = [[student["name"]] for student in api._students]
 
-            resp = self.master.sendButtons(self.user_id, "Выберите нового ученика:", buttons)
+            resp = self.master.sendButtons(
+                self.user_id, "Выберите нового ученика:", buttons
+            )
             message_id = resp["message_id"]
 
             answer = self.master.getButtonAnswer()
@@ -103,7 +108,7 @@ class SettingsAccount(Keyboard):
                 self.user_id,
                 message_id,
                 f'Ученик аккаунта "{current_account}" сменён на "{answer}"'
-                '\nДля продолжения работы под новым учеником, войдите в аккаунт еще раз.',
+                "\nДля продолжения работы под новым учеником, войдите в аккаунт еще раз.",
                 [],
             )
 

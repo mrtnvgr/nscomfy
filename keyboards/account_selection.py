@@ -9,7 +9,9 @@ class AccountSelection(Keyboard):
         super().__init__(*args, **kwargs)
 
     def set(self):
-        self.text = "Чтобы начать работу добавьте свой аккаунт или выберите из существующих:"
+        self.text = (
+            "Чтобы начать работу добавьте свой аккаунт или выберите из существующих:"
+        )
 
         users = self.master.master.config["users"]
         accounts = users[self.user_id]["accounts"]
