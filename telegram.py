@@ -117,7 +117,7 @@ class TelegramHandler:
                     self.editButtons(
                         user_id,
                         message_id,
-                        "Перед тем как скачивать, нужно зайти в аккаунт!",
+                        "Перед тем как скачать вложение, нужно зайти в аккаунт.",
                         [],
                     )
                     return True
@@ -130,7 +130,8 @@ class TelegramHandler:
                     self.editButtons(
                         user_id,
                         message_id,
-                        "Текущий аккаунт не имеет доступа к этому вложению!",
+                        "Текущий аккаунт не имеет доступа к этому вложению."
+                        "\nВойдите в подходящий аккаунт или запросите кнопку еще раз.",
                         [],
                     )
                     return True
@@ -155,7 +156,11 @@ class TelegramHandler:
 
                 if attachmentSize > maxSize:
                     self.editButtons(
-                        user_id, message_id, "Размер файла слишком большой!", []
+                        user_id,
+                        message_id,
+                        "Размер файла слишком большой, мы не можем отправить вам файл."
+                        "\nВ будущем, это будет исправлено.",
+                        [],
                     )
                     return True
 
@@ -183,7 +188,12 @@ class TelegramHandler:
 
         account = {}
 
-        account["url"] = self.askUser(user_id, "Напишите ссылку на нет город:")
+        account["url"] = self.askUser(
+            user_id,
+            "Напишите ссылку на нетгород:"
+            "\nНапример: sgo.tomedu.ru"
+            "\n(формат ссылки не важен)",
+        )
         if not account["url"]:
             return
 
@@ -194,10 +204,10 @@ class TelegramHandler:
             self.tg_api.sendMessage(user_id, error_msg)
             return
 
-        account["login"] = self.askUser(user_id, "Напишите логин:")
+        account["login"] = self.askUser(user_id, "Напишите логин от аккаунта:")
         if not account["login"]:
             return
-        account["password"] = self.askUser(user_id, "Напишите пароль:")
+        account["password"] = self.askUser(user_id, "Напишите пароль от аккаунта:")
         if not account["password"]:
             return
 
@@ -271,7 +281,7 @@ class TelegramHandler:
         self.editButtons(
             user_id,
             message_id,
-            "Напишите имя аккаунта:\n(можно изменить в настройках)",
+            "Напишите название аккаунта (в списке аккаунтов):\n(можно изменить в настройках)",
             [],
         )
         name = self.getUpdateText()
@@ -279,14 +289,17 @@ class TelegramHandler:
             return
 
         if not util.checkAccountName(name):
-            self.tg_api.sendMessage(user_id, "Такое имя аккаунта запрещено!")
+            self.tg_api.sendMessage(
+                user_id,
+                "Такое имя аккаунта нельзя использовать. Попробуйте что-нибудь другое.",
+            )
             return
 
         user = self.master.config["users"][user_id]
 
         if name in user["accounts"]:
-            msg = "У вас уже есть аккаунт под таким названием!"
-            if not self.askUserAgreement(user_id, msg, "перезаписи"):
+            msg = "У вас уже есть аккаунт под таким названием."
+            if not self.askUserAgreement(user_id, msg, "перезаписи аккаунта"):
                 return
 
         self.addNewUser(user_id)
