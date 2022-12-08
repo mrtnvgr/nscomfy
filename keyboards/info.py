@@ -69,11 +69,12 @@ class Info(Keyboard):
                 accounts = users[user]["accounts"]
                 accCount += len(accounts)
 
-            giturl = "https://github.com/mrtnvgr/nscomfy"
-            text.append(f"Страница проекта: <a href = '{giturl}'>тут</a>")
-            text.append("Автор: @p13d3z\n")
+            giturl = "github.com/mrtnvgr/nscomfy"
+            text.append("<b>Контакты:</b>")
+            text.append("Автор: @p13d3z")
+            text.append(f"Страница проекта: {giturl}")
 
-            text.append("<b>Статистика:</b>")
+            text.append("\n<b>Статистика:</b>")
             text.append(f"Количество пользователей: <b>{userCount}</b>")
             text.append(f"Количество аккаунтов: <b>{accCount}</b>")
 
