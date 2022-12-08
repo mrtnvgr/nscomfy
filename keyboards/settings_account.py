@@ -91,14 +91,20 @@ class SettingsAccount(Keyboard):
             if answer not in [student["name"] for student in api._students]:
                 return
 
-            logging.info(f"[NS] {self.user_id}: change student of account")
-
-            self.master.tg_api.deleteMessage(self.user_id, message_id)
+            logging.info(f"[NS] {self.user_id}: change account student")
 
             user = self.master.master.config["users"][self.user_id]
 
             current_account = user["current_account"]
             user["accounts"][current_account]["student"] = answer
-            self.master.saveConfig()
+            self.master.master.saveConfig()
+
+            self.master.editButtons(
+                self.user_id,
+                message_id,
+                f'Ученик аккаунта "{current_account}" сменён на "{answer}"'
+                '\nДля продолжения работы под новым учеником, войдите в аккаунт еще раз.',
+                [],
+            )
 
             self.master.forceLogout(self.user_id)
