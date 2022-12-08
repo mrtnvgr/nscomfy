@@ -81,7 +81,7 @@ class SettingsAccount(Keyboard):
 
             buttons = [[student["name"]] for student in api._students]
 
-            resp = self.master.sendButtons(self.user_id, "Выберите ученика:", buttons)
+            resp = self.master.sendButtons(self.user_id, "Выберите нового ученика:", buttons)
             message_id = resp["message_id"]
 
             answer = self.master.getButtonAnswer()
