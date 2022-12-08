@@ -27,7 +27,7 @@ class Info(Keyboard):
 
                 buttons = [
                     {
-                        "text": "Полные данные",
+                        "text": "Получить полные данные",
                         "callback_data": "/getFullSchoolInfo",
                     }
                 ]
@@ -73,6 +73,7 @@ class Info(Keyboard):
             text.append(f"Страница проекта: <a href = '{giturl}'>тут</a>")
             text.append("Автор: @p13d3z\n")
 
+            text.append("<b>Статистика:</b>")
             text.append(f"Количество пользователей: <b>{userCount}</b>")
             text.append(f"Количество аккаунтов: <b>{accCount}</b>")
 
