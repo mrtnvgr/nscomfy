@@ -91,7 +91,7 @@ class TelegramHandler:
             current_keyboard = self.master.config["users"][user_id]["current_keyboard"]
 
             if not current_keyboard:
-                return True
+                return
 
             keyboard_func = keyboards.KEYBOARDS[current_keyboard]
             keyboard = keyboard_func(user_id, self)
@@ -302,6 +302,7 @@ class TelegramHandler:
             self.master.config["users"][user_id]["accounts"] = {}
             self.master.config["users"][user_id]["current_account"] = None
             self.master.config["users"][user_id]["current_keyboard"] = None
+            self.master.saveConfig()
 
     def askUser(self, user_id, msg):
         self.tg_api.sendMessage(user_id, msg)
