@@ -16,7 +16,7 @@ class TelegramHandler:
         # Set offset to latest update
         self.getInstantUpdates()
 
-    def getUpdates(self, limit=100, timeout=30):
+    def getUpdates(self, limit=100, timeout=60):
 
         offset = self.master.config["telegram"].get("offset", 0)
         updates = self.tg_api.getUpdates(offset, limit, timeout)
