@@ -10,9 +10,8 @@ class Diary(Keyboard):
     def set(self):
         self.text = "Выберите тип информации:"
 
+        self.keyboard.append(["Задания", "Расписание", "Оценки"])
         self.keyboard.append(["Всё"])
-        self.keyboard.append(["Расписание"])
-        self.keyboard.append(["Задания", "Оценки"])
         self.keyboard.append(["Назад"])
 
         self.one_time_keyboard = False
