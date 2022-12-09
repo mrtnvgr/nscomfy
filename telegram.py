@@ -70,18 +70,27 @@ class TelegramHandler:
     def updateHandler(self, update):
         user_id = str(self.tg_api.getUserIdFromUpdate(update))
 
-        self.addNewUser(user_id)
+        try:
 
-        if self.menuAnswerHandler(user_id, update):
-            return
+            self.addNewUser(user_id)
 
-        # Check if user is currently logged in
-        if self.master.config["users"][user_id]["current_account"]:
-            self.sendKeyboard(user_id, "mm")
+            if self.menuAnswerHandler(user_id, update):
+                return
 
-        # Login menu
-        if not self.master.config["users"][user_id]["current_account"]:
-            self.sendKeyboard(user_id, "account_selection")
+            # Check if user is currently logged in
+            if self.master.config["users"][user_id]["current_account"]:
+                self.sendKeyboard(user_id, "mm")
+
+            # Login menu
+            if not self.master.config["users"][user_id]["current_account"]:
+                self.sendKeyboard(user_id, "account_selection")
+
+        except Exception as ex:
+            msg, unknown = self.master.handleError(user_id, ex)
+            if unknown:
+                self.tg_api.sendMessage(user_id, f"Неожиданная ошибка.")
+            else:
+                self.tg_api.sendMessage(user_id, f"Ошибка: {msg}")
 
     def menuAnswerHandler(self, user_id, update):
 
