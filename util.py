@@ -80,16 +80,37 @@ def detectEmptyTask(task):
 
 
 def shortenSubjectName(subject):
+
+    original_subject = subject
+
+    # NOTE: названия могут содержать англиские буквы похожие на русские.
+    similar_letters = {
+        "A": "А",
+        "a": "а",
+        "B": "В",
+        "e": "е",
+        "E": "Е",
+        "K": "К",
+        "c": "с",
+        "C": "С",
+        "T": "Т",
+        "X": "Х",
+        "x": "х",
+    }
+
+    for key, value in similar_letters.items():
+        subject = subject.replace(key, value)
+
     subjects = {
         "Основы безопасности жизнедеятельности": "ОБЖ",
         "Информатика и ИКТ": "Информатика",
-        "Изобразительное искусcтво": "ИЗО",
+        "Изобразительное искусство": "ИЗО",
     }
 
     if subject in subjects:
         return subjects[subject]
     else:
-        return subject
+        return original_subject
 
 
 def checkAccountName(name):
