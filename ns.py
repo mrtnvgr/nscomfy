@@ -337,7 +337,7 @@ class NetSchoolSessionHandler:
             ["Факс", contactInfo["fax"], False],
             ["Почта", contactInfo["email"], True],
             ["Сайт", contactInfo["web"], True],
-            ["Работники:", "--SPACER--", False],
+            ["Руководство:", "--SPACER--", False],
             ["Директор", managementInfo["director"], True],
             ["Зам директора по УВР", managementInfo["principalUVR"], False],
             ["Зам директора по АХЧ", managementInfo["principalAHC"], False],
