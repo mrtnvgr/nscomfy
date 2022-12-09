@@ -2,6 +2,7 @@ from nsapi import NetSchoolAPI
 from ns import NetSchoolSessionHandler
 from tgapi import TelegramAPI
 import keyboards
+import callbacks
 import util
 
 
@@ -116,82 +117,13 @@ class TelegramHandler:
 
             button_data = button_data.split(" ")
 
-            if button_data[0] == "/downloadAttachment":
+            callback_func = callbacks.CALLBACKS.get(button_data[0])
+            if not callback_func:
+                return
 
-                message_id = self.tg_api.sendMessage(user_id, "Подождите...")[
-                    "message_id"
-                ]
+            callback = callback_func(user_id, self)
 
-                if not self.ns.checkSession(user_id):
-                    self.editButtons(
-                        user_id,
-                        message_id,
-                        "Перед тем как скачать вложение, нужно зайти в аккаунт.",
-                        [],
-                    )
-                    return True
-
-                api = self.ns.sessions[user_id]
-
-                studentId = api.student_info["id"]
-
-                if str(studentId) != button_data[1]:
-                    self.editButtons(
-                        user_id,
-                        message_id,
-                        "Текущий аккаунт не имеет доступа к этому вложению."
-                        "\nВойдите в подходящий аккаунт или запросите кнопку еще раз.",
-                        [],
-                    )
-                    return True
-
-                assignmentId = button_data[2]
-                # Для получения доступа к вложению нужно запросить список вложений задания
-                api.getDiaryAttachments(assignmentId)
-
-                attachmentId = button_data[3]
-
-                attachmentUrl = api.getAttachmentUrl(attachmentId)
-                attachment = api.request(attachmentUrl)
-                attachmentData = attachment.content
-                attachmentSize = int(attachment.headers.get("content-length", 0))
-                attachmentType = attachment.headers.get("content-type", "")
-
-                maxSize = 1000000
-                if attachmentType.startswith("image/"):
-                    maxSize *= 10
-                else:
-                    maxSize *= 50
-
-                if attachmentSize > maxSize:
-                    self.editButtons(
-                        user_id,
-                        message_id,
-                        "Размер файла слишком большой, мы не можем отправить вам файл."
-                        "\nВ будущем, это будет исправлено.",
-                        [],
-                    )
-                    return True
-
-                attachmentName = self.parseButtonUpdate(update, getText=True)
-
-                self.tg_api.deleteMessage(user_id, message_id)
-
-                self.tg_api.sendFile(user_id, attachmentName, attachmentData)
-
-                return True
-
-            elif button_data[0] == "/getFullSchoolInfo":
-
-                message_id = update["callback_query"]["message"]["message_id"]
-
-                school_info = self.ns.getSchoolInfo(user_id, full=True)
-                if school_info:
-                    self.editButtons(
-                        user_id, message_id, school_info, [], parse_mode="HTML"
-                    )
-
-                return True
+            return callback.parse(update, button_data[1:])
 
     def askForAccount(self, user_id):
 

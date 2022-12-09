@@ -9,13 +9,13 @@ def formatDate(string: str):
     date = string.split("-")
     return ".".join(date[::-1])
 
+
 def convertDate(string: str):
     """Convert from XX.XX.XXXX -> {weekday}, {day} {month}"""
     dt = datetime.fromisoformat(string)
     newstring = dt.strftime("%A, %d %B")
 
     translations = {
-
         # Дни недели
         "Sunday": "Воскресенье",
         "Monday": "Понедельник",
@@ -24,7 +24,6 @@ def convertDate(string: str):
         "Thursday": "Четверг",
         "Friday": "Пятница",
         "Monday": "Суббота",
-
         # Месяца
         "December": "Декабря",
         "January": "Января",
@@ -44,6 +43,7 @@ def convertDate(string: str):
         newstring = newstring.replace(name, key)
 
     return newstring
+
 
 def normalizeHTMLText(text):
     return html_escape(text, quote=True)
