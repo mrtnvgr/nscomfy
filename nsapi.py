@@ -267,7 +267,7 @@ class NetSchoolAPI:
         }
 
         # Get active sessions count
-        self._active_sessions = self.request("context/activeSessions").json()
+        # self._active_sessions = self.request("context/activeSessions").json()
 
         # Get unreaded mail messages count
         self._unreaded_mail_messages = self.request("mail/messages/unreaded").json()
@@ -349,7 +349,7 @@ class NetSchoolAPI:
 
         self._school_id = None
 
-        self._active_sessions = None
+        # self._active_sessions = None
         self._unreaded_mail_messages = None
 
     def _getMethodNameFromUrl(self, url):

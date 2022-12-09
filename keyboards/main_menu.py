@@ -12,7 +12,6 @@ class MainMenu(Keyboard):
         api = self.master.ns.sessions[self.user_id]
 
         student_info = f"Ученик: {api.student_info['name']}"
-        activeSessions = f"Пользователей в сети: {len(api._active_sessions)}"
 
         firstRow = ["Дневник"]
 
@@ -24,13 +23,14 @@ class MainMenu(Keyboard):
             overdueCount = ""
 
         if api._unreaded_mail_messages > 0:
-            unreaded = f"\nНепрочитанные письма: {api._unreaded_mail_messages}"
+            unreaded = api._unreaded_mail_messages
+            unreaded = f"\nНепрочитанные письма: {unreaded}"
         else:
             unreaded = ""
 
         studentText = f"{student_info}{overdueCount}{unreaded}"
 
-        self.text = f"<b>Главное меню</b>\n\n{studentText}\n\n{activeSessions}"
+        self.text = f"<b>Главное меню</b>\n\n{studentText}\n\n"
 
         self.keyboard.append(firstRow)
         self.keyboard.append(["Информация"])
