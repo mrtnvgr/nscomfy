@@ -269,7 +269,7 @@ class NetSchoolSessionHandler:
                                     buttons.append(attachmentButton)
 
             name = lesson["subjectName"]
-            number = lesson["number"]
+            # number = lesson["number"]
             start = lesson["startTime"]
             end = lesson["endTime"]
 
@@ -281,7 +281,7 @@ class NetSchoolSessionHandler:
             if only_tasks and not tasks:
                 continue
 
-            line = f"\n{number}: {name} ({start} - {end})"
+            line = f"\n{name} ({start} - {end})"
             line = util.normalizeHTMLText(line)
             if marks and not only_marks:
                 line += f" <b>[{', '.join(marks)}]</b>"
