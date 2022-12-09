@@ -88,7 +88,10 @@ class Info(Keyboard):
 
         elif text == "Дни рождения":
 
-            message_id, birthdays = self.master.ns.getBirthdays(self.user_id)
+            resp = self.master.ns.getBirthdays(self.user_id)
+            if not resp:
+                return True
+            message_id, birthdays = resp
             self.master.editButtons(
                 self.user_id, message_id, birthdays, [], parse_mode="HTML"
             )
