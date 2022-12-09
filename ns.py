@@ -162,7 +162,7 @@ class NetSchoolSessionHandler:
                 days.append(day_output)
 
         if not days:
-            days.append(["На эти числа информации нет.", []])
+            days.append(["На эти числа информации не найдено.", []])
 
         return days
 
