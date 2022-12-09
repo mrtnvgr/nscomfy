@@ -1,7 +1,5 @@
 from keyboards.keyboard import Keyboard
 
-import logging
-
 
 class Diary(Keyboard):
     def __init__(self, *args, **kwargs):
@@ -20,34 +18,21 @@ class Diary(Keyboard):
         if text not in ["Всё", "Расписание", "Задания", "Оценки"]:
             return
 
-        dateanswer, message_id = self.master.askUserAboutDate(self.user_id)
-        if not dateanswer:
-            return True
+        callback_data = f"/getDiary {text}"
 
-        diary_kwargs = {}
+        buttons = [
+            [
+                {"text": "Вчера", "callback_data": f"{callback_data} yd"},
+                {"text": "Сегодня", "callback_data": f"{callback_data} td"},
+                {"text": "Завтра", "callback_data": f"{callback_data} tm"},
+            ],
+            [
+                {"text": "Прошлая", "callback_data": f"{callback_data} lw"},
+                {"text": "Текущая", "callback_data": f"{callback_data} cw"},
+                {"text": "Следующая", "callback_data": f"{callback_data} nw"},
+            ],
+        ]
 
-        if text == "Расписание":
-            diary_kwargs["show_tasks"] = False
-            diary_kwargs["show_marks"] = False
-        elif text == "Задания":
-            diary_kwargs["only_tasks"] = True
-        elif text == "Оценки":
-            diary_kwargs["only_marks"] = True
-
-        logging.info(f'[NS] {self.user_id}: "{text}" diary request')
-
-        self.master.editButtons(self.user_id, message_id, "Подождите...", [])
-
-        diary = self.master.ns.getDiary(self.user_id, dateanswer, **diary_kwargs)
-        if not diary:
-            self.master.tg_api.deleteMessage(self.user_id, message_id)
-            return True
-
-        self.master.tg_api.deleteMessage(self.user_id, message_id)
-
-        for day in diary:
-            text, buttons = day
-
-            self.master.sendButtons(self.user_id, text, buttons, parse_mode="HTML")
+        self.master.sendButtons(self.user_id, "Выберите дату:", buttons)
 
         return True

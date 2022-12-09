@@ -114,22 +114,22 @@ class NetSchoolSessionHandler:
         today = datetime.today()
         monday = today - timedelta(days=today.weekday())
 
-        if date == "Сегодня":
+        if date == "td":
             start = today
             end = start
-        elif date == "Завтра":
+        elif date == "tm":
             start = today + util.getTomorrowDelta(today)
             end = start
-        elif date == "Вчера":
+        elif date == "yd":
             start = today - util.getYesterdayDelta(today)
             end = start
-        elif date == "Текущая":
+        elif date == "cw":
             start = monday
             end = start + timedelta(days=5)
-        elif date == "Следующая":
+        elif date == "nw":
             start = monday + timedelta(days=7)
             end = start + timedelta(days=5)
-        elif date == "Прошлая":
+        elif date == "lw":
             start = monday - timedelta(days=7)
             end = start + timedelta(days=5)
         else:

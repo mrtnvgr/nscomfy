@@ -272,18 +272,6 @@ class TelegramHandler:
         self.editButtons(user_id, message_id, msg, buttons)
         return self.getButtonAnswer()
 
-    def askUserAboutDate(self, user_id):
-        buttons = [
-            ["Вчера", "Сегодня", "Завтра"],
-            ["Прошлая", "Текущая", "Следующая"],
-        ]
-        resp = self.sendButtons(user_id, "Выберите дату:", buttons)
-        message_id = resp["message_id"]
-
-        dateanswer = self.getButtonAnswer()
-
-        return dateanswer, message_id
-
     def askUserAgreement(self, user_id, reason="", action="продолжения"):
         message = f'Для {action} напишите "Согласен":'
 
