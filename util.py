@@ -1,6 +1,6 @@
 from html import escape as html_escape
 from unicodedata import lookup as unilookup
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 
 def formatDate(string: str):
@@ -9,6 +9,41 @@ def formatDate(string: str):
     date = string.split("-")
     return ".".join(date[::-1])
 
+def convertDate(string: str):
+    """Convert from XX.XX.XXXX -> {weekday}, {day} {month}"""
+    dt = datetime.fromisoformat(string)
+    newstring = dt.strftime("%A, %d %B")
+
+    translations = {
+
+        # Дни недели
+        "Sunday": "Воскресенье",
+        "Monday": "Понедельник",
+        "Tuesday": "Вторник",
+        "Wednesday": "Среда",
+        "Thursday": "Четверг",
+        "Friday": "Пятница",
+        "Monday": "Суббота",
+
+        # Месяца
+        "December": "Декабря",
+        "January": "Января",
+        "February": "Февраля",
+        "March": "Марта",
+        "April": "Апреля",
+        "May": "Мая",
+        "June": "Июня",
+        "July": "Июля",
+        "August": "Августа",
+        "September": "Сентября",
+        "October": "Октября",
+        "November": "Ноября",
+    }
+
+    for name, key in translations.items():
+        newstring = newstring.replace(name, key)
+
+    return newstring
 
 def normalizeHTMLText(text):
     return html_escape(text, quote=True)
