@@ -1,5 +1,6 @@
 from keyboards.keyboard import Keyboard
 from util import checkAccountName
+from urllib.parse import quote_plus
 
 import logging
 
@@ -82,34 +83,21 @@ class SettingsAccount(Keyboard):
                 return
             api = self.master.ns.sessions[self.user_id]
 
-            buttons = [[student["name"]] for student in api._students]
-
-            resp = self.master.sendButtons(
-                self.user_id, "Выберите нового ученика:", buttons
-            )
-            message_id = resp["message_id"]
-
-            answer = self.master.getButtonAnswer()
-            if not answer:
-                return
-
-            if answer not in [student["name"] for student in api._students]:
-                return
-
-            logging.info(f"[NS] {self.user_id}: change account student")
-
             user = self.master.master.config["users"][self.user_id]
-
             current_account = user["current_account"]
-            user["accounts"][current_account]["student"] = answer
-            self.master.master.saveConfig()
 
-            self.master.editButtons(
-                self.user_id,
-                message_id,
-                f'Ученик аккаунта "{current_account}" сменён на "{answer}"'
-                "\nДля продолжения работы под новым учеником, войдите в аккаунт еще раз.",
-                [],
-            )
+            callback_data = f"/changeAccountStudent {quote_plus(current_account)}"
 
-            self.master.forceLogout(self.user_id)
+            buttons = [
+                [
+                    {
+                        "text": student["name"],
+                        "callback_data": callback_data,
+                    }
+                ]
+                for student in api._students
+            ]
+
+            self.master.sendButtons(self.user_id, "Выберите нового ученика:", buttons)
+
+            return True
