@@ -14,7 +14,7 @@ class GetDiary(Callback):
             self.master.editButtons(
                 self.user_id,
                 message_id,
-                "Перед тем как запросить дневник, нужно зайти в аккаунт.",
+                "Перед тем как запросить дневник, войдите в аккаунт.",
                 [],
             )
             return True

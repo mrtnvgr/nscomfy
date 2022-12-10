@@ -17,7 +17,7 @@ class ChangeAccountStudent(Callback):
             self.master.editButtons(
                 self.user_id,
                 message_id,
-                f'Для корректной работы данной кнопки, нужно зайти в аккаунт "{button_data[0]}".',
+                f'Для корректной работы данной кнопки, войдите в аккаунт "{button_data[0]}".',
                 [],
             )
             return True
@@ -31,7 +31,7 @@ class ChangeAccountStudent(Callback):
                 self.user_id,
                 message_id,
                 "Смена ученика одного аккаунта под другим может вызвать ошибки."
-                f'\nДля корректной работы данной кнопки, нужно зайти в аккаунт "{button_data[0]}".',
+                f'\nДля корректной работы данной кнопки, войдите в аккаунт "{button_data[0]}".',
                 [],
             )
             return True

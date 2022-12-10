@@ -15,7 +15,7 @@ class DownloadAttachment(Callback):
             self.master.editButtons(
                 self.user_id,
                 message_id,
-                "Перед тем как скачать вложение, нужно зайти в аккаунт.",
+                "Перед тем как скачать вложение, войдите в аккаунт.",
                 [],
             )
             return True
@@ -35,7 +35,7 @@ class DownloadAttachment(Callback):
             return True
 
         assignmentId = button_data[1]
-        # Для получения доступа к вложению нужно запросить список вложений задания
+        # Для получения доступа к вложению запрашиваем список вложений задания
         api.getDiaryAttachments(assignmentId)
 
         attachmentId = button_data[2]
