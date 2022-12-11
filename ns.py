@@ -421,6 +421,7 @@ class NetSchoolSessionHandler:
         api = self.sessions[user_id]
 
         monthId = monthId.split("_")[1]
+        monthName = util.getMonthName(monthId)
 
         birthdays = api.getBirthdays(monthId)
 
@@ -445,17 +446,18 @@ class NetSchoolSessionHandler:
 
         text = []
 
+        text.append(f"<b>{monthName}</b>")
+
         for bd_date, bd_list in bd_sorted.items():
 
-            text.append(f"\n\n<b>{bd_date}:</b>\n")
             for bd_data in bd_list:
+                text.append(f"\n<b>{bd_date}:</b>")
                 fio = bd_data["fio"]
                 role = bd_data["role"]
                 text.append(f"{fio}")
                 text.append(f"Роль: {role}")
 
-        if text == []:
-            monthName = util.getMonthName(monthId)
+        if len(text) < 2:
             text.append(f"На {monthName} нет именинников.")
 
         return "\n".join(text)
