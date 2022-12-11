@@ -16,3 +16,7 @@ class InvalidUrlError(Exception):
 
 class UnsupportedRole(Exception):
     pass
+
+
+class UnknownStudentError(Exception):
+    pass

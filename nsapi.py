@@ -282,6 +282,9 @@ class NetSchoolAPI:
                 self.student_info = student
                 break
 
+        if not self.student_info:
+            raise UnknownStudentError(f'this account doesn\'t have "{student_name}"')
+
     def request(self, url, method="GET", headers={}, relogin=True, **kwargs):
         """Session request wrapper"""
 
