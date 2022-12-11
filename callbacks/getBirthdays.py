@@ -17,11 +17,32 @@ class GetBirthdays(Callback):
             )
             return True
 
+        self.master.editButtons(
+            self.user_id,
+            message_id,
+            "Подождите...",
+            [],
+        )
+
         month = button_data[0]
 
-        birthdays = self.master.ns.getBirthdays(self.user_id, month)
-        self.master.editButtons(
-            self.user_id, message_id, birthdays, [], parse_mode="HTML"
-        )
+        birthdays = []
+
+        if month != "YEAR":
+
+            birthdays.append(self.master.ns.getBirthdays(self.user_id, month))
+
+        else:
+
+            months = self.master.ns.getBirthdayMonths(self.user_id)
+            for month in months.values():
+
+                birthday = self.master.ns.getBirthdays(self.user_id, month)
+                birthdays.append(birthday)
+
+        self.master.tg_api.deleteMessage(self.user_id, message_id)
+
+        for birthday in birthdays:
+            self.master.tg_api.sendMessage(self.user_id, birthday)
 
         return True

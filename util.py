@@ -1,6 +1,7 @@
 from html import escape as html_escape
 from unicodedata import lookup as unilookup
 from datetime import datetime, timedelta
+import calendar
 
 
 def formatDate(string: str):
@@ -8,6 +9,27 @@ def formatDate(string: str):
     # YYYY-MM-DD -> DD.MM.YYYY
     date = string.split("-")
     return ".".join(date[::-1])
+
+
+def getMonthName(monthId):
+    month_name = calendar.month_name[int(monthId)]
+
+    translations = {
+        "December": "Декабрь",
+        "January": "Январь",
+        "February": "Февраль",
+        "March": "Март",
+        "April": "Апрель",
+        "May": "Май",
+        "June": "Июнь",
+        "July": "Июль",
+        "August": "Август",
+        "September": "Сентябрь",
+        "October": "Октябрь",
+        "November": "Ноябрь",
+    }
+
+    return translate(translations, month_name)
 
 
 def humanizeDate(string: str):
@@ -39,10 +61,13 @@ def humanizeDate(string: str):
         "November": "Ноября",
     }
 
-    for name, key in translations.items():
-        newstring = newstring.replace(name, key)
+    return translate(translations, newstring)
 
-    return newstring
+
+def translate(translations: dict, string: str):
+    for name, key in translations.items():
+        string = string.replace(name, key)
+    return string
 
 
 def normalizeHTMLText(text):

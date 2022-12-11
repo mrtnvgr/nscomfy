@@ -423,8 +423,6 @@ class NetSchoolSessionHandler:
         monthId = monthId.split("_")[1]
 
         birthdays = api.getBirthdays(monthId)
-        if not birthdays:
-            return
 
         bd_sorted = {}
 
@@ -455,6 +453,10 @@ class NetSchoolSessionHandler:
                 role = bd_data["role"]
                 text.append(f"{fio}")
                 text.append(f"Роль: {role}")
+
+        if text == []:
+            monthName = util.getMonthName(monthId)
+            text.append(f"На {monthName} нет именинников.")
 
         return "\n".join(text)
 

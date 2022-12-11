@@ -92,8 +92,13 @@ class Info(Keyboard):
             if not months:
                 return
 
+            months["Год"] = "YEAR"
+
             buttons = [
-                {"text": month_name, "callback_data": f"/getBirthdays {month_value}"}
+                {
+                    "text": month_name.split(" ")[0],
+                    "callback_data": f"/getBirthdays {month_value}",
+                }
                 for month_name, month_value in months.items()
             ]
 
