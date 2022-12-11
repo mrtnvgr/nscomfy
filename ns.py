@@ -414,28 +414,13 @@ class NetSchoolSessionHandler:
 
         return "\n".join(text)
 
-    def getBirthdays(self, user_id):
+    def getBirthdays(self, user_id, monthId):
 
         if not self.checkSession(user_id):
             return
         api = self.sessions[user_id]
 
-        months = self.getBirthdayMonths(user_id)
-        if not months:
-            return
-
-        buttons = []
-        for month_name, month_value in months.items():
-            buttons.append({"text": month_name, "callback_data": month_value})
-
-        resp = self.master.sendButtons(user_id, "Выберите месяц:", buttons)
-        message_id = resp["message_id"]
-
-        resp = self.master.getButtonAnswer()
-        if not resp:
-            return
-
-        monthId = resp.split("_")[1]
+        monthId = monthId.split("_")[1]
 
         birthdays = api.getBirthdays(monthId)
         if not birthdays:
@@ -444,7 +429,6 @@ class NetSchoolSessionHandler:
         bd_sorted = {}
 
         # Restructure birthdays info
-
         for birthday in birthdays:
 
             bd_date = util.formatDate(birthday["birthdate"])
@@ -472,7 +456,7 @@ class NetSchoolSessionHandler:
                 text.append(f"{fio}")
                 text.append(f"Роль: {role}")
 
-        return message_id, "\n".join(text)
+        return "\n".join(text)
 
     def getBirthdayMonths(self, user_id):
 

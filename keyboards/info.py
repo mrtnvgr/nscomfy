@@ -88,12 +88,15 @@ class Info(Keyboard):
 
         elif text == "Дни рождения":
 
-            resp = self.master.ns.getBirthdays(self.user_id)
-            if not resp:
-                return True
-            message_id, birthdays = resp
-            self.master.editButtons(
-                self.user_id, message_id, birthdays, [], parse_mode="HTML"
-            )
+            months = self.master.ns.getBirthdayMonths(self.user_id)
+            if not months:
+                return
+
+            buttons = [
+                {"text": month_name, "callback_data": f"/getBirthdays {month_value}"}
+                for month_name, month_value in months.items()
+            ]
+
+            self.master.sendButtons(self.user_id, "Выберите месяц:", buttons)
 
             return True
