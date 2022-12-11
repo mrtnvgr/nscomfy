@@ -10,7 +10,7 @@ def formatDate(string: str):
     return ".".join(date[::-1])
 
 
-def convertDate(string: str):
+def humanizeDate(string: str):
     """Convert from XX.XX.XXXX -> {weekday}, {day} {month}"""
     dt = datetime.fromisoformat(string)
     newstring = dt.strftime("%A, %d %B")

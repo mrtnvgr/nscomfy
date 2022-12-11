@@ -62,7 +62,7 @@ class NetSchoolSessionHandler:
         dates = {}
 
         for task in response:
-            date = util.convertDate(task["dueDate"])
+            date = util.humanizeDate(task["dueDate"])
             if date not in dates:
                 dates[date] = []
             dates[date].append(task)
@@ -178,7 +178,7 @@ class NetSchoolSessionHandler:
         only_marks,
     ):
 
-        daydate = util.convertDate(day["date"])
+        daydate = util.humanizeDate(day["date"])
 
         text = []
         buttons = []
