@@ -10,7 +10,7 @@ class ChangeAccountStudent(Callback):
 
     def parse(self, update, button_data):
         button_data = [unquote_plus(data) for data in button_data]
-        message_id = update["callback_query"]["message"]["message_id"]
+        message_id = self._getMessageId(update)
         new_student = self.master.parseButtonUpdate(update, getText=True)
 
         if not self.master.ns.checkSession(self.user_id):

@@ -6,7 +6,7 @@ class GetBirthdays(Callback):
         super().__init__(*args, **kwargs)
 
     def parse(self, update, button_data):
-        message_id = update["callback_query"]["message"]["message_id"]
+        message_id = self._getMessageId(update)
 
         if not self.master.ns.checkSession(self.user_id):
             self.master.editButtons(
@@ -23,3 +23,5 @@ class GetBirthdays(Callback):
         self.master.editButtons(
             self.user_id, message_id, birthdays, [], parse_mode="HTML"
         )
+
+        return True

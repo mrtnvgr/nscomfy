@@ -6,7 +6,7 @@ class GetFullSchoolInfo(Callback):
         super().__init__(*args, **kwargs)
 
     def parse(self, update, _):
-        message_id = update["callback_query"]["message"]["message_id"]
+        message_id = self._getMessageId(update)
 
         school_info = self.master.ns.getSchoolInfo(self.user_id, full=True)
         if not school_info:

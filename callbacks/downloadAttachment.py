@@ -7,9 +7,8 @@ class DownloadAttachment(Callback):
         super().__init__(*args, **kwargs)
 
     def parse(self, _, button_data):
-        message_id = self.master.tg_api.sendMessage(self.user_id, "Подождите...")[
-            "message_id"
-        ]
+        resp = self.master.tg_api.sendMessage(self.user_id, "Подождите...")
+        message_id = resp["message_id"]
 
         if not self.master.ns.checkSession(self.user_id):
             self.master.editButtons(

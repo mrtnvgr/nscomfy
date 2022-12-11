@@ -8,7 +8,7 @@ class GetDiary(Callback):
         super().__init__(*args, **kwargs)
 
     def parse(self, update, button_data):
-        message_id = update["callback_query"]["message"]["message_id"]
+        message_id = self._getMessageId(update)
 
         if not self.master.ns.checkSession(self.user_id):
             self.master.editButtons(
