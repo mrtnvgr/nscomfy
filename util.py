@@ -17,13 +17,13 @@ def convertDate(string: str):
 
     translations = {
         # Дни недели
-        "Sunday": "Воскресенье",
         "Monday": "Понедельник",
         "Tuesday": "Вторник",
         "Wednesday": "Среда",
         "Thursday": "Четверг",
         "Friday": "Пятница",
-        "Monday": "Суббота",
+        "Saturday": "Суббота",
+        "Sunday": "Воскресенье",
         # Месяца
         "December": "Декабря",
         "January": "Января",
