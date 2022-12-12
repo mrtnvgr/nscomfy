@@ -3,6 +3,15 @@ from unicodedata import lookup as unilookup
 from datetime import datetime, timedelta
 import calendar
 
+SETTINGS_SCHEMA = {
+    "diary.shorten_subjects": {
+        "name": "Сокращать названия уроков",
+        "path": 'user["settings"]["diary"]["shorten_subjects"]',
+        "description": "Сокращать названия уроков",
+        "default_value": True,
+    },
+}
+
 
 def formatDate(string: str):
     string = string.removesuffix("T00:00:00")

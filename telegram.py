@@ -261,14 +261,22 @@ class TelegramHandler:
             self.master.config["users"][user_id] = {}
         user = self.master.config["users"][user_id]
 
-        params = (
+        params = [
             ('user', "accounts", {}),
             ('user', "current_account", None),
             ('user', "current_keyboard", None),
             ('user', "settings", {}),
             ('user["settings"]', "diary", {}),
-            ('user["settings"]["diary"]', "shorten_subjects", True),
-        )
+        ]
+
+        for setting_name, setting_data in util.SETTINGS_SCHEMA.items():
+            # Получаем место элемента из путя к нему
+            # ...["settings"]["setting"] -> ...["settings"]
+            dictionary = "[".join(setting_data["path"].split("[")[:-1])
+
+            key = setting_name.split(".")[-1]
+            default_value = setting_data["default_value"]
+            params.append((dictionary, key, default_value))
 
         new = False
 

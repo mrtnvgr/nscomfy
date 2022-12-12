@@ -13,17 +13,8 @@ class ShowSetting(Callback):
         settingType = button_data[0]
 
         user = self.master.master.config["users"][self.user_id]
-        user_settings = user["settings"]
 
-        settings = {
-            "diary.shorten_subjects": {
-                "name": "Сокращать названия уроков",
-                "path": 'user_settings["diary"]["shorten_subjects"]',
-                "description": "Сокращать названия уроков",
-            },
-        }
-
-        setting = settings[settingType]
+        setting = util.SETTINGS_SCHEMA[settingType]
         setting_state = eval(setting["path"])
         setting_state = util.getSwitchEmoji(setting_state)
 
