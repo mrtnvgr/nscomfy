@@ -95,8 +95,8 @@ def getEmoji(name):
 
 
 def getSwitchEmoji(boolean):
-    true = "WHITE HEAVY CHECK MARK"
-    false = "NEGATIVE SQUARED CROSS MARK"
+    true = "HEAVY CHECK MARK"
+    false = "CROSS MARK"
     return unilookup(true) if boolean else unilookup(false)
 
 
