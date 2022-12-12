@@ -3,36 +3,32 @@ from callbacks.callback import Callback
 import util
 
 
-class ShowSetting(Callback):
+class ToggleSetting(Callback):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def parse(self, update, button_data):
         message_id = self._getMessageId(update)
 
-        settingType = button_data[0]
+        setting_type = button_data[0]
+
+        setting = util.SETTINGS_SCHEMA[setting_type]
 
         user = self.master.master.config["users"][self.user_id]
+        exec(f'{setting["path"]} = not {setting["path"]}')
+        self.master.master.saveConfig()
 
-        setting = util.SETTINGS_SCHEMA[settingType]
         setting_state = eval(setting["path"])
         setting_state = util.getSwitchEmoji(setting_state)
 
-        text = []
-
-        text.append(f'<b>{setting["name"]}:\n</b>')
-        text.append(f'Описание: {setting["description"]}')
-
         buttons = [
-            {"text": setting_state, "callback_data": f"/toggleSetting {settingType}"}
+            {"text": setting_state, "callback_data": f"/toggleSetting {setting_type}"}
         ]
 
-        self.master.editButtons(
+        self.master.editMessageReplyMarkup(
             self.user_id,
             message_id,
-            "\n".join(text),
             buttons,
-            parse_mode="HTML",
         )
 
         return True

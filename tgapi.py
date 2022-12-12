@@ -121,6 +121,19 @@ class TelegramAPI:
 
         return self.method("sendDocument", payload, files=files)
 
+    def editMessageReplyMarkup(self, user_id, message_id, markup):
+
+        if type(markup) is dict:
+            markup = json.dumps(markup)
+
+        payload = {
+            "chat_id": user_id,
+            "message_id": message_id,
+            "reply_markup": markup,
+        }
+
+        return self.method("editMessageReplyMarkup", payload)
+
     @staticmethod
     def getUserIdFromUpdate(update):
         if "message" in update:

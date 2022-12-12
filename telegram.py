@@ -337,6 +337,10 @@ class TelegramHandler:
 
         return self.tg_api.editButtons(user_id, message_id, text, markup, **kwargs)
 
+    def editMessageReplyMarkup(self, user_id, message_id, values):
+        markup = self._parseButtons(values)
+        return self.tg_api.editMessageReplyMarkup(user_id, message_id, markup)
+
     def handleLoginError(self, user_id, message_id, exception, pop: str = ""):
 
         error_msg, unknown_err = self.master.handleError(user_id, exception)
