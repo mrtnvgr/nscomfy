@@ -10,6 +10,12 @@ SETTINGS_SCHEMA = {
         "description": "Сокращать названия уроков",
         "default_value": True,
     },
+    "diary.show_subject_time": {
+        "name": "Показывать время уроков",
+        "path": 'user["settings"]["diary"]["show_subject_time"]',
+        "description": "Показывать время уроков",
+        "default_value": True,
+    },
 }
 
 
