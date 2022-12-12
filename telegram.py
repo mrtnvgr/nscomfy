@@ -267,7 +267,7 @@ class TelegramHandler:
             ('user', "current_keyboard", None),
             ('user', "settings", {}),
             ('user["settings"]', "diary", {}),
-            ('user["settings"]["diary"]', "short_subjects", True),
+            ('user["settings"]["diary"]', "shorten_subjects", True),
         )
 
         new = False

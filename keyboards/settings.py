@@ -28,7 +28,7 @@ class Settings(Keyboard):
             user_settings = user["settings"]["diary"]
 
             settings = (
-                ("Сокращать названия уроков", "short_subjects"),
+                ("Сокращать названия уроков", "shorten_subjects"),
             )
 
             buttons = []
@@ -37,7 +37,7 @@ class Settings(Keyboard):
                 state = user_settings[setting]
                 status = util.getSwitchEmoji(state)
                 buttons.append(
-                    {"text": f"{status} {setting_name}", "callback_data": "/changeSetting {setting}"}
+                    {"text": f"{status} {setting_name}", "callback_data": f"/showSetting diary.{setting}"}
                 )
 
             self.master.sendButtons(self.user_id, "Настройки дневника:", buttons)
