@@ -162,11 +162,10 @@ class TelegramHandler:
             self.editButtons(user_id, message_id, error_msg, [])
             return
 
-        districts = []
-        for district in districts_response:
-            districts.append(
-                {"text": district["name"], "callback_data": district["id"]}
-            )
+        districts = [
+            {"text": district["name"], "callback_data": district["id"]}
+            for district in districts_response
+        ]
 
         municipalityDistrictId = self.askUserWithButtons(
             user_id, message_id, "Выберите округ:", districts
@@ -174,11 +173,11 @@ class TelegramHandler:
         if not municipalityDistrictId:
             return "TIMEOUT"
 
-        addresses = []
-        for school in schools_response:
-            if school["addressString"] not in addresses:
-                if str(school["municipalityDistrictId"]) == municipalityDistrictId:
-                    addresses.append(school["addressString"])
+        addresses = list({
+            school["addressString"]
+            for school in schools_response
+            if str(school["municipalityDistrictId"]) == municipalityDistrictId
+        })
 
         account["address"] = self.askUserWithButtons(
             user_id, message_id, "Выберите адрес:", addresses
@@ -186,10 +185,11 @@ class TelegramHandler:
         if not account["address"]:
             return "TIMEOUT"
 
-        schools = []
-        for school in schools_response:
-            if school["addressString"] == account["address"]:
-                schools.append(school["name"])
+        schools = [
+            school["name"]
+            for school in schools_response
+            if school["addressString"] == account["address"]
+        ]
 
         account["school"] = self.askUserWithButtons(
             user_id, message_id, "Выберите школу:", schools
