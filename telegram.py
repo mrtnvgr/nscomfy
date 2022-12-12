@@ -73,7 +73,8 @@ class TelegramHandler:
 
         try:
 
-            self.addNewUser(user_id)
+            if user_id not in self.ns.sessions:
+                self.addNewUser(user_id)
 
             if self.menuAnswerHandler(user_id, update):
                 return
@@ -103,7 +104,10 @@ class TelegramHandler:
             if not current_keyboard:
                 return
 
-            keyboard_func = keyboards.KEYBOARDS[current_keyboard]
+            keyboard_func = keyboards.KEYBOARDS.get(current_keyboard)
+            if not keyboard_func:
+                return
+
             keyboard = keyboard_func(user_id, self)
 
             return keyboard.parse(text)
@@ -173,11 +177,13 @@ class TelegramHandler:
         if not municipalityDistrictId:
             return "TIMEOUT"
 
-        addresses = list({
-            school["addressString"]
-            for school in schools_response
-            if str(school["municipalityDistrictId"]) == municipalityDistrictId
-        })
+        addresses = list(
+            {
+                school["addressString"]
+                for school in schools_response
+                if str(school["municipalityDistrictId"]) == municipalityDistrictId
+            }
+        )
 
         account["address"] = self.askUserWithButtons(
             user_id, message_id, "Выберите адрес:", addresses
@@ -253,9 +259,33 @@ class TelegramHandler:
     def addNewUser(self, user_id):
         if user_id not in self.master.config["users"]:
             self.master.config["users"][user_id] = {}
-            self.master.config["users"][user_id]["accounts"] = {}
-            self.master.config["users"][user_id]["current_account"] = None
-            self.master.config["users"][user_id]["current_keyboard"] = None
+        user = self.master.config["users"][user_id]
+
+        params = [
+            ("user", "accounts", {}),
+            ("user", "current_account", None),
+            ("user", "current_keyboard", None),
+            ("user", "settings", {}),
+            ('user["settings"]', "diary", {}),
+        ]
+
+        for setting_name, setting_data in util.SETTINGS_SCHEMA.items():
+            # Получаем место элемента из путя к нему
+            # ...["settings"]["setting"] -> ...["settings"]
+            dictionary = "[".join(setting_data["path"].split("[")[:-1])
+
+            key = setting_name.split(".")[-1]
+            default_value = setting_data["default_value"]
+            params.append((dictionary, key, default_value))
+
+        new = False
+
+        for dictionary, key, default_value in params:
+            old_value = eval(f"{dictionary}.setdefault(key, default_value)")
+            if old_value == default_value:
+                new = True
+
+        if new:
             self.master.saveConfig()
 
     def askUser(self, user_id, msg):
@@ -306,6 +336,10 @@ class TelegramHandler:
         markup = self._parseButtons(values)
 
         return self.tg_api.editButtons(user_id, message_id, text, markup, **kwargs)
+
+    def editMessageReplyMarkup(self, user_id, message_id, values):
+        markup = self._parseButtons(values)
+        return self.tg_api.editMessageReplyMarkup(user_id, message_id, markup)
 
     def handleLoginError(self, user_id, message_id, exception, pop: str = ""):
 

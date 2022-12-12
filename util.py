@@ -3,6 +3,27 @@ from unicodedata import lookup as unilookup
 from datetime import datetime, timedelta
 import calendar
 
+SETTINGS_SCHEMA = {
+    "diary.shorten_subjects": {
+        "name": "Сокращать названия уроков",
+        "path": 'user["settings"]["diary"]["shorten_subjects"]',
+        "description": "Сокращать названия уроков",
+        "default_value": True,
+    },
+    "diary.show_subject_time": {
+        "name": "Показывать время уроков",
+        "path": 'user["settings"]["diary"]["show_subject_time"]',
+        "description": "Показывать время уроков",
+        "default_value": True,
+    },
+    "diary.show_subject_number": {
+        "name": "Показывать номера уроков",
+        "path": 'user["settings"]["diary"]["show_subject_number"]',
+        "description": "Показывать номера уроков",
+        "default_value": False,
+    },
+}
+
 
 def formatDate(string: str):
     string = string.removesuffix("T00:00:00")
@@ -92,6 +113,12 @@ def mark_to_sign(mark):
 
 def getEmoji(name):
     return unilookup(name)
+
+
+def getSwitchEmoji(boolean):
+    true = "HEAVY CHECK MARK"
+    false = "CROSS MARK"
+    return unilookup(true) if boolean else unilookup(false)
 
 
 def detectEmptyTask(task):
