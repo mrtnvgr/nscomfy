@@ -27,16 +27,17 @@ class Settings(Keyboard):
             user = self.master.master.config["users"][self.user_id]
             user_settings = user["settings"]["diary"]
 
-            settings = {
-                "Сокращать названия уроков": user_settings["short_subjects"],
-            }
+            settings = (
+                ("Сокращать названия уроков", "short_subjects"),
+            )
 
             buttons = []
 
-            for setting, value in settings.items():
-                status = util.getSwitchEmoji(value)
+            for setting_name, setting in settings:
+                state = user_settings[setting]
+                status = util.getSwitchEmoji(state)
                 buttons.append(
-                    {"text": f"[{status}] {setting}", "callback_data": "/changeSetting"}
+                    {"text": f"{status} {setting_name}", "callback_data": "/changeSetting {setting}"}
                 )
 
             self.master.sendButtons(self.user_id, "Настройки дневника:", buttons)

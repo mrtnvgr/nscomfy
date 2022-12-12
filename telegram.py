@@ -262,21 +262,20 @@ class TelegramHandler:
         user = self.master.config["users"][user_id]
 
         params = (
-            (user["accounts"], {}),
-            (user["current_account"], None),
-            (user["current_keyboard"], None),
-            (user["settings"], {}),
-            (user["settings"]["diary"], {}),
-            (user["settings"]["diary"]["short_subjects"], True),
+            ('user', "accounts", {}),
+            ('user', "current_account", None),
+            ('user', "current_keyboard", None),
+            ('user', "settings", {}),
+            ('user["settings"]', "diary", {}),
+            ('user["settings"]["diary"]', "short_subjects", True),
         )
 
         new = False
 
-        for key, value in params:
-            try:
-                _ = key
-            except:
-                key = value
+        for dictionary, key, default_value in params:
+            old_value = eval(f"{dictionary}.setdefault(key, default_value)")
+            if old_value == default_value:
+                new = True
 
         if new:
             self.master.saveConfig()
