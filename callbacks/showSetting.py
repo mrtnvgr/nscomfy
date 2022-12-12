@@ -23,9 +23,9 @@ class ShowSetting(Callback):
         text.append(f'<b>{setting["name"]}:\n</b>')
         text.append(f'Описание: {setting["description"]}')
 
-        buttons = [{
-            "text": setting_state, "callback_data": f"/toggleSetting {settingType}"
-        }]
+        buttons = [
+            {"text": setting_state, "callback_data": f"/toggleSetting {settingType}"}
+        ]
 
         self.master.editButtons(
             self.user_id,
@@ -35,6 +35,6 @@ class ShowSetting(Callback):
             parse_mode="HTML",
         )
 
-        #exec(f'{setting["path"]} = not {setting["path"]}')
+        # exec(f'{setting["path"]} = not {setting["path"]}')
 
         return True

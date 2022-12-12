@@ -25,7 +25,7 @@ class Settings(Keyboard):
         elif text == "Дневник":
 
             user = self.master.master.config["users"][self.user_id]
-            
+
             settings = util.SETTINGS_SCHEMA
 
             buttons = []
@@ -35,7 +35,10 @@ class Settings(Keyboard):
                 status = util.getSwitchEmoji(state)
                 setting_name = setting_data["name"]
                 buttons.append(
-                    {"text": f"{status} {setting_name}", "callback_data": f"/showSetting {setting}"}
+                    {
+                        "text": f"{status} {setting_name}",
+                        "callback_data": f"/showSetting {setting}",
+                    }
                 )
 
             self.master.sendButtons(self.user_id, "Настройки дневника:", buttons)

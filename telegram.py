@@ -262,10 +262,10 @@ class TelegramHandler:
         user = self.master.config["users"][user_id]
 
         params = [
-            ('user', "accounts", {}),
-            ('user', "current_account", None),
-            ('user', "current_keyboard", None),
-            ('user', "settings", {}),
+            ("user", "accounts", {}),
+            ("user", "current_account", None),
+            ("user", "current_keyboard", None),
+            ("user", "settings", {}),
             ('user["settings"]', "diary", {}),
         ]
 
