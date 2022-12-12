@@ -94,6 +94,12 @@ def getEmoji(name):
     return unilookup(name)
 
 
+def getSwitchEmoji(boolean):
+    true = "WHITE HEAVY CHECK MARK"
+    false = "NEGATIVE SQUARED CROSS MARK"
+    return unilookup(true) if boolean else unilookup(false)
+
+
 def detectEmptyTask(task):
     # This function filters tasks like "не задано."
     task = task.lower()

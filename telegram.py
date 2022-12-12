@@ -73,7 +73,8 @@ class TelegramHandler:
 
         try:
 
-            self.addNewUser(user_id)
+            if user_id not in self.ns.sessions:
+                self.addNewUser(user_id)
 
             if self.menuAnswerHandler(user_id, update):
                 return
@@ -103,7 +104,10 @@ class TelegramHandler:
             if not current_keyboard:
                 return
 
-            keyboard_func = keyboards.KEYBOARDS[current_keyboard]
+            keyboard_func = keyboards.KEYBOARDS.get(current_keyboard)
+            if not keyboard_func:
+                return
+
             keyboard = keyboard_func(user_id, self)
 
             return keyboard.parse(text)
@@ -173,11 +177,13 @@ class TelegramHandler:
         if not municipalityDistrictId:
             return "TIMEOUT"
 
-        addresses = list({
-            school["addressString"]
-            for school in schools_response
-            if str(school["municipalityDistrictId"]) == municipalityDistrictId
-        })
+        addresses = list(
+            {
+                school["addressString"]
+                for school in schools_response
+                if str(school["municipalityDistrictId"]) == municipalityDistrictId
+            }
+        )
 
         account["address"] = self.askUserWithButtons(
             user_id, message_id, "Выберите адрес:", addresses
@@ -253,9 +259,26 @@ class TelegramHandler:
     def addNewUser(self, user_id):
         if user_id not in self.master.config["users"]:
             self.master.config["users"][user_id] = {}
-            self.master.config["users"][user_id]["accounts"] = {}
-            self.master.config["users"][user_id]["current_account"] = None
-            self.master.config["users"][user_id]["current_keyboard"] = None
+        user = self.master.config["users"][user_id]
+
+        params = (
+            (user["accounts"], {}),
+            (user["current_account"], None),
+            (user["current_keyboard"], None),
+            (user["settings"], {}),
+            (user["settings"]["diary"], {}),
+            (user["settings"]["diary"]["short_subjects"], True),
+        )
+
+        new = False
+
+        for key, value in params:
+            try:
+                _ = key
+            except:
+                key = value
+
+        if new:
             self.master.saveConfig()
 
     def askUser(self, user_id, msg):
