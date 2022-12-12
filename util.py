@@ -16,6 +16,12 @@ SETTINGS_SCHEMA = {
         "description": "Показывать время уроков",
         "default_value": True,
     },
+    "diary.show_subject_number": {
+        "name": "Показывать номера уроков",
+        "path": 'user["settings"]["diary"]["show_subject_number"]',
+        "description": "Показывать номера уроков",
+        "default_value": False,
+    },
 }
 
 
