@@ -273,7 +273,10 @@ class NetSchoolSessionHandler:
             start = lesson["startTime"]
             end = lesson["endTime"]
 
-            name = util.shortenSubjectName(name)
+            user = self.master.master.config["users"][user_id]
+            diary_settings = user["settings"]["diary"]
+            if diary_settings["shorten_subjects"]:
+                name = util.shortenSubjectName(name)
 
             if only_marks and not marks:
                 continue
