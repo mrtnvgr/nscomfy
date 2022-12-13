@@ -1,6 +1,7 @@
 from callbacks.callback import Callback
 
 import util
+import logging
 
 
 class ToggleSetting(Callback):
@@ -20,6 +21,8 @@ class ToggleSetting(Callback):
 
         setting_state = eval(setting["path"])
         setting_state = util.getSwitchEmoji(setting_state)
+
+        logging.info(f'[NS] {self.user_id}: toggle "{setting_type}" setting')
 
         buttons = [
             {"text": setting_state, "callback_data": f"/toggleSetting {setting_type}"}

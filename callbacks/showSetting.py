@@ -1,6 +1,7 @@
 from callbacks.callback import Callback
 
 import util
+import logging
 
 
 class ShowSetting(Callback):
@@ -34,5 +35,7 @@ class ShowSetting(Callback):
             buttons,
             parse_mode="HTML",
         )
+
+        logging.info(f'[NS] {self.user_id}: show "{settingType}" setting')
 
         return True
