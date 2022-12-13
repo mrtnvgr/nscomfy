@@ -24,6 +24,16 @@ SETTINGS_SCHEMA = {
     },
 }
 
+SHORTENED_SUBJECTS = {
+    "Основы безопасности жизнедеятельности": "ОБЖ",
+    "Информатика и ИКТ": "Информатика",
+    "Изобразительное искусство": "ИЗО",
+}
+
+SETTINGS_SCHEMA["diary.shorten_subjects"]["description"] += "\n\nСокращения:"
+for full, short in SHORTENED_SUBJECTS.items():
+    SETTINGS_SCHEMA["diary.shorten_subjects"]["description"] += f"\n{full} -> {short}"
+
 
 def formatDate(string: str):
     string = string.removesuffix("T00:00:00")
@@ -153,14 +163,8 @@ def shortenSubjectName(subject):
     for key, value in similar_letters.items():
         subject = subject.replace(key, value)
 
-    subjects = {
-        "Основы безопасности жизнедеятельности": "ОБЖ",
-        "Информатика и ИКТ": "Информатика",
-        "Изобразительное искусство": "ИЗО",
-    }
-
-    if subject in subjects:
-        return subjects[subject]
+    if subject in SHORTENED_SUBJECTS:
+        return SHORTENED_SUBJECTS[subject]
     else:
         return original_subject
 
