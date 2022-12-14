@@ -1,5 +1,9 @@
 from keyboards.keyboard import Keyboard
 
+import util
+
+import logging
+
 
 class MainMenu(Keyboard):
     def __init__(self, *args, **kwargs):
@@ -13,7 +17,7 @@ class MainMenu(Keyboard):
 
         student_info = f"Ученик: {api.student_info['name']}"
 
-        firstRow = ["Дневник"]
+        firstRow = ["Дневник", "Оценки"]
 
         self.master.ns.setOverdueCount(self.user_id)
         if api._overdue_count > 0:
@@ -57,6 +61,73 @@ class MainMenu(Keyboard):
         elif text == "Дневник":
 
             self.master.sendKeyboard(self.user_id, "diary")
+            return True
+
+        elif text == "Оценки":
+
+            logging.info("[NS] all marks request")
+
+            resp = self.master.tg_api.sendMessage(self.user_id, "Подождите...")
+            message_id = resp["message_id"]
+
+            start, end = self.master.ns.getTermDates(self.user_id)
+
+            api = self.master.ns.sessions[self.user_id]
+
+            diary = api.getDiary(start=start, end=end)
+
+            subject_marks = {}
+
+            for day in diary["weekDays"]:
+
+                for lesson in day["lessons"]:
+
+                    if "assignments" not in lesson:
+                        continue
+
+                    marks = []
+
+                    for assignment in lesson["assignments"]:
+
+                        if "mark" in assignment:
+
+                            mark = assignment["mark"]["mark"]
+
+                            marks.append(mark)
+
+                    subjectName = lesson["subjectName"]
+
+                    subject_marks.setdefault(subjectName, [])
+
+                    subject_marks[subjectName].extend(marks)
+
+            user = self.master.master.config["users"][self.user_id]
+            diary_settings = user["settings"]["diary"]
+
+            text = ["<b>Оценки за четверть</b>"]
+
+            convertmark = lambda mark: util.mark_to_sign(mark)
+
+            for subjectName, marks in subject_marks.items():
+
+                if diary_settings["shorten_subjects"]:
+                    subjectName = util.shortenSubjectName(subjectName)
+
+                line = f"\n{subjectName}: "
+
+                rational_marks = [i for i in marks if i is not None]
+                average = round(sum(rational_marks) / len(rational_marks), 1)
+
+                line += f"{round(average + 0.001)} ({average})\n"
+
+                line += " ".join(map(convertmark, marks))
+
+                text.append(line)
+
+            self.master.editButtons(
+                self.user_id, message_id, "\n".join(text), [], parse_mode="HTML"
+            )
+
             return True
 
         elif text == "Настройки":

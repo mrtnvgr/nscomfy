@@ -496,6 +496,25 @@ class NetSchoolSessionHandler:
                 months = source["items"]
                 return {month["title"]: month["value"] for month in months}
 
+    def getTermDates(self, user_id):
+
+        if not self.checkSession(user_id):
+            return
+        api = self.sessions[user_id]
+
+        filters = api.getMarksReportFilters()
+        if not filters:
+            return
+
+        if "filterSources" not in filters:
+            return
+
+        sources = filters["filterSources"]
+        for source in sources:
+            if source["filterId"] == "period":
+                defaultRange = source["defaultRange"]
+                return defaultRange["start"], defaultRange["end"]
+
     def getUserPhoto(self, user_id):
 
         if not self.checkSession(user_id):

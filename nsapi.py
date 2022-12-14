@@ -5,7 +5,7 @@ import hashlib
 import logging
 
 from typing import Optional
-from datetime import date, timedelta
+from datetime import datetime, timedelta
 
 from errors import *
 from requests.exceptions import ConnectionError, InvalidURL
@@ -86,6 +86,11 @@ class NetSchoolAPI:
 
         return self.request("schedule/month/filterpanel?month=").json()
 
+    def getMarksReportFilters(self):
+        """Get marks report filters"""
+
+        return self.request("reports/studenttotal").json()
+
     def getUserPhoto(self):
         """Get user photo"""
 
@@ -97,23 +102,29 @@ class NetSchoolAPI:
 
         return self.request("users/photo", params=params).content
 
-    def getDiary(self, start: Optional[date] = None, end: Optional[date] = None):
+    def getDiary(
+        self, start: Optional[datetime] = None, end: Optional[datetime] = None
+    ):
         """Get diary info"""
 
         if not start:
             # Start = Monday
-            start = date.today() - timedelta(days=date.today().weekday())
+            start = datetime.today() - timedelta(days=datetime.today().weekday())
 
         if not end:
             end = start + timedelta(days=5)
+
+        for date in [start, end]:
+            if type(date) is not str:
+                date = date.isoformat()
 
         response = self.request(
             "student/diary",
             params={
                 "studentId": self.student_info["id"],
                 "yearId": self._year_id,
-                "weekStart": start.isoformat(),
-                "weekEnd": end.isoformat(),
+                "weekStart": start,
+                "weekEnd": end,
             },
         ).json()
 
