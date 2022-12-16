@@ -103,6 +103,7 @@ class MainMenu(Keyboard):
 
             user = self.master.master.config["users"][self.user_id]
             diary_settings = user["settings"]["diary"]
+            tm_settings = user["settings"]["term_marks"]
 
             text = ["<b>Оценки за четверть</b>"]
 
@@ -117,8 +118,10 @@ class MainMenu(Keyboard):
 
                 rational_marks = [i for i in marks if i is not None]
                 average = round(sum(rational_marks) / len(rational_marks), 1)
-
-                line += f"<b>{round(average + 0.001)}</b> ({average})\n"
+                if tm_settings["round_marks"]:
+                    line += f"<b>{round(average + 0.001)}</b> ({average})\n"
+                else:
+                    line += f"<b>{average}</b>\n"
 
                 line += " ".join(map(convertmark, marks))
 

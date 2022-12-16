@@ -266,8 +266,14 @@ class TelegramHandler:
             ("user", "current_account", None),
             ("user", "current_keyboard", None),
             ("user", "settings", {}),
-            ('user["settings"]', "diary", {}),
         ]
+
+        settings_groups = []
+        for setting in util.SETTINGS_SCHEMA.keys():
+            group = setting.split(".")[0]
+            if group not in settings_groups:
+                params.append(('user["settings"]', group, {}))
+                settings_groups.append(group)
 
         for setting_name, setting_data in util.SETTINGS_SCHEMA.items():
             # Получаем место элемента из путя к нему
