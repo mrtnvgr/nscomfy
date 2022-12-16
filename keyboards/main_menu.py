@@ -1,8 +1,7 @@
-from keyboards.keyboard import Keyboard
+import logging
 
 import util
-
-import logging
+from keyboards.keyboard import Keyboard
 
 
 class MainMenu(Keyboard):

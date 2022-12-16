@@ -1,7 +1,7 @@
+import calendar
+from datetime import datetime, timedelta
 from html import escape as html_escape
 from unicodedata import lookup as unilookup
-from datetime import datetime, timedelta
-import calendar
 
 SETTINGS_SCHEMA = {
     "general.shorten_subjects": {

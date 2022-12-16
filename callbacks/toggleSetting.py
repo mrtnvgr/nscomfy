@@ -1,7 +1,7 @@
-from callbacks.callback import Callback
+import logging
 
 import util
-import logging
+from callbacks.callback import Callback
 
 
 class ToggleSetting(Callback):

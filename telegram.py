@@ -1,9 +1,9 @@
-from nsapi import NetSchoolAPI
-from ns import NetSchoolSessionHandler
-from tgapi import TelegramAPI
-import keyboards
 import callbacks
+import keyboards
 import util
+from ns import NetSchoolSessionHandler
+from nsapi import NetSchoolAPI
+from tgapi import TelegramAPI
 
 
 class TelegramHandler:

@@ -1,5 +1,6 @@
-from callbacks.callback import Callback
 from urllib.parse import unquote_plus
+
+from callbacks.callback import Callback
 
 
 class DownloadAttachment(Callback):

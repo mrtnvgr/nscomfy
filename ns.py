@@ -1,7 +1,7 @@
+import logging
 from datetime import date as datetime
 from datetime import timedelta
 from itertools import zip_longest
-import logging
 
 import util
 from nsapi import NetSchoolAPI

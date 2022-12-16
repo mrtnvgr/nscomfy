@@ -1,7 +1,7 @@
-from keyboards.keyboard import Keyboard
-from errors import *
-
 import logging
+
+from errors import *
+from keyboards.keyboard import Keyboard
 
 
 class AccountSelection(Keyboard):

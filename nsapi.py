@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 
-import requests
 import hashlib
 import logging
-
-from typing import Optional
 from datetime import datetime, timedelta
+from json.decoder import JSONDecodeError
+from typing import Optional
+
+import requests
+from requests.exceptions import ConnectionError, InvalidURL
 
 from errors import *
-from requests.exceptions import ConnectionError, InvalidURL
-from json.decoder import JSONDecodeError
 
 
 class NetSchoolAPI:

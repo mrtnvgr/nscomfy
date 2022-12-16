@@ -1,6 +1,5 @@
-from keyboards.keyboard import Keyboard
-
 import util
+from keyboards.keyboard import Keyboard
 
 
 class Settings(Keyboard):

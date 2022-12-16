@@ -1,7 +1,8 @@
-from typing import Dict
-import requests
 import json
 import logging
+from typing import Dict
+
+import requests
 
 
 class TelegramAPI:
