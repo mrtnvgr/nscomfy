@@ -90,7 +90,7 @@ class TelegramHandler:
         except Exception as ex:
             msg, unknown = self.master.handleError(user_id, ex)
             if unknown:
-                self.tg_api.sendMessage(user_id, f"Неожиданная ошибка.")
+                self.tg_api.sendMessage(user_id, "Неожиданная ошибка.")
             else:
                 self.tg_api.sendMessage(user_id, f"Ошибка: {msg}")
 

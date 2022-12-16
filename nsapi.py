@@ -32,7 +32,7 @@ class NetSchoolAPI:
 
         # Get version info and NSSESSIONID cookie
         try:
-            ns_info = self.request(f"logindata")
+            ns_info = self.request("logindata")
             if ns_info.status_code == 503:
                 raise TechnicalMaintenanceError()
             self.ns_info = ns_info.json()
