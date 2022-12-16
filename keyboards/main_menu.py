@@ -118,7 +118,7 @@ class MainMenu(Keyboard):
                 rational_marks = [i for i in marks if i is not None]
                 average = round(sum(rational_marks) / len(rational_marks), 1)
 
-                line += f"{round(average + 0.001)} ({average})\n"
+                line += f"<b>{round(average + 0.001)}</b> ({average})\n"
 
                 line += " ".join(map(convertmark, marks))
 
