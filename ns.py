@@ -274,9 +274,9 @@ class NetSchoolSessionHandler:
             end = lesson["endTime"]
 
             user = self.master.master.config["users"][user_id]
-            diary_settings = user["settings"]["diary"]
+            settings = user["settings"]
 
-            if diary_settings["shorten_subjects"]:
+            if settings["general"]["shorten_subjects"]:
                 name = util.shortenSubjectName(name)
 
             if only_marks and not marks:
@@ -287,12 +287,12 @@ class NetSchoolSessionHandler:
 
             line = ""
 
-            if diary_settings["show_subject_number"]:
+            if settings["diary"]["show_subject_number"]:
                 line += f"{number}: "
 
             line += name
 
-            if diary_settings["show_subject_time"]:
+            if settings["diary"]["show_subject_time"]:
                 line += f"({start} - {end})"
 
             line = "\n" + line

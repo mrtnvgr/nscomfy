@@ -102,7 +102,7 @@ class MainMenu(Keyboard):
                     subject_marks[subjectName].extend(marks)
 
             user = self.master.master.config["users"][self.user_id]
-            tm_settings = user["settings"]["term_marks"]
+            settings = user["settings"]
 
             text = ["<b>Оценки за четверть</b>"]
 
@@ -110,14 +110,14 @@ class MainMenu(Keyboard):
 
             for subjectName, marks in subject_marks.items():
 
-                if tm_settings["shorten_subjects"]:
+                if settings["general"]["shorten_subjects"]:
                     subjectName = util.shortenSubjectName(subjectName)
 
                 line = f"\n{subjectName}: "
 
                 rational_marks = [i for i in marks if i is not None]
                 average = round(sum(rational_marks) / len(rational_marks), 1)
-                if tm_settings["round_marks"]:
+                if settings["term_marks"]["round_marks"]:
                     line += f"<b>{round(average + 0.001)}</b> ({average})\n"
                 else:
                     line += f"<b>{average}</b>\n"

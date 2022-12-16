@@ -10,13 +10,14 @@ class Settings(Keyboard):
     def set(self):
 
         self.settings_types = {
-            "Дневник": "дневника",
-            "Оценки": "оценок за четверть",
+            "Общее": "Общие настройки",
+            "Дневник": "Настройки дневника",
+            "Оценки": "Настройки оценок за четверть",
         }
 
         self.text = "Настройки:"
 
-        self.keyboard.extend(zip(*[iter(self.settings_types)] * 2))
+        self.keyboard.append(list(self.settings_types.keys()))
         self.keyboard.append(["Аккаунт", "Назад"])
 
         self.one_time_keyboard = False
@@ -29,8 +30,6 @@ class Settings(Keyboard):
             return True
 
         elif text in self.settings_types.keys():
-
-            user = self.master.master.config["users"][self.user_id]
 
             settings = util.SETTINGS_SCHEMA
 
@@ -51,8 +50,6 @@ class Settings(Keyboard):
 
             settings_type = self.settings_types.get(text, text)
 
-            self.master.sendButtons(
-                self.user_id, f"Настройки {settings_type}:", buttons
-            )
+            self.master.sendButtons(self.user_id, f"{settings_type}:", buttons)
 
             return True

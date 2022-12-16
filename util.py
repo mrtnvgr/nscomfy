@@ -4,11 +4,11 @@ from datetime import datetime, timedelta
 import calendar
 
 SETTINGS_SCHEMA = {
-    "diary.shorten_subjects": {
-        "name": "Сокращать названия уроков",
-        "group": "Дневник",
-        "path": 'user["settings"]["diary"]["shorten_subjects"]',
-        "description": "Сокращать названия уроков",
+    "general.shorten_subjects": {
+        "name": "Сокращать названия предметов",
+        "group": "Общее",
+        "path": 'user["settings"]["general"]["shorten_subjects"]',
+        "description": "Сокращать названия предметов",
         "default_value": True,
     },
     "diary.show_subject_time": {
@@ -32,13 +32,6 @@ SETTINGS_SCHEMA = {
         "description": "Округлять оценки за четверть\n(Не округлённые оценки будут рядом в скобках)",
         "default_value": True,
     },
-    "term_marks.shorten_subjects": {
-        "name": "Сокращать названия предметов",
-        "group": "Оценки",
-        "path": 'user["settings"]["term_marks"]["shorten_subjects"]',
-        "description": "Сокращать названия предметов",
-        "default_value": True,
-    },
 }
 
 SHORTENED_SUBJECTS = {
@@ -47,9 +40,9 @@ SHORTENED_SUBJECTS = {
     "Изобразительное искусство": "ИЗО",
 }
 
-SETTINGS_SCHEMA["diary.shorten_subjects"]["description"] += "\n\nСокращения:"
+SETTINGS_SCHEMA["general.shorten_subjects"]["description"] += "\n\nСокращения:"
 for full, short in SHORTENED_SUBJECTS.items():
-    SETTINGS_SCHEMA["diary.shorten_subjects"]["description"] += f"\n{full} -> {short}"
+    SETTINGS_SCHEMA["general.shorten_subjects"]["description"] += f"\n{full} -> {short}"
 
 
 def formatDate(string: str):
