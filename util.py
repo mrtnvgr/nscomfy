@@ -32,6 +32,13 @@ SETTINGS_SCHEMA = {
         "description": "Округлять оценки за четверть\n(Не округлённые оценки будут рядом в скобках)",
         "default_value": True,
     },
+    "term_marks.shorten_subjects": {
+        "name": "Сокращать названия предметов",
+        "group": "Оценки",
+        "path": 'user["settings"]["term_marks"]["shorten_subjects"]',
+        "description": "Сокращать названия предметов",
+        "default_value": True,
+    },
 }
 
 SHORTENED_SUBJECTS = {

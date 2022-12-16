@@ -102,7 +102,6 @@ class MainMenu(Keyboard):
                     subject_marks[subjectName].extend(marks)
 
             user = self.master.master.config["users"][self.user_id]
-            diary_settings = user["settings"]["diary"]
             tm_settings = user["settings"]["term_marks"]
 
             text = ["<b>Оценки за четверть</b>"]
@@ -111,7 +110,7 @@ class MainMenu(Keyboard):
 
             for subjectName, marks in subject_marks.items():
 
-                if diary_settings["shorten_subjects"]:
+                if tm_settings["shorten_subjects"]:
                     subjectName = util.shortenSubjectName(subjectName)
 
                 line = f"\n{subjectName}: "
