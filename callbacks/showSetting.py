@@ -10,6 +10,7 @@ class ShowSetting(Callback):
 
     def parse(self, update, button_data):
         message_id = self._getMessageId(update)
+        group = update["callback_query"]["message"]["text"]
 
         settingType = button_data[0]
 
@@ -21,7 +22,8 @@ class ShowSetting(Callback):
 
         text = []
 
-        text.append(f'<b>{setting["name"]}:\n</b>')
+        text.append(group)
+        text.append(f'\n<b>{setting["name"]}:\n</b>')
         text.append(f'Описание: {setting["description"]}')
 
         buttons = [
