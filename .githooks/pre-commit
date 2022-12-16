@@ -1,6 +1,5 @@
 #!/bin/sh
 
-# Проверяем на качество кода
-
 flake8 *.py */*.py || exit 1
-black *.py */*.py
+echo "FLAKE8 CHECK: OK"
+black --quiet *.py */*.py && echo "BLACK CHECK: OK"
