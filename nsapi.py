@@ -312,7 +312,7 @@ class NetSchoolAPI:
         # Make a request
         try:
             response = self._session.request(method, url, headers=rheaders, **kwargs)
-        except:
+        except Exception:
             # Retry request
             return self.request(url, method, headers, relogin, **kwargs)
 
