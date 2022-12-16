@@ -20,3 +20,7 @@ class UnsupportedRole(Exception):
 
 class UnknownStudentError(Exception):
     pass
+
+
+class TechnicalMaintenance(Exception):
+    pass

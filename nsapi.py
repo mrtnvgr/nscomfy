@@ -32,7 +32,10 @@ class NetSchoolAPI:
 
         # Get version info and NSSESSIONID cookie
         try:
-            self.ns_info = self.request(f"logindata").json()
+            ns_info = self.request(f"logindata")
+            if ns_info.status_code == 503:
+                raise TechnicalMaintenance()
+            self.ns_info = ns_info.json()
         except (JSONDecodeError, ConnectionError, InvalidURL):
             raise InvalidUrlError("given url isn't a net school url")
 
