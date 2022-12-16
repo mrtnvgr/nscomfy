@@ -1,8 +1,8 @@
-from callbacks.downloadAttachment import DownloadAttachment
-from callbacks.getFullSchoolInfo import GetFullSchoolInfo
-from callbacks.getDiary import GetDiary
 from callbacks.changeAccountStudent import ChangeAccountStudent
+from callbacks.downloadAttachment import DownloadAttachment
 from callbacks.getBirthdays import GetBirthdays
+from callbacks.getDiary import GetDiary
+from callbacks.getFullSchoolInfo import GetFullSchoolInfo
 from callbacks.showSetting import ShowSetting
 from callbacks.toggleSetting import ToggleSetting
 

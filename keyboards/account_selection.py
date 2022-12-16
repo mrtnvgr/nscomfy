@@ -1,7 +1,6 @@
-from keyboards.keyboard import Keyboard
-from errors import *
-
 import logging
+
+from keyboards.keyboard import Keyboard
 
 
 class AccountSelection(Keyboard):
@@ -39,7 +38,8 @@ class AccountSelection(Keyboard):
         if text not in accounts:
             self.master.tg_api.sendMessage(
                 self.user_id,
-                "Такого аккаунта не существует. Для выбора аккаунта используйте кнопки клавиатуры телеграмма.",
+                "Такого аккаунта не существует."
+                "Для выбора аккаунта используйте кнопки клавиатуры телеграмма.",
             )
             return
 

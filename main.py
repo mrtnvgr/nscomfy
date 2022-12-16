@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 
-from telegram import TelegramHandler
-
-from errors import *
-from requests.exceptions import JSONDecodeError, ConnectionError
-
+import argparse
 import json
+import logging
 import os
 import signal
-import logging
-import argparse
+
+from requests.exceptions import ConnectionError, JSONDecodeError
+
+from errors import *
+from telegram import TelegramHandler
 
 
 class Main:

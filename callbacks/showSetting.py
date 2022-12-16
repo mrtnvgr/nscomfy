@@ -1,7 +1,7 @@
-from callbacks.callback import Callback
+import logging
 
 import util
-import logging
+from callbacks.callback import Callback
 
 
 class ShowSetting(Callback):
@@ -14,7 +14,7 @@ class ShowSetting(Callback):
 
         settingType = button_data[0]
 
-        user = self.master.master.config["users"][self.user_id]
+        user = self.master.master.config["users"][self.user_id]  # noqa: F841
 
         setting = util.SETTINGS_SCHEMA[settingType]
         setting_state = eval(setting["path"])

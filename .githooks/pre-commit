@@ -1,0 +1,5 @@
+#!/bin/sh
+
+flake8 *.py */*.py || exit 1
+echo "FLAKE8 CHECK: OK"
+black --quiet *.py */*.py && echo "BLACK CHECK: OK"

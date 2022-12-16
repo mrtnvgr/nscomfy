@@ -1,9 +1,9 @@
-from nsapi import NetSchoolAPI
-from ns import NetSchoolSessionHandler
-from tgapi import TelegramAPI
-import keyboards
 import callbacks
+import keyboards
 import util
+from ns import NetSchoolSessionHandler
+from nsapi import NetSchoolAPI
+from tgapi import TelegramAPI
 
 
 class TelegramHandler:
@@ -90,7 +90,7 @@ class TelegramHandler:
         except Exception as ex:
             msg, unknown = self.master.handleError(user_id, ex)
             if unknown:
-                self.tg_api.sendMessage(user_id, f"Неожиданная ошибка.")
+                self.tg_api.sendMessage(user_id, "Неожиданная ошибка.")
             else:
                 self.tg_api.sendMessage(user_id, f"Ошибка: {msg}")
 
@@ -259,7 +259,7 @@ class TelegramHandler:
     def addNewUser(self, user_id):
         if user_id not in self.master.config["users"]:
             self.master.config["users"][user_id] = {}
-        user = self.master.config["users"][user_id]
+        user = self.master.config["users"][user_id]  # noqa: F841
 
         params = [
             ("user", "accounts", {}),

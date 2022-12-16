@@ -1,6 +1,6 @@
-from callbacks.callback import Callback
-
 import logging
+
+from callbacks.callback import Callback
 
 
 class GetDiary(Callback):

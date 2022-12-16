@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 
-import requests
 import hashlib
 import logging
-
-from typing import Optional
 from datetime import datetime, timedelta
+from json.decoder import JSONDecodeError
+from typing import Optional
+
+import requests
+from requests.exceptions import ConnectionError, InvalidURL
 
 from errors import *
-from requests.exceptions import ConnectionError, InvalidURL
-from json.decoder import JSONDecodeError
 
 
 class NetSchoolAPI:
@@ -32,7 +32,7 @@ class NetSchoolAPI:
 
         # Get version info and NSSESSIONID cookie
         try:
-            ns_info = self.request(f"logindata")
+            ns_info = self.request("logindata")
             if ns_info.status_code == 503:
                 raise TechnicalMaintenanceError()
             self.ns_info = ns_info.json()
@@ -312,7 +312,7 @@ class NetSchoolAPI:
         # Make a request
         try:
             response = self._session.request(method, url, headers=rheaders, **kwargs)
-        except:
+        except Exception:
             # Retry request
             return self.request(url, method, headers, relogin, **kwargs)
 

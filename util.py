@@ -1,7 +1,7 @@
+import calendar
+from datetime import datetime, timedelta
 from html import escape as html_escape
 from unicodedata import lookup as unilookup
-from datetime import datetime, timedelta
-import calendar
 
 SETTINGS_SCHEMA = {
     "general.shorten_subjects": {
@@ -29,7 +29,8 @@ SETTINGS_SCHEMA = {
         "name": "Округлять оценки",
         "group": "Оценки",
         "path": 'user["settings"]["term_marks"]["round_marks"]',
-        "description": "Округлять оценки за четверть\n(Не округлённые оценки будут рядом в скобках)",
+        "description": "Округлять оценки за четверть"
+        "\n(Не округлённые оценки будут рядом в скобках)",
         "default_value": True,
     },
 }

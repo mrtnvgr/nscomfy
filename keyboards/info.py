@@ -1,6 +1,6 @@
-from keyboards.keyboard import Keyboard
-
 import logging
+
+from keyboards.keyboard import Keyboard
 
 
 class Info(Keyboard):

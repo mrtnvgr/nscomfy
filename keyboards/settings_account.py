@@ -1,8 +1,8 @@
-from keyboards.keyboard import Keyboard
-from util import checkAccountName
+import logging
 from urllib.parse import quote_plus
 
-import logging
+from keyboards.keyboard import Keyboard
+from util import checkAccountName
 
 
 class SettingsAccount(Keyboard):
