@@ -95,11 +95,11 @@ class Main:
             'Бот предназначен для аккаунтов с ролями "Student"(Ученик) или "Parent"(Родитель)',
             InvalidUrlError: "Введённая ссылка неправильная или не является нетгородом.",
             UnknownStudentError: "Указанного ученика аккаунта больше не существует.",
-            TechnicalMaintenance: "На сервере нетгорода проводятся технические работы.",
         }
 
         ignoreErrors = [
             JSONDecodeError,  # Битые данные с нет города
+            TechnicalMaintenance, # тех. работы
         ]
 
         unknownMessage = "Что-то пошло не так, повторите попытку позже."
