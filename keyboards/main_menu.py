@@ -65,7 +65,7 @@ class MainMenu(Keyboard):
 
         elif text == "Оценки":
 
-            logging.info("[NS] all marks request")
+            logging.info(f"[NS] {self.user_id}: all marks request")
 
             resp = self.master.tg_api.sendMessage(self.user_id, "Подождите...")
             message_id = resp["message_id"]
