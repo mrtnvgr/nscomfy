@@ -34,7 +34,7 @@ class NetSchoolAPI:
         try:
             ns_info = self.request(f"logindata")
             if ns_info.status_code == 503:
-                raise TechnicalMaintenance()
+                raise TechnicalMaintenanceError()
             self.ns_info = ns_info.json()
         except (JSONDecodeError, ConnectionError, InvalidURL):
             raise InvalidUrlError("given url isn't a net school url")
@@ -254,7 +254,7 @@ class NetSchoolAPI:
         mysettings = self.request("mysettings").json()
         roles = mysettings["roles"]
         if not ("Student" in roles or "Parent" in roles):
-            raise UnsupportedRole(roles)
+            raise UnsupportedRoleError(roles)
 
         # Save current login data for auto-relogin
         self._login_data = (username, password, school_name)

@@ -14,7 +14,7 @@ class InvalidUrlError(Exception):
     pass
 
 
-class UnsupportedRole(Exception):
+class UnsupportedRoleError(Exception):
     pass
 
 
@@ -22,5 +22,5 @@ class UnknownStudentError(Exception):
     pass
 
 
-class TechnicalMaintenance(Exception):
+class TechnicalMaintenanceError(Exception):
     pass

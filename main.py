@@ -91,7 +91,7 @@ class Main:
         errorMessages = {
             SchoolNotFoundError: "Такой школы не существует.",
             LoginError: "Неправильные данные для входа в аккаунт.",
-            UnsupportedRole: "Ваш тип аккаунта не поддерживается."
+            UnsupportedRoleError: "Ваш тип аккаунта не поддерживается."
             'Бот предназначен для аккаунтов с ролями "Student"(Ученик) или "Parent"(Родитель)',
             InvalidUrlError: "Введённая ссылка неправильная или не является нетгородом.",
             UnknownStudentError: "Указанного ученика аккаунта больше не существует.",
@@ -99,7 +99,7 @@ class Main:
 
         ignoreErrors = [
             JSONDecodeError,  # Битые данные с нет города
-            TechnicalMaintenance, # тех. работы
+            TechnicalMaintenanceError,  # тех. работы
         ]
 
         unknownMessage = "Что-то пошло не так, повторите попытку позже."
