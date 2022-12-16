@@ -105,8 +105,6 @@ class MainMenu(Keyboard):
 
             text = ["<b>Оценки за четверть</b>"]
 
-            convertmark = lambda mark: util.mark_to_sign(mark)
-
             for subjectName, marks in subject_marks.items():
 
                 if settings["general"]["shorten_subjects"]:
@@ -121,7 +119,7 @@ class MainMenu(Keyboard):
                 else:
                     line += f"<b>{average}</b>\n"
 
-                line += " ".join(map(convertmark, marks))
+                line += " ".join(map(util.mark_to_sign, marks))
 
                 text.append(line)
 
