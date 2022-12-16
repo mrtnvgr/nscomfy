@@ -15,7 +15,7 @@ class ToggleSetting(Callback):
 
         setting = util.SETTINGS_SCHEMA[setting_type]
 
-        user = self.master.master.config["users"][self.user_id]
+        user = self.master.master.config["users"][self.user_id]  # noqa: F841
         exec(f'{setting["path"]} = not {setting["path"]}')
         self.master.master.saveConfig()
 

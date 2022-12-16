@@ -259,7 +259,7 @@ class TelegramHandler:
     def addNewUser(self, user_id):
         if user_id not in self.master.config["users"]:
             self.master.config["users"][user_id] = {}
-        user = self.master.config["users"][user_id]
+        user = self.master.config["users"][user_id]  # noqa: F841
 
         params = [
             ("user", "accounts", {}),
