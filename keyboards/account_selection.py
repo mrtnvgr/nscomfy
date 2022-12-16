@@ -1,6 +1,5 @@
 import logging
 
-from errors import *
 from keyboards.keyboard import Keyboard
 
 
