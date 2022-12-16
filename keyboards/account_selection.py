@@ -38,7 +38,8 @@ class AccountSelection(Keyboard):
         if text not in accounts:
             self.master.tg_api.sendMessage(
                 self.user_id,
-                "Такого аккаунта не существует. Для выбора аккаунта используйте кнопки клавиатуры телеграмма.",
+                "Такого аккаунта не существует."
+                "Для выбора аккаунта используйте кнопки клавиатуры телеграмма.",
             )
             return
 

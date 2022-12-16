@@ -29,7 +29,8 @@ SETTINGS_SCHEMA = {
         "name": "Округлять оценки",
         "group": "Оценки",
         "path": 'user["settings"]["term_marks"]["round_marks"]',
-        "description": "Округлять оценки за четверть\n(Не округлённые оценки будут рядом в скобках)",
+        "description": "Округлять оценки за четверть"
+        "\n(Не округлённые оценки будут рядом в скобках)",
         "default_value": True,
     },
 }
