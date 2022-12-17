@@ -314,7 +314,7 @@ class NetSchoolAPI:
             response = self._session.request(method, url, headers=rheaders, **kwargs)
         except Exception:
             # Retry request
-            return self.request(url, method, headers, relogin, **kwargs)
+            return self.request(url, method, headers, relogin=False, **kwargs)
 
         status_code = response.status_code
 
