@@ -174,15 +174,12 @@ class TelegramHandler:
         if not municipalityDistrictId:
             return "TIMEOUT"
 
-        addresses = list(
-            [
-                {
-                    school["addressString"]
-                    for school in schools_response
-                    if str(school["municipalityDistrictId"]) == municipalityDistrictId
-                }
-            ]
-        )
+        addresses = {
+            school["addressString"]
+            for school in schools_response
+            if str(school["municipalityDistrictId"]) == municipalityDistrictId
+        }
+        addresses = list(map(lambda x: [{"text": x, "callback_data": x}], addresses))
 
         account["address"] = self.askUserWithButtons(
             user_id, message_id, "Выберите адрес:", addresses
@@ -191,7 +188,7 @@ class TelegramHandler:
             return "TIMEOUT"
 
         schools = [
-            [school["name"]]
+            [{"text": school["name"], "callback_data": school["name"]}]
             for school in schools_response
             if school["addressString"] == account["address"]
         ]
@@ -202,7 +199,7 @@ class TelegramHandler:
         if not account["school"]:
             return "TIMEOUT"
 
-        self.editButtons(user_id, message_id, "Подождите...", [])
+        self.tg_api.editButtons(user_id, message_id, "Подождите...", [])
 
         try:
             api.login(account["login"], account["password"], account["school"])
@@ -224,7 +221,7 @@ class TelegramHandler:
 
         api.logout()
 
-        self.editButtons(
+        self.tg_api.editButtons(
             user_id,
             message_id,
             "Напишите название аккаунта (в списке аккаунтов):\n(можно изменить в настройках)",
@@ -302,7 +299,10 @@ class TelegramHandler:
 
         if type(buttons) is list:
             if len(buttons) == 1:
-                return buttons[0]
+                if len(buttons[0]) == 1:
+                    if type(buttons[0][0]) is dict:
+                        return buttons[0][0]["callback_data"]
+                    return buttons[0][0]
 
         self.tg_api.editButtons(user_id, message_id, msg, buttons)
         return self.getButtonAnswer()
