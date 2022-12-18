@@ -26,11 +26,11 @@ SETTINGS_SCHEMA = {
         "default_value": False,
     },
     "term_marks.round_marks": {
-        "name": "Округлять оценки",
+        "name": "Округлять средний балл",
         "group": "Оценки",
         "path": 'user["settings"]["term_marks"]["round_marks"]',
-        "description": "Округлять оценки за четверть"
-        "\n(Не округлённые оценки будут рядом в скобках)",
+        "description": "Округлять средний балл за четверть"
+        "\n(Неокруглённый балл останется рядом в скобках)",
         "default_value": True,
     },
 }
