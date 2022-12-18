@@ -68,9 +68,8 @@ class TelegramAPI:
 
     def sendButtons(self, user_id, text, markup, **kwargs):
 
-        if type(markup) is list:
-            markup = {"inline_keyboard": markup}
-        markup = json.dumps(markup)
+        if type(markup) is dict:
+            markup = json.dumps(markup)
 
         payload = {"text": text, "reply_markup": markup, **kwargs}
 
@@ -82,9 +81,8 @@ class TelegramAPI:
 
     def editButtons(self, user_id, message_id, text, markup, **kwargs):
 
-        if type(markup) is list:
-            markup = {"inline_keyboard": markup}
-        markup = json.dumps(markup)
+        if type(markup) is dict:
+            markup = json.dumps(markup)
 
         payload = {
             "chat_id": user_id,
@@ -126,9 +124,8 @@ class TelegramAPI:
 
     def editMessageReplyMarkup(self, user_id, message_id, markup):
 
-        if type(markup) is list:
-            markup = {"inline_keyboard": markup}
-        markup = json.dumps(markup)
+        if type(markup) is dict:
+            markup = json.dumps(markup)
 
         payload = {
             "chat_id": user_id,

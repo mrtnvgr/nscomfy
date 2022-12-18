@@ -9,7 +9,7 @@ class GetBirthdays(Callback):
         message_id = self._getMessageId(update)
 
         if not self.master.ns.checkSession(self.user_id):
-            self.master.tg_api.editButtons(
+            self.master.editButtons(
                 self.user_id,
                 message_id,
                 "Перед тем как запросить дни рождения, войдите в аккаунт.",
@@ -17,7 +17,7 @@ class GetBirthdays(Callback):
             )
             return True
 
-        self.master.tg_api.editButtons(
+        self.master.editButtons(
             self.user_id,
             message_id,
             "Подождите...",

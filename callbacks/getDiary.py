@@ -11,7 +11,7 @@ class GetDiary(Callback):
         message_id = self._getMessageId(update)
 
         if not self.master.ns.checkSession(self.user_id):
-            self.master.tg_api.editButtons(
+            self.master.editButtons(
                 self.user_id,
                 message_id,
                 "Перед тем как запросить дневник, войдите в аккаунт.",
@@ -34,7 +34,7 @@ class GetDiary(Callback):
 
         logging.info(f'[NS] {self.user_id}: "{text}" diary request')
 
-        self.master.tg_api.editButtons(self.user_id, message_id, "Подождите...", [])
+        self.master.editButtons(self.user_id, message_id, "Подождите...", [])
 
         diary = self.master.ns.getDiary(self.user_id, dateanswer, **diary_kwargs)
         if not diary:
@@ -46,8 +46,6 @@ class GetDiary(Callback):
         for day in diary:
             text, buttons = day
 
-            self.master.tg_api.sendButtons(
-                self.user_id, text, buttons, parse_mode="HTML"
-            )
+            self.master.sendButtons(self.user_id, text, buttons, parse_mode="HTML")
 
         return True

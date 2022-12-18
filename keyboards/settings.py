@@ -34,8 +34,6 @@ class Settings(Keyboard):
 
             buttons = []
 
-            user = self.master.master.config["users"][self.user_id]  # noqa: F841
-
             for setting, setting_data in settings.items():
                 if setting_data["group"] != text:
                     continue
@@ -43,16 +41,14 @@ class Settings(Keyboard):
                 status = util.getSwitchEmoji(state)
                 setting_name = setting_data["name"]
                 buttons.append(
-                    [
-                        {
-                            "text": f"{status} {setting_name}",
-                            "callback_data": f"/showSetting {setting}",
-                        }
-                    ]
+                    {
+                        "text": f"{status} {setting_name}",
+                        "callback_data": f"/showSetting {setting}",
+                    }
                 )
 
             settings_type = self.settings_types.get(text, text)
 
-            self.master.tg_api.sendButtons(self.user_id, f"{settings_type}:", buttons)
+            self.master.sendButtons(self.user_id, f"{settings_type}:", buttons)
 
             return True

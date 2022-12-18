@@ -14,7 +14,7 @@ class ChangeAccountStudent(Callback):
         new_student = self.master.parseButtonUpdate(update, getText=True)
 
         if not self.master.ns.checkSession(self.user_id):
-            self.master.tg_api.editButtons(
+            self.master.editButtons(
                 self.user_id,
                 message_id,
                 f'Для корректной работы данной кнопки, войдите в аккаунт "{button_data[0]}".',
@@ -27,7 +27,7 @@ class ChangeAccountStudent(Callback):
         current_account = user["current_account"]
 
         if current_account != button_data[0]:
-            self.master.tg_api.editButtons(
+            self.master.editButtons(
                 self.user_id,
                 message_id,
                 "Смена ученика одного аккаунта под другим может вызвать ошибки."
@@ -38,7 +38,7 @@ class ChangeAccountStudent(Callback):
 
         accountStudents = [student["name"] for student in api._students]
         if new_student not in accountStudents:
-            self.master.tg_api.editButtons(
+            self.master.editButtons(
                 self.user_id,
                 message_id,
                 "Такого ученика больше не существует."
@@ -52,7 +52,7 @@ class ChangeAccountStudent(Callback):
         user["accounts"][current_account]["student"] = new_student
         self.master.master.saveConfig()
 
-        self.master.tg_api.editButtons(
+        self.master.editButtons(
             self.user_id,
             message_id,
             f'Ученик аккаунта "{current_account}" сменён на "{new_student}"'

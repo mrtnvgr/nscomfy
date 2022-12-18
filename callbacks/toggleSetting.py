@@ -25,10 +25,10 @@ class ToggleSetting(Callback):
         logging.info(f'[NS] {self.user_id}: toggle "{setting_type}" setting')
 
         buttons = [
-            [{"text": setting_state, "callback_data": f"/toggleSetting {setting_type}"}]
+            {"text": setting_state, "callback_data": f"/toggleSetting {setting_type}"}
         ]
 
-        self.master.tg_api.editMessageReplyMarkup(
+        self.master.editMessageReplyMarkup(
             self.user_id,
             message_id,
             buttons,

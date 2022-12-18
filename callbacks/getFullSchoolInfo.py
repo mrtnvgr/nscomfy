@@ -12,7 +12,7 @@ class GetFullSchoolInfo(Callback):
         if not school_info:
             return True
 
-        self.master.tg_api.editButtons(
+        self.master.editButtons(
             self.user_id, message_id, school_info, [], parse_mode="HTML"
         )
 
