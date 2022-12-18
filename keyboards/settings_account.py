@@ -101,3 +101,9 @@ class SettingsAccount(Keyboard):
             self.master.sendButtons(self.user_id, "Выберите нового ученика:", buttons)
 
             return True
+        
+        elif text == "Назад":
+
+            self.master.sendKeyboard(self.user_id, "settings")
+
+            return True
