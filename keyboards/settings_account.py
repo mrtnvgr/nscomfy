@@ -98,7 +98,9 @@ class SettingsAccount(Keyboard):
                 for student in api._students
             ]
 
-            self.master.sendButtons(self.user_id, "Выберите нового ученика:", buttons)
+            self.master.tg_api.sendButtons(
+                self.user_id, "Выберите нового ученика:", buttons
+            )
 
             return True
 

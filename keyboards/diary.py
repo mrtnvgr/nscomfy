@@ -33,6 +33,6 @@ class Diary(Keyboard):
             ],
         ]
 
-        self.master.sendButtons(self.user_id, "Выберите дату:", buttons)
+        self.master.tg_api.sendButtons(self.user_id, "Выберите дату:", buttons)
 
         return True

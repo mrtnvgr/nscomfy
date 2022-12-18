@@ -26,13 +26,15 @@ class Info(Keyboard):
             if school_info:
 
                 buttons = [
-                    {
-                        "text": "Получить полные данные",
-                        "callback_data": "/getFullSchoolInfo",
-                    }
+                    [
+                        {
+                            "text": "Получить полные данные",
+                            "callback_data": "/getFullSchoolInfo",
+                        }
+                    ]
                 ]
 
-                self.master.sendButtons(self.user_id, school_info, buttons)
+                self.master.tg_api.sendButtons(self.user_id, school_info, buttons)
 
             return True
 
@@ -95,13 +97,15 @@ class Info(Keyboard):
             months["Год"] = "YEAR"
 
             buttons = [
-                {
-                    "text": month_name.split(" ")[0],
-                    "callback_data": f"/getBirthdays {month_value}",
-                }
+                [
+                    {
+                        "text": month_name.split(" ")[0],
+                        "callback_data": f"/getBirthdays {month_value}",
+                    }
+                ]
                 for month_name, month_value in months.items()
             ]
 
-            self.master.sendButtons(self.user_id, "Выберите месяц:", buttons)
+            self.master.tg_api.sendButtons(self.user_id, "Выберите месяц:", buttons)
 
             return True
