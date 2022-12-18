@@ -12,7 +12,7 @@ class DownloadAttachment(Callback):
         message_id = resp["message_id"]
 
         if not self.master.ns.checkSession(self.user_id):
-            self.master.editButtons(
+            self.master.tg_api.editButtons(
                 self.user_id,
                 message_id,
                 "Перед тем как скачать вложение, войдите в аккаунт.",
@@ -25,7 +25,7 @@ class DownloadAttachment(Callback):
         studentId = api.student_info["id"]
 
         if str(studentId) != button_data[0]:
-            self.master.editButtons(
+            self.master.tg_api.editButtons(
                 self.user_id,
                 message_id,
                 "Текущий аккаунт не имеет доступа к этому вложению."
@@ -56,7 +56,7 @@ class DownloadAttachment(Callback):
             maxSize *= 50
 
         if attachmentSize > maxSize:
-            self.master.editButtons(
+            self.master.tg_api.editButtons(
                 self.user_id,
                 message_id,
                 "Размер файла слишком большой, мы не можем отправить вам файл."

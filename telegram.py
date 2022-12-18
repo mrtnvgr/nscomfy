@@ -164,7 +164,7 @@ class TelegramHandler:
             return
 
         districts = [
-            {"text": district["name"], "callback_data": district["id"]}
+            [{"text": district["name"], "callback_data": district["id"]}]
             for district in districts_response
         ]
 
@@ -175,11 +175,13 @@ class TelegramHandler:
             return "TIMEOUT"
 
         addresses = list(
-            {
-                school["addressString"]
-                for school in schools_response
-                if str(school["municipalityDistrictId"]) == municipalityDistrictId
-            }
+            [
+                {
+                    school["addressString"]
+                    for school in schools_response
+                    if str(school["municipalityDistrictId"]) == municipalityDistrictId
+                }
+            ]
         )
 
         account["address"] = self.askUserWithButtons(
@@ -189,7 +191,7 @@ class TelegramHandler:
             return "TIMEOUT"
 
         schools = [
-            school["name"]
+            [school["name"]]
             for school in schools_response
             if school["addressString"] == account["address"]
         ]
@@ -209,7 +211,7 @@ class TelegramHandler:
             return
 
         students = api._students
-        student_buttons = [student["name"] for student in students]
+        student_buttons = [[student["name"]] for student in students]
 
         account["student"] = self.askUserWithButtons(
             user_id,
@@ -302,7 +304,7 @@ class TelegramHandler:
             if len(buttons) == 1:
                 return buttons[0]
 
-        self.editButtons(user_id, message_id, msg, buttons)
+        self.tg_api.editButtons(user_id, message_id, msg, buttons)
         return self.getButtonAnswer()
 
     def askUserAgreement(self, user_id, reason="", action="продолжения"):
@@ -328,22 +330,6 @@ class TelegramHandler:
             self.master.config["users"][user_id]["current_keyboard"] = ktype
             self.master.saveConfig()
 
-    def sendButtons(self, user_id, text, values, **kwargs):
-
-        markup = self._parseButtons(values)
-
-        return self.tg_api.sendButtons(user_id, text, markup, **kwargs)
-
-    def editButtons(self, user_id, message_id, text, values, **kwargs):
-
-        markup = self._parseButtons(values)
-
-        return self.tg_api.editButtons(user_id, message_id, text, markup, **kwargs)
-
-    def editMessageReplyMarkup(self, user_id, message_id, values):
-        markup = self._parseButtons(values)
-        return self.tg_api.editMessageReplyMarkup(user_id, message_id, markup)
-
     def handleLoginError(self, user_id, message_id, exception, pop: str = ""):
 
         error_msg, unknown_err = self.master.handleError(user_id, exception)
@@ -357,28 +343,3 @@ class TelegramHandler:
         self.ns.logout(user_id)
         self.master.config["users"][user_id]["current_account"] = None
         self.master.saveConfig()
-
-    @staticmethod
-    def _parseButtons(values):
-        buttons = []
-
-        ind = 0
-        for value in values:
-            if type(value) is str:
-                buttons.append([{"text": value, "callback_data": f"/button {ind}"}])
-            elif type(value) is dict:
-                buttons.append([value])
-            elif type(value) is list:
-                if type(value[0]) is dict:
-                    buttons.append(value)
-                else:
-                    values = []
-                    for button in value:
-                        ind += 1
-                        values.append(
-                            {"text": button, "callback_data": f"/button {ind}"}
-                        )
-                    buttons.append(values)
-            ind += 1
-
-        return {"inline_keyboard": [*buttons]}
