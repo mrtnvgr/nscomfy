@@ -112,7 +112,11 @@ class MainMenu(Keyboard):
 
                 line = f"\n{subjectName}: "
 
-                rational_marks = [i for i in marks if i is not None]
+                if settings["term_marks"]["overdue_as_F"]:
+                    rational_marks = [i if i is not None else 2 for i in marks]
+                else:
+                    rational_marks = [i for i in marks if i is not None]
+
                 average = round(sum(rational_marks) / len(rational_marks), 1)
                 if settings["term_marks"]["round_avg_score"]:
                     line += f"<b>{round(average + 0.001)}</b> ({average})"

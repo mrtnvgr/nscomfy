@@ -41,6 +41,14 @@ SETTINGS_SCHEMA = {
         "\nВыкл: Показывать только средний балл",
         "default_value": True,
     },
+    "term_marks.overdue_as_F": {
+        "name": "Считать точки за двойки",
+        "group": "Оценки",
+        "path": 'user["settings"]["term_marks"]["overdue_as_F"]',
+        "description": "Считать точки за двойки в средний балл"
+        "\n(Выкл: Точки не учитываются в среднем балле)",
+        "default_value": False,
+    },
 }
 
 SHORTENED_SUBJECTS = {
