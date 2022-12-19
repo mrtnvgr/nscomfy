@@ -33,6 +33,14 @@ SETTINGS_SCHEMA = {
         "\n(Неокруглённый балл останется рядом в скобках)",
         "default_value": True,
     },
+    "term_marks.show_marks": {
+        "name": "Показывать все оценки",
+        "group": "Оценки",
+        "path": 'user["settings"]["term_marks"]["show_marks"]',
+        "description": "\nВкл: Показывать все оценки и средний балл"
+        "\nВыкл: Показывать только средний балл",
+        "default_value": True,
+    },
 }
 
 SHORTENED_SUBJECTS = {

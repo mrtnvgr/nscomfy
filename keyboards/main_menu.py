@@ -115,11 +115,12 @@ class MainMenu(Keyboard):
                 rational_marks = [i for i in marks if i is not None]
                 average = round(sum(rational_marks) / len(rational_marks), 1)
                 if settings["term_marks"]["round_marks"]:
-                    line += f"<b>{round(average + 0.001)}</b> ({average})\n"
+                    line += f"<b>{round(average + 0.001)}</b> ({average})"
                 else:
-                    line += f"<b>{average}</b>\n"
+                    line += f"<b>{average}</b>"
 
-                line += " ".join(map(util.mark_to_sign, marks))
+                if settings["term_marks"]["show_marks"]:
+                    line += f'\n{" ".join(map(util.mark_to_sign, marks))}'
 
                 text.append(line)
 
