@@ -25,10 +25,10 @@ SETTINGS_SCHEMA = {
         "description": "Показывать номера уроков",
         "default_value": False,
     },
-    "term_marks.round_marks": {
+    "term_marks.round_avg_score": {
         "name": "Округлять средний балл",
         "group": "Оценки",
-        "path": 'user["settings"]["term_marks"]["round_marks"]',
+        "path": 'user["settings"]["term_marks"]["round_avg_score"]',
         "description": "Округлять средний балл за четверть"
         "\n(Неокруглённый балл останется рядом в скобках)",
         "default_value": True,
