@@ -8,28 +8,28 @@ SETTINGS_SCHEMA = {
         "name": "Сокращать названия предметов",
         "group": "Общее",
         "path": 'user["settings"]["general"]["shorten_subjects"]',
-        "description": "Сокращать названия предметов",
+        "description": "\nСокращать названия предметов",
         "default_value": True,
     },
     "diary.show_subject_time": {
         "name": "Показывать время уроков",
         "group": "Дневник",
         "path": 'user["settings"]["diary"]["show_subject_time"]',
-        "description": "Показывать время уроков",
+        "description": "\nПоказывать время уроков",
         "default_value": True,
     },
     "diary.show_subject_number": {
         "name": "Показывать номера уроков",
         "group": "Дневник",
         "path": 'user["settings"]["diary"]["show_subject_number"]',
-        "description": "Показывать номера уроков",
+        "description": "\nПоказывать номера уроков",
         "default_value": False,
     },
     "term_marks.round_avg_score": {
         "name": "Округлять средний балл",
         "group": "Оценки",
         "path": 'user["settings"]["term_marks"]["round_avg_score"]',
-        "description": "Округлять средний балл за четверть"
+        "description": "\nОкруглять средний балл за четверть"
         "\n(Неокруглённый балл останется рядом в скобках)",
         "default_value": True,
     },
@@ -45,7 +45,7 @@ SETTINGS_SCHEMA = {
         "name": "Считать точки за двойки",
         "group": "Оценки",
         "path": 'user["settings"]["term_marks"]["overdue_as_F"]',
-        "description": "Считать точки за двойки в средний балл"
+        "description": "\nСчитать точки за двойки в средний балл"
         "\n(Выкл: Точки не учитываются в среднем балле)",
         "default_value": False,
     },
