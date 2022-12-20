@@ -78,7 +78,7 @@ class Main:
         while True:
 
             try:
-                updates = self.telegram.getUpdates(timeout=999999)
+                updates = self.telegram.getUpdates()
                 for update in updates:
                     self.telegram.updateHandler(update)
             except ConnectionError:
