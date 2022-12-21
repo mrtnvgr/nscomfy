@@ -1,6 +1,4 @@
 import logging
-from datetime import date as datetime
-from datetime import timedelta
 from itertools import zip_longest
 
 import util
@@ -111,29 +109,11 @@ class NetSchoolSessionHandler:
         if not self.checkSession(user_id):
             return
 
-        today = datetime.today()
-        monday = today - timedelta(days=today.weekday())
-
-        if date == "td":
-            start = today
-            end = start
-        elif date == "tm":
-            start = today + util.getTomorrowDelta(today)
-            end = start
-        elif date == "yd":
-            start = today - util.getYesterdayDelta(today)
-            end = start
-        elif date == "cw":
-            start = monday
-            end = start + timedelta(days=5)
-        elif date == "nw":
-            start = monday + timedelta(days=7)
-            end = start + timedelta(days=5)
-        elif date == "lw":
-            start = monday - timedelta(days=7)
-            end = start + timedelta(days=5)
-        else:
+        date = util.getDate(date)
+        if not date:
             return False
+
+        start, end = date
 
         api = self.sessions[user_id]
 

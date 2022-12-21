@@ -243,3 +243,31 @@ def getRole(role):
     }
 
     return translations.get(role, role)
+
+
+def getDate(date):
+    today = datetime.today()
+    monday = today - timedelta(days=today.weekday())
+
+    if date == "td":
+        start = today
+        end = start
+    elif date == "tm":
+        start = today + getTomorrowDelta(today)
+        end = start
+    elif date == "yd":
+        start = today - getYesterdayDelta(today)
+        end = start
+    elif date == "cw":
+        start = monday
+        end = start + timedelta(days=5)
+    elif date == "nw":
+        start = monday + timedelta(days=7)
+        end = start + timedelta(days=5)
+    elif date == "lw":
+        start = monday - timedelta(days=7)
+        end = start + timedelta(days=5)
+    else:
+        return False
+
+    return start, end
