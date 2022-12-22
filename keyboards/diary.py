@@ -10,15 +10,19 @@ class Diary(Keyboard):
 
         self.keyboard.append(["Задания", "Расписание", "Оценки"])
         self.keyboard.append(["Всё"])
+        self.keyboard.append(["Контрольные работы"])
         self.keyboard.append(["Назад"])
 
         self.one_time_keyboard = False
 
     def parse(self, text):
-        if text not in ["Всё", "Расписание", "Задания", "Оценки"]:
-            return
 
-        callback_data = f"/getDiary {text}"
+        if text in ["Всё", "Расписание", "Задания", "Оценки"]:
+            callback_data = f"/getDiary {text}"
+        elif text == "Контрольные работы":
+            callback_data = "/getDiaryTests"
+        else:
+            return
 
         buttons = [
             [
