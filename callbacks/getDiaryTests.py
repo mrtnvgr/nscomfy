@@ -64,7 +64,9 @@ class GetDiaryTests(Callback):
         self.master.tg_api.deleteMessage(self.user_id, message_id)
 
         if importants == {}:
-            self.master.tg_api.sendMessage(self.user_id, "ТОДО")
+            self.master.tg_api.sendMessage(
+                self.user_id, "На эти числа информации не найдено."
+            )
             return True
 
         user = self.master.master.config["users"][self.user_id]

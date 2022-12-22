@@ -42,20 +42,19 @@ class SettingsAccount(Keyboard):
 
         elif text == "Переименовать":
 
-            while True:
-                newName = self.master.askUser(
-                    self.user_id, "Напишите новое название аккаунта:"
+            newName = self.master.askUser(
+                self.user_id, "Напишите новое название аккаунта:"
+            )
+
+            if not newName:
+                return
+
+            if not checkAccountName(newName):
+                self.master.tg_api.sendMessage(
+                    self.user_id,
+                    "Такое имя аккаунта нельзя использовать. Попробуйте что-нибудь другое.",
                 )
-                if not newName:
-                    return
-                # TODO
-                if not checkAccountName(newName):
-                    self.master.tg_api.sendMessage(
-                        self.user_id,
-                        "Такое имя аккаунта нельзя использовать. Попробуйте что-нибудь другое.",
-                    )
-                    continue
-                break
+                return
 
             logging.info(f"[NS] {self.user_id}: rename account")
 
