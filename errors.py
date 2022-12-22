@@ -14,6 +14,10 @@ class InvalidUrlError(Exception):
     pass
 
 
+class NotANetSchoolError(Exception):
+    pass
+
+
 class UnsupportedRoleError(Exception):
     pass
 

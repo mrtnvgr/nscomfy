@@ -36,8 +36,10 @@ class NetSchoolAPI:
             if ns_info.status_code == 503:
                 raise TechnicalMaintenanceError
             self.ns_info = ns_info.json()
-        except (JSONDecodeError, ConnectionError, InvalidURL):
-            raise InvalidUrlError("given url isn't a net school url")
+        except (ConnectionError, InvalidURL):
+            raise InvalidUrlError("given url is invalid")
+        except JSONDecodeError:
+            raise NotANetSchoolError("given url isn't a net school url")
 
     def getSchoolList(self, force=False):
         """Get school info list"""
