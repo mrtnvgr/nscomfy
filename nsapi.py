@@ -32,9 +32,9 @@ class NetSchoolAPI:
 
         # Get version info and NSSESSIONID cookie
         try:
-            ns_info = self.request("logindata", relogin=False)
+            ns_info = self.request("logindata", relogin=False, retry=False)
             if ns_info.status_code == 503:
-                raise TechnicalMaintenanceError()
+                raise TechnicalMaintenanceError
             self.ns_info = ns_info.json()
         except (JSONDecodeError, ConnectionError, InvalidURL):
             raise InvalidUrlError("given url isn't a net school url")
@@ -299,7 +299,9 @@ class NetSchoolAPI:
         if not self.student_info:
             raise UnknownStudentError(f'this account doesn\'t have "{student_name}"')
 
-    def request(self, url, method="GET", headers={}, relogin=True, **kwargs):
+    def request(
+        self, url, method="GET", headers={}, relogin=True, retry=True, **kwargs
+    ):
         """Session request wrapper"""
 
         # Check if url is relative
@@ -313,8 +315,11 @@ class NetSchoolAPI:
         try:
             response = self._session.request(method, url, headers=rheaders, **kwargs)
         except Exception:
-            # Retry request
-            return self.request(url, method, headers, relogin=False, **kwargs)
+            if retry:
+                # Retry request
+                return self.request(url, method, headers, relogin=False, **kwargs)
+            else:
+                raise
 
         status_code = response.status_code
 
