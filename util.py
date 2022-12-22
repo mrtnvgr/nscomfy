@@ -27,7 +27,7 @@ SETTINGS_SCHEMA = {
     },
     "term_marks.round_avg_score": {
         "name": "Округлять средний балл",
-        "group": "Оценки",
+        "group": "Средний балл",
         "path": 'user["settings"]["term_marks"]["round_avg_score"]',
         "description": "\nОкруглять средний балл за четверть"
         "\n(Неокруглённый балл останется рядом в скобках)",
@@ -35,7 +35,7 @@ SETTINGS_SCHEMA = {
     },
     "term_marks.show_marks": {
         "name": "Показывать все оценки",
-        "group": "Оценки",
+        "group": "Средний балл",
         "path": 'user["settings"]["term_marks"]["show_marks"]',
         "description": "\nВкл: Показывать все оценки и средний балл"
         "\nВыкл: Показывать только средний балл",
@@ -43,7 +43,7 @@ SETTINGS_SCHEMA = {
     },
     "term_marks.overdue_as_F": {
         "name": "Считать точки за двойки",
-        "group": "Оценки",
+        "group": "Средний балл",
         "path": 'user["settings"]["term_marks"]["overdue_as_F"]',
         "description": "\nСчитать точки за двойки в средний балл"
         "\n(Выкл: Точки не учитываются в среднем балле)",
