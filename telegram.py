@@ -241,9 +241,11 @@ class TelegramHandler:
         user = self.master.config["users"][user_id]
 
         if name in user["accounts"]:
-            msg = "У вас уже есть аккаунт под таким названием."
-            if not self.askUserAgreement(user_id, msg, "перезаписи аккаунта"):
-                return
+            self.tg_api.sendMessage(
+                user_id,
+                "У вас уже есть аккаунт под таким названием.",
+            )
+            return
 
         self.addNewUser(user_id)
 
@@ -307,15 +309,18 @@ class TelegramHandler:
         self.tg_api.editButtons(user_id, message_id, msg, buttons)
         return self.getButtonAnswer()
 
-    def askUserAgreement(self, user_id, reason="", action="продолжения"):
-        message = f'Для {action} напишите "Согласен":'
+    def askUserAgreement(self, user_id, msg, callback_data):
+        buttons = [
+            [
+                {
+                    "text": "Да",
+                    "callback_data": callback_data,
+                },
+                {"text": "Нет", "callback_data": "/deleteThisMessage"},
+            ]
+        ]
 
-        if reason:
-            message = f"{reason}\n{message}"
-
-        userAnswer = self.askUser(user_id, message)
-        if userAnswer == "Согласен":
-            return True
+        self.tg_api.sendButtons(user_id, msg, buttons)
 
     def sendKeyboard(self, user_id, ktype):
         """Send different keyboards to user"""

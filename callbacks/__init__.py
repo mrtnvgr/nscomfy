@@ -1,4 +1,6 @@
 from callbacks.changeAccountStudent import ChangeAccountStudent
+from callbacks.deleteAccount import DeleteAccount
+from callbacks.deleteThisMessage import DeleteThisMessage
 from callbacks.downloadAttachment import DownloadAttachment
 from callbacks.getBirthdays import GetBirthdays
 from callbacks.getDiary import GetDiary
@@ -16,4 +18,6 @@ CALLBACKS = {
     "/getBirthdays": GetBirthdays,
     "/showSetting": ShowSetting,
     "/toggleSetting": ToggleSetting,
+    "/deleteThisMessage": DeleteThisMessage,
+    "/deleteAccount": DeleteAccount,
 }

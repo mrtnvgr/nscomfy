@@ -30,20 +30,15 @@ class SettingsAccount(Keyboard):
         if text == "Удалить":
 
             msg = "Вы точно хотите удалить текущий аккаунт?"
-            userAnswer = self.master.askUserAgreement(self.user_id, msg)
-            if not userAnswer:
-                return
-
-            logging.info(f"[NS] {self.user_id}: delete account")
 
             user = self.master.master.config["users"][self.user_id]
             current_account = user["current_account"]
-            user["accounts"].pop(current_account)
 
-            self.master.ns.logout(self.user_id)
-            user["current_account"] = None
+            callback_data = f"/deleteAccount {quote_plus(current_account)}"
 
-            self.master.master.saveConfig()
+            self.master.askUserAgreement(self.user_id, msg, callback_data)
+
+            return True
 
         elif text == "Переименовать":
 
@@ -53,7 +48,7 @@ class SettingsAccount(Keyboard):
                 )
                 if not newName:
                     return
-
+                # TODO
                 if not checkAccountName(newName):
                     self.master.tg_api.sendMessage(
                         self.user_id,
