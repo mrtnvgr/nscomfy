@@ -101,8 +101,9 @@ class Diary(Keyboard):
                 rational_marks = [i for i in marks if i is not None]
 
             average = round(sum(rational_marks) / len(rational_marks), 1)
+            rounded = round(average + 0.001)
             if settings["term_marks"]["round_avg_score"]:
-                line += f"<b>{round(average + 0.001)}</b> ({average})"
+                line += f"<b>{rounded}</b> ({average})"
             else:
                 line += f"<b>{average}</b>"
 
