@@ -46,8 +46,6 @@ class GetDiary(Callback):
         for day in diary:
             text, buttons = day
 
-            self.master.tg_api.sendButtons(
-                self.user_id, text, buttons, parse_mode="HTML"
-            )
+            self.master.tg_api.sendButtons(self.user_id, text, buttons)
 
         return True

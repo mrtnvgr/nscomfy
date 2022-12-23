@@ -35,7 +35,6 @@ class ShowSetting(Callback):
             message_id,
             "\n".join(text),
             buttons,
-            parse_mode="HTML",
         )
 
         logging.info(f'[NS] {self.user_id}: show "{settingType}" setting')

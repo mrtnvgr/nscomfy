@@ -112,8 +112,6 @@ class Diary(Keyboard):
 
             text.append(line)
 
-        self.master.tg_api.editButtons(
-            self.user_id, message_id, "\n".join(text), [], parse_mode="HTML"
-        )
+        self.master.tg_api.editButtons(self.user_id, message_id, "\n".join(text), [])
 
         return True

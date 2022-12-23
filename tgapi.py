@@ -66,13 +66,13 @@ class TelegramAPI:
             "sendMessage", {"text": text, "reply_markup": keyboard}, user_id
         )
 
-    def sendButtons(self, user_id, text, markup, **kwargs):
+    def sendButtons(self, user_id, text, markup):
 
         if type(markup) is list:
             markup = {"inline_keyboard": markup}
         markup = json.dumps(markup)
 
-        payload = {"text": text, "reply_markup": markup, **kwargs}
+        payload = {"text": text, "reply_markup": markup}
 
         return self.method(
             "sendMessage",
@@ -80,28 +80,24 @@ class TelegramAPI:
             user_id,
         )
 
-    def editButtons(self, user_id, message_id, text, markup, **kwargs):
+    def editButtons(self, user_id, message_id, text, markup):
 
         if type(markup) is list:
             markup = {"inline_keyboard": markup}
         markup = json.dumps(markup)
 
         payload = {
-            "chat_id": user_id,
             "message_id": message_id,
             "text": text,
             "reply_markup": markup,
-            **kwargs,
         }
 
-        return self.method("editMessageText", payload)
+        return self.method("editMessageText", payload, user_id)
 
-    def editPhoto(self, user_id, photo, caption, **kwargs):
+    def editPhoto(self, user_id, photo, caption):
 
         payload = {
-            "chat_id": user_id,
             "caption": caption,
-            **kwargs,
         }
         files = {}
 
@@ -110,7 +106,7 @@ class TelegramAPI:
         else:
             raise Exception(f"invalid photo type: {type(photo)}")
 
-        return self.method("sendPhoto", payload, files=files)
+        return self.method("sendPhoto", payload, user_id, files=files)
 
     def sendFile(self, user_id, filename, filebytes: bytes):
 

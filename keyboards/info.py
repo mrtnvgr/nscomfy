@@ -51,7 +51,6 @@ class Info(Keyboard):
                     self.user_id,
                     user_photo,
                     account_info,
-                    parse_mode="HTML",
                 )
 
             return True
