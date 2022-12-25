@@ -309,14 +309,16 @@ class TelegramHandler:
         self.tg_api.editButtons(user_id, message_id, msg, buttons)
         return self.getButtonAnswer()
 
-    def askUserAgreement(self, user_id, msg, callback_data):
+    def askUserAgreement(
+        self, user_id, msg, yes_cbdata, no_cbdata="/deleteThisMessage"
+    ):
         buttons = [
             [
                 {
                     "text": "Да",
-                    "callback_data": callback_data,
+                    "callback_data": yes_cbdata,
                 },
-                {"text": "Нет", "callback_data": "/deleteThisMessage"},
+                {"text": "Нет", "callback_data": no_cbdata},
             ]
         ]
 
