@@ -17,8 +17,10 @@ class Settings(Keyboard):
 
         self.text = "Настройки:"
 
-        self.keyboard.append(list(self.settings_types.keys()))
-        self.keyboard.append(["Аккаунт", "Назад"])
+        self.keyboard.append(["Общее"])
+        self.keyboard.append(["Дневник", "Средний балл"])
+        self.keyboard.append(["Аккаунт"])
+        self.keyboard.append(["Отладка", "Назад"])
 
         self.one_time_keyboard = False
 
