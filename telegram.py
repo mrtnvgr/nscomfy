@@ -85,11 +85,8 @@ class TelegramHandler:
                 self.sendKeyboard(user_id, "account_selection")
 
         except Exception as ex:
-            msg, unknown = self.master.handleError(user_id, ex)
-            if unknown:
-                self.tg_api.sendMessage(user_id, "Неожиданная ошибка.")
-            else:
-                self.tg_api.sendMessage(user_id, f"Ошибка: {msg}")
+            msg, _ = self.master.handleError(user_id, ex)
+            self.tg_api.sendMessage(user_id, msg)
 
     def menuAnswerHandler(self, user_id, update):
 

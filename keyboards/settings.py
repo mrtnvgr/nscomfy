@@ -9,9 +9,10 @@ class Settings(Keyboard):
     def set(self):
 
         self.settings_types = {
-            "Общее": "Общие настройки",
-            "Дневник": "Настройки дневника",
-            "Средний балл": "Настройки оценок за четверть",
+            "Общее": "Общие настройки:",
+            "Дневник": "Настройки дневника:",
+            "Средний балл": "Настройки оценок за четверть:",
+            "Отладка": "Настройки для отладки:",
         }
 
         self.text = "Настройки:"
@@ -53,6 +54,6 @@ class Settings(Keyboard):
 
             settings_type = self.settings_types.get(text, text)
 
-            self.master.tg_api.sendButtons(self.user_id, f"{settings_type}:", buttons)
+            self.master.tg_api.sendButtons(self.user_id, settings_type, buttons)
 
             return True

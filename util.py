@@ -49,6 +49,13 @@ SETTINGS_SCHEMA = {
         "\n(Выкл: Точки не учитываются в среднем балле)",
         "default_value": False,
     },
+    "debug.show_traceback": {
+        "name": "Показывать traceback ошибок",
+        "group": "Отладка",
+        "path": 'user["settings"]["debug"]["show_traceback"]',
+        "description": "\nПоказывать traceback неизвестных ошибок",
+        "default_value": False,
+    },
 }
 
 SHORTENED_SUBJECTS = {

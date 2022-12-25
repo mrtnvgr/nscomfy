@@ -5,9 +5,11 @@ import json
 import logging
 import os
 import signal
+import traceback
 
 from requests.exceptions import ConnectionError, JSONDecodeError
 
+import util
 from errors import *
 from telegram import TelegramHandler
 
@@ -116,6 +118,13 @@ class Main:
             logging.error(f'[NS] {user_id}: "{exceptionName}" exception')
         else:
             logging.exception(f"[NS] {user_id}: unknown exception!")
+
+            settings = self.config["users"][user_id]["settings"]
+            if settings["debug"]["show_traceback"]:
+                tb = traceback.format_exception(exception)
+                tb = util.normalizeHTMLText("".join(tb))
+                errorMessage += "\n\n<b>Traceback</b>:"
+                errorMessage += f"\n<pre>{tb}</pre>"
 
         return errorMessage, unknownErr
 
